@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class DrcSendMoneyMerchant extends Model
 {
     use HasFactory;
-    protected $connection = 'paydrc';
+    protected $connection = 'mysql';
     protected $table = 'drc_send_money_merchant';
     protected $guarded = [];
 }

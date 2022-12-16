@@ -89,121 +89,15 @@ class HomeController extends Controller
     public function admin()
     {
 
-        DrcSendMoneyTransac::whereDate('created_at', Carbon::today()->toDateString())->groupBy('method','sta')->count();
-        $client = new Client();
-        $response = $client->request('GET','http://167.71.131.224:4500/services/daily_transactions', ['timeout' => 60000]);
-        $responseBody = json_decode($response->getBody(), true);
-        $airtel_charge = $responseBody["airtel_charge"];
-        $orange_charge = $responseBody["orange_charge"];
-        $vodacom_charge = $responseBody["vodacom_charge"];
-        $airtel_payout = $responseBody["airtel_payout"];
-        $orange_payout = $responseBody["orange_payout"];
-        $vodacom_payout = $responseBody["vodacom_payout"];
-        $global_payout = $responseBody["global_payout"];
-        $global_charge = $responseBody["global_charge"];
+        $test = DrcSendMoneyTransac::select('status','action','method', DB::raw('count(*) as total'))
+        ->whereDate('created_at', Carbon::today()->toDateString())->groupBy('action','status','method')
+        ->get();
 
+        $all = DrcSendMoneyTransac::select('status','action', DB::raw('count(*) as total'))
+        ->whereDate('created_at', Carbon::today()->toDateString())->groupBy('action','status','method')
+        ->get();
 
-        if ($global_payout == null) {
-            $credit_success = 0;
-            $credit_failed = 0;
-            $credit_pending = 0;
-            $credit_submitted = 0;
-        }
-        else {
-            foreach ($global_payout as $key => $value) {
-                $data_2[] = $value["status"];
-                $credit = array_count_values($data_2);
-            }
-            if (array_key_exists('Successful', $credit)) {
-                $credit_success = $credit["Successful"];
-            }
-            else {
-                $credit_success = 0;
-            }
-            if (array_key_exists('Failed', $credit)) {
-                $credit_failed = $credit["Failed"];
-            }
-            else {
-                $credit_failed = 0;
-            }
-            if (array_key_exists('Pending', $credit)) {
-                $credit_pending = $credit["Pending"];
-            }
-            else {
-                $credit_pending = 0;
-            }
-            if (array_key_exists('Submitted', $credit)) {
-                $credit_submitted = $credit["Submitted"];
-            }
-            else {
-                $credit_submitted = 0;
-            }
-            $total_payout = $credit_submitted + $credit_failed + $credit_pending + $credit_success;
-            $percent_success_payout = number_format(($credit_success * 100) / ($total_payout),2);
-            $percent_pending_payout =number_format(($credit_pending * 100) / ($total_payout),2);
-            $percent_failed_payout = number_format(($credit_failed * 100) / ($total_payout),2);
-            $percent_submitted_payout = number_format(($credit_submitted * 100) / ($total_payout),2);
-        }
-
-        if ($vodacom_payout == null) {
-            $credit_vodacom_success = 0;
-            $credit_vodacom_failed = 0;
-            $credit_vodacom_pending = 0;
-            $credit_vodacom_submitted = 0;
-
-            $total_vodacom_charge = $credit_vodacom_submitted + $credit_vodacom_failed + $credit_vodacom_pending + $credit_vodacom_success;
-            $p_vcredit_success = 0;
-            $p_vcredit_pending = 0;
-            $p_vcredit_failed = 0;
-            $p_vcredit_submitted = 0;
-        }
-        else {
-            foreach ($vodacom_payout as $key => $value) {
-                $data_3[] = $value["status"];
-                $vodacomp = array_count_values($data_3);
-            }
-            if (array_key_exists('Successful', $vodacomp)) {
-                $credit_vodacom_success = $vodacomp["Successful"];
-            }
-            else {
-                $credit_vodacom_success = 0;
-            }
-            if (array_key_exists('Failed', $vodacomp)) {
-                $credit_vodacom_failed = $vodacomp["Failed"];
-            }
-            else {
-                $credit_vodacom_failed = 0;
-            }
-            if (array_key_exists('Pending', $vodacomp)) {
-                $credit_vodacom_pending = $vodacomp["Pending"];
-            }
-            else {
-                $credit_vodacom_pending = 0;
-            }
-            if (array_key_exists('Submitted', $vodacomp)) {
-                $credit_vodacom_submitted = $vodacomp["Submitted"];
-            }
-            else {
-                $credit_vodacom_submitted = 0;
-            }
-            $total_vodacom_charge = $credit_vodacom_submitted + $credit_vodacom_failed + $credit_vodacom_pending + $credit_vodacom_success;
-            if ($total_vodacom_charge == 0) {
-                $p_vcredit_success = number_format(($credit_vodacom_success * 100),2);
-            $p_vcredit_pending =number_format(($credit_vodacom_pending * 100),2);
-            $p_vcredit_failed = number_format(($credit_vodacom_failed * 100),2);
-            $p_vcredit_submitted = number_format(($credit_vodacom_submitted * 100),2);
-            }
-            else {
-                $p_vcredit_success = number_format(($credit_vodacom_success * 100) / ($total_vodacom_charge),2);
-            $p_vcredit_pending =number_format(($credit_vodacom_pending * 100) / ($total_vodacom_charge),2);
-            $p_vcredit_failed = number_format(($credit_vodacom_failed * 100) / ($total_vodacom_charge),2);
-            $p_vcredit_submitted = number_format(($credit_vodacom_submitted * 100) / ($total_vodacom_charge),2);
-            }
-            
-        }
-
-        if ($airtel_payout == null) {
-            $credit_airtel_success = 0;
+        $credit_airtel_success = 0;
             $credit_airtel_failed = 0;
             $credit_airtel_pending = 0;
             $credit_airtel_submitted = 0;
@@ -212,281 +106,215 @@ class HomeController extends Controller
             $p_acredit_pending = 0;
             $p_acredit_failed = 0;
             $p_acredit_submitted = 0;
-        }
-        else {
-            foreach ($airtel_payout as $key => $value) {
-                $data_4[] = $value["status"];
-                $airtelp = array_count_values($data_4);
-            }
-            if (array_key_exists('Successful', $airtelp)) {
-                $credit_airtel_success = $airtelp["Successful"];
-            }
-            else {
-                $credit_airtel_success = 0;
-            }
-            if (array_key_exists('Failed', $airtelp)) {
-                $credit_airtel_failed = $airtelp["Failed"];
-            }
-            else {
-                $credit_airtel_failed = 0;
-            }
-            if (array_key_exists('Pending', $airtelp)) {
-                $credit_airtel_pending = $airtelp["Pending"];
-            }
-            else {
-                $credit_airtel_pending = 0;
-            }
-            if (array_key_exists('Submitted', $airtelp)) {
-                $credit_airtel_submitted = $airtelp["Submitted"];
-            }
-            else {
-                $credit_airtel_submitted = 0;
-            }
-            $total_airtel_charge = $credit_airtel_submitted + $credit_airtel_failed + $credit_airtel_pending + $credit_airtel_success;
-            $p_acredit_success = number_format(($credit_airtel_success * 100) / ($total_airtel_charge),2);
-            $p_acredit_pending =number_format(($credit_airtel_pending * 100) / ($total_airtel_charge),2);
-            $p_acredit_failed = number_format(($credit_airtel_failed * 100) / ($total_airtel_charge),2);
-            $p_acredit_submitted = number_format(($credit_airtel_submitted * 100) / ($total_airtel_charge),2);
-        }
 
-        if ($orange_payout == null) {
-            $credit_orange_success = 0;
-            $credit_orange_failed = 0;
-            $credit_orange_pending = 0;
-            $credit_orange_submitted = 0;
-            $p_ocredit_success = 0;
-            $p_ocredit_pending = 0;
-            $p_ocredit_failed = 0;
-            $p_ocredit_submitted = 0;
-        }
-        else {
-            foreach ($orange_payout as $key => $value) {
-                $data_5[] = $value["status"];
-                $orangep = array_count_values($data_5);
-            }
-            if (array_key_exists('Successful', $orangep)) {
-                $credit_orange_success = $orangep["Successful"];
-            }
-            else {
-                $credit_orange_success = 0;
-            }
-            if (array_key_exists('Failed', $orangep)) {
-                $credit_orange_failed = $orangep["Failed"];
-            }
-            else {
-                $credit_orange_failed = 0;
-            }
-            if (array_key_exists('Pending', $orangep)) {
-                $credit_orange_pending = $orangep["Pending"];
-            }
-            else {
-                $credit_orange_pending = 0;
-            }
-            if (array_key_exists('Submitted', $orangep)) {
-                $credit_orange_submitted = $orangep["Submitted"];
-            }
-            else {
-                $credit_orange_submitted = 0;
-            }
-            $total_orange_charge = $credit_orange_submitted + $credit_orange_failed + $credit_orange_pending + $credit_orange_success;
-            $p_ocredit_success = number_format(($credit_orange_success * 100) / ($total_orange_charge),2);
-            $p_ocredit_pending =number_format(($credit_orange_pending * 100) / ($total_orange_charge),2);
-            $p_ocredit_failed = number_format(($credit_orange_failed * 100) / ($total_orange_charge),2);
-            $p_ocredit_submitted = number_format(($credit_orange_submitted * 100) / ($total_orange_charge),2);
-        }
 
-        ####################################################################################################"
+        $debit_pending = 0;
+        $debit_submitted = 0;
+        $debit_success = 0;
+        $debit_failed = 0;
 
-        if ($global_charge == null) {
-            $debit_success = 0;
-            $debit_failed = 0;
-            $debit_pending = 0;
-            $debit_submitted = 0;
+        $credit_pending = 0;
+        $credit_submitted = 0;
+        $credit_success = 0;
+        $credit_failed = 0;
+
+        $debit_airtel_pending = 0;
+        $debit_airtel_submitted = 0;
+        $debit_airtel_success = 0;
+        $debit_airtel_failed = 0;
+
+        $credit_airtel_pending = 0;
+        $credit_airtel_submitted = 0;
+        $credit_airtel_success = 0;
+        $credit_airtel_failed = 0;
+
+        $debit_orange_pending = 0;
+        $debit_orange_submitted = 0;
+        $debit_orange_success = 0;
+        $debit_orange_failed = 0;
+        
+        $credit_orange_pending = 0;
+        $credit_orange_submitted = 0;
+        $credit_orange_success = 0;
+        $credit_orange_failed = 0;
+
+        $debit_mpesa_pending = 0;
+        $debit_mpesa_submitted = 0;
+        $debit_mpesa_success = 0;
+        $debit_mpesa_failed = 0;
+        
+        $credit_mpesa_pending = 0;
+        $credit_mpesa_submitted = 0;
+        $credit_mpesa_success = 0;
+        $credit_mpesa_failed = 0;
+
+        $credit_vodacom_pending = 0;
+        $credit_vodacom_failed = 0;
+        $credit_vodacom_submitted = 0;
+        $credit_vodacom_success = 0;
+
+        $debit_vodacom_success = 0;
+            $debit_vodacom_failed = 0;
+            $debit_vodacom_pending = 0;
+            $debit_vodacom_submitted = 0;
+
+        foreach ($test as $key => $value) {
+            if ($value["action"] == "debit" && $value["status"] == "Successful" && $value["method"] == "airtel") {
+                $debit_airtel_success = $value["total"];
+            }
+            if ($value["action"] == "debit" && $value["status"] == "Failed" && $value["method"] == "airtel") {
+                $debit_airtel_failed = $value["total"];
+            }
+            if ($value["action"] == "debit" && $value["status"] == "Pending" && $value["method"] == "airtel") {
+                $debit_airtel_pending = $value["total"];
+            }
+            if ($value["action"] == "debit" && $value["status"] == "Submitted" && $value["method"] == "airtel") {
+                $debit_airtel_submitted = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Successful" && $value["method"] == "airtel") {
+                $credit_airtel_success = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Failed" && $value["method"] == "airtel") {
+                $credit_airtel_failed = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Pending" && $value["method"] == "airtel") {
+                $credit_airtel_pending = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Submitted" && $value["method"] == "airtel") {
+                $credit_airtel_submitted = $value["total"];
+            }
+            # Orange
+            if ($value["action"] == "debit" && $value["status"] == "Successful" && $value["method"] == "orange") {
+                $debit_orange_success = $value["total"];
+            }
+            if ($value["action"] == "debit" && $value["status"] == "Failed" && $value["method"] == "orange") {
+                $debit_orange_failed = $value["total"];
+            }
+            if ($value["action"] == "debit" && $value["status"] == "Pending" && $value["method"] == "orange") {
+                $debit_orange_pending = $value["total"];
+            }
+            if ($value["action"] == "debit" && $value["status"] == "Submitted" && $value["method"] == "orange") {
+                $debit_orange_submitted = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Successful" && $value["method"] == "orange") {
+                $credit_orange_success = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Failed" && $value["method"] == "orange") {
+                $credit_orange_failed = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Pending" && $value["method"] == "orange") {
+                $credit_orange_pending = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Submitted" && $value["method"] == "orange") {
+                $credit_orange_submitted = $value["total"];
+            }
+            # Vodacom
+            if ($value["action"] == "debit" && $value["status"] == "Successful" && $value["method"] == "mpesa") {
+                $debit_vodacom_success = $value["total"];
+            }
+            if ($value["action"] == "debit" && $value["status"] == "Failed" && $value["method"] == "mpesa") {
+                $debit_vodacom_failed = $value["total"];
+            }
+            if ($value["action"] == "debit" && $value["status"] == "Pending" && $value["method"] == "mpesa") {
+                $debit_vodacom_pending = $value["total"];
+            }
+            if ($value["action"] == "debit" && $value["status"] == "Submitted" && $value["method"] == "mpesa") {
+                $debit_vodacom_submitted = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Successful" && $value["method"] == "mpesa") {
+                $credit_vodacom_success = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Failed" && $value["method"] == "mpesa") {
+                $credit_vodacom_failed = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Pending" && $value["method"] == "mpesa") {
+                $credit_vodacom_pending = $value["total"];
+            }
+            if ($value["action"] == "credit" && $value["status"] == "Submitted" && $value["method"] == "mpesa") {
+                $credit_vodacom_submitted = $value["total"];
+            }
             
         }
-        else {
-            foreach ($global_charge as $key => $value) {
-                $result_2[] = $value["status"];
-                $debit = array_count_values($result_2);
+
+        foreach ($all as $key => $value) {
+            if ($value["action"] == "debit" && $value["status"] == "Successful") {
+                $debit_success = $value["total"];
             }
-            if (array_key_exists('Successful', $debit)) {
-                $debit_success = $debit["Successful"];
+            if ($value["action"] == "debit" && $value["status"] == "Failed") {
+                $debit_failed = $value["total"];
             }
-            else {
-                $debit_success = 0;
+            if ($value["action"] == "debit" && $value["status"] == "Pending") {
+                $debit_pending = $value["total"];
             }
-            if (array_key_exists('Failed', $debit)) {
-                $debit_failed = $debit["Failed"];
+            if ($value["action"] == "debit" && $value["status"] == "Submitted") {
+                $debit_submitted = $value["total"];
             }
-            else {
-                $debit_failed = 0;
+
+            if ($value["action"] == "credit" && $value["status"] == "Successful") {
+                $credit_success = $value["total"];
             }
-            if (array_key_exists('Pending', $debit)) {
-                $debit_pending = $debit["Pending"];
+            if ($value["action"] == "credit" && $value["status"] == "Failed") {
+                $credit_failed = $value["total"];
             }
-            else {
-                $debit_pending = 0;
+            if ($value["action"] == "credit" && $value["status"] == "Pending") {
+                $credit_pending = $value["total"];
             }
-            if (array_key_exists('Submitted', $debit)) {
-                $debit_submitted = $debit["Submitted"];
+            if ($value["action"] == "credit" && $value["status"] == "Submitted") {
+                $credit_submitted = $value["total"];
             }
-            else {
-                $debit_submitted = 0;
-            }
+
+        }
+
+            $total_orange_charge = $debit_orange_submitted + $debit_orange_failed + $debit_orange_pending + $debit_orange_success;
+            $p_odebit_success = number_format(($debit_orange_success * 100) / 100,2);
+            $p_odebit_pending =number_format(($debit_orange_pending * 100) / 100,2);
+            $p_odebit_failed = number_format(($debit_orange_failed * 100) / 100,2);
+            $p_odebit_submitted = number_format(($debit_orange_submitted * 100) / 100,2);
+      
+
+            $total_airtel_charge = $debit_airtel_submitted + $debit_airtel_failed + $debit_airtel_pending + $debit_airtel_success;
+            $p_adebit_success = number_format(($debit_airtel_success * 100) / 100,2);
+            $p_adebit_pending =number_format(($debit_airtel_pending * 100) / 100,2);
+            $p_adebit_failed = number_format(($debit_airtel_failed * 100) / 100,2);
+            $p_adebit_submitted = number_format(($debit_airtel_submitted * 100) / 100,2);
+
+            $total_payout = $credit_submitted + $credit_failed + $credit_pending + $credit_success;
+            $percent_success_payout = number_format(($credit_success * 100) / 100,2);
+            $percent_pending_payout =number_format(($credit_pending * 100) / 100,2);
+            $percent_failed_payout = number_format(($credit_failed * 100) / 100,2);
+            $percent_submitted_payout = number_format(($credit_submitted * 100) / 100,2);
+
+            $total_mpesa_charge = $debit_mpesa_submitted + $debit_mpesa_failed + $debit_mpesa_pending + $debit_mpesa_success;
+            $p_vdebit_success = number_format(($debit_mpesa_success * 100) / 100,2);
+            $p_vdebit_pending =number_format(($debit_mpesa_pending * 100) / 100,2);
+            $p_vdebit_failed = number_format(($debit_mpesa_failed * 100) / 100,2);
+            $p_vdebit_submitted = number_format(($debit_mpesa_submitted * 100) / 100,2);
+
+            
+
+            $total_airtel_charge = $debit_airtel_submitted + $debit_airtel_failed + $debit_airtel_pending + $debit_airtel_success;
+            $p_adebit_success = number_format(($debit_airtel_success * 100) / 100,2);
+            $p_adebit_pending =number_format(($debit_airtel_pending * 100) / 100,2);
+            $p_adebit_failed = number_format(($debit_airtel_failed * 100) / 100,2);
+            $p_adebit_submitted = number_format(($debit_airtel_submitted * 100) / 100,2);
+
+
+            $p_vcredit_success = number_format(($credit_vodacom_success * 100),2);
+            $p_vcredit_pending =number_format(($credit_vodacom_pending * 100),2);
+            $p_vcredit_failed = number_format(($credit_vodacom_failed * 100),2);
+            $p_vcredit_submitted = number_format(($credit_vodacom_submitted * 100),2);
+
             $total_charge = $debit_submitted + $debit_failed + $debit_pending + $debit_success;
             $percent_success = number_format(($debit_success * 100) / ($total_charge),2);
             $percent_pending =number_format(($debit_pending * 100) / ($total_charge),2);
             $percent_failed = number_format(($debit_failed * 100) / ($total_charge),2);
             $percent_submitted = number_format(($debit_submitted * 100) / ($total_charge),2);
-        }
 
-        if ($vodacom_charge == null) {
-            $debit_vodacom_success = 0;
-            $debit_vodacom_failed = 0;
-            $debit_vodacom_pending = 0;
-            $debit_vodacom_submitted = 0;
-
-            $p_vdebit_success = 0;
-            $p_vdebit_pending = 0;
-            $p_vdebit_failed = 0;
-            $p_vdebit_submitted = 0;
-        }
-        else {
-            foreach ($vodacom_charge as $key => $value) {
-                $result_3[] = $value["status"];
-                $vodacom = array_count_values($result_3);
-            }
-            if (array_key_exists('Successful', $vodacom)) {
-                $debit_vodacom_success = $vodacom["Successful"];
-            }
-            else {
-                $debit_vodacom_success = 0;
-            }
-            if (array_key_exists('Failed', $vodacom)) {
-                $debit_vodacom_failed = $vodacom["Failed"];
-            }
-            else {
-                $debit_vodacom_failed = 0;
-            }
-            if (array_key_exists('Pending', $vodacom)) {
-                $debit_vodacom_pending = $vodacom["Pending"];
-            }
-            else {
-                $debit_vodacom_pending = 0;
-            }
-            if (array_key_exists('Submitted', $vodacom)) {
-                $debit_vodacom_submitted = $vodacom["Submitted"];
-            }
-            else {
-                $debit_vodacom_submitted = 0;
-            }
-            $total_mpesa_charge = $debit_vodacom_submitted + $debit_vodacom_failed + $debit_vodacom_pending + $debit_vodacom_success;
-            if ($total_mpesa_charge == 0) {
-                $p_vdebit_success = number_format(($debit_vodacom_success * 100),2);
-            $p_vdebit_pending =number_format(($debit_vodacom_pending * 100),2);
-            $p_vdebit_failed = number_format(($debit_vodacom_failed * 100),2);
-            $p_vdebit_submitted = number_format(($debit_vodacom_submitted * 100),2);
-            }
-            else {
-                $p_vdebit_success = number_format(($debit_vodacom_success * 100) / ($total_mpesa_charge),2);
-            $p_vdebit_pending =number_format(($debit_vodacom_pending * 100) / ($total_mpesa_charge),2);
-            $p_vdebit_failed = number_format(($debit_vodacom_failed * 100) / ($total_mpesa_charge),2);
-            $p_vdebit_submitted = number_format(($debit_vodacom_submitted * 100) / ($total_mpesa_charge),2);
-            }
-            
-        }
-
-        if ($airtel_charge == null) {
-            $debit_airtel_success = 0;
-            $debit_airtel_failed = 0;
-            $debit_airtel_pending = 0;
-            $debit_airtel_submitted = 0;
-            $p_adebit_success = 0;
-            $p_adebit_pending = 0;
-            $p_adebit_failed = 0;
-            $p_adebit_submitted = 0;
-        }
-        else {
-            foreach ($airtel_charge as $key => $value) {
-                $result_4[] = $value["status"];
-                $airtel = array_count_values($result_4);
-            }
-            if (array_key_exists('Successful', $airtel)) {
-                $debit_airtel_success = $airtel["Successful"];
-            }
-            else {
-                $debit_airtel_success = 0;
-            }
-            if (array_key_exists('Failed', $airtel)) {
-                $debit_airtel_failed = $airtel["Failed"];
-            }
-            else {
-                $debit_airtel_failed = 0;
-            }
-            if (array_key_exists('Pending', $airtel)) {
-                $debit_airtel_pending = $airtel["Pending"];
-            }
-            else {
-                $debit_airtel_pending = 0;
-            }
-            if (array_key_exists('Submitted', $airtel)) {
-                $debit_airtel_submitted = $airtel["Submitted"];
-            }
-            else {
-                $debit_airtel_submitted = 0;
-            }
-            $total_airtel_charge = $debit_airtel_submitted + $debit_airtel_failed + $debit_airtel_pending + $debit_airtel_success;
-            $p_adebit_success = number_format(($debit_airtel_success * 100) / ($total_airtel_charge),2);
-            $p_adebit_pending =number_format(($debit_airtel_pending * 100) / ($total_airtel_charge),2);
-            $p_adebit_failed = number_format(($debit_airtel_failed * 100) / ($total_airtel_charge),2);
-            $p_adebit_submitted = number_format(($debit_airtel_submitted * 100) / ($total_airtel_charge),2);
-        }
-
-        if ($orange_charge == null) {
-            $debit_orange_success = 0;
-            $debit_orange_failed = 0;
-            $debit_orange_pending = 0;
-            $debit_orange_submitted = 0;
-            $p_odebit_success = 0;
-            $p_odebit_pending = 0;
-            $p_odebit_failed = 0;
-            $p_odebit_submitted = 0;
-        }
-        else {
-            foreach ($orange_charge as $key => $value) {
-                $result_5[] = $value["status"];
-                $orange = array_count_values($result_5);
-            }
-            if (array_key_exists('Successful', $orange)) {
-                $debit_orange_success = $orange["Successful"];
-            }
-            else {
-                $debit_orange_success = 0;
-            }
-            if (array_key_exists('Failed', $orange)) {
-                $debit_orange_failed = $orange["Failed"];
-            }
-            else {
-                $debit_orange_failed = 0;
-            }
-            if (array_key_exists('Pending', $orange)) {
-                $debit_orange_pending = $orange["Pending"];
-            }
-            else {
-                $debit_orange_pending = 0;
-            }
-            if (array_key_exists('Submitted', $orange)) {
-                $debit_orange_submitted = $orange["Submitted"];
-            }
-            else {
-                $debit_orange_submitted = 0;
-            }
-            $total_orange_charge = $debit_orange_submitted + $debit_orange_failed + $debit_orange_pending + $debit_orange_success;
-            $p_odebit_success = number_format(($debit_orange_success * 100) / ($total_orange_charge),2);
-            $p_odebit_pending =number_format(($debit_orange_pending * 100) / ($total_orange_charge),2);
-            $p_odebit_failed = number_format(($debit_orange_failed * 100) / ($total_orange_charge),2);
-            $p_odebit_submitted = number_format(($debit_orange_submitted * 100) / ($total_orange_charge),2);
-        }
+            $total_orange_charge = $credit_orange_submitted + $credit_orange_failed + $credit_orange_pending + $credit_orange_success;
+            $p_ocredit_success = number_format(($credit_orange_success * 100) / ($total_orange_charge),2);
+            $p_ocredit_pending =number_format(($credit_orange_pending * 100) / ($total_orange_charge),2);
+            $p_ocredit_failed = number_format(($credit_orange_failed * 100) / ($total_orange_charge),2);
+            $p_ocredit_submitted = number_format(($credit_orange_submitted * 100) / ($total_orange_charge),2);
 
 
         $hour = DrcSendMoneyTransac::select(DB::raw("Hour(created_at) as hour"))

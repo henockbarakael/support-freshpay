@@ -54,22 +54,22 @@
                         <!--begin::Progress-->
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
-                                <span>{{$debit_success}} Successful</span>
+                                <span>{{$charge_success}} Successful</span>
                                 <span>{{$percent_success}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$debit_failed}} Failed</span>
+                                <span>{{$charge_failed}} Failed</span>
                                 <span>{{$percent_failed}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$debit_pending}} Pending</span>
+                                <span>{{$charge_pending}} Pending</span>
                                 <span>{{$percent_pending}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$debit_submitted}} Submitted</span>
+                                <span>{{$charge_submitted}} Submitted</span>
                                 <span>{{$percent_submitted}}%</span>
                             </div>
                             
@@ -103,22 +103,22 @@
                         <!--begin::Progress-->
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
-                                <span>{{$credit_success}} Successful</span>
+                                <span>{{$payout_success}} Successful</span>
                                 <span>{{$percent_success_payout}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$credit_failed}} Failed</span>
+                                <span>{{$payout_failed}} Failed</span>
                                 <span>{{$percent_failed_payout}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$credit_pending}} Pending</span>
+                                <span>{{$payout_pending}} Pending</span>
                                 <span>{{$percent_pending_payout}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$credit_submitted}} Submitted</span>
+                                <span>{{$payout_submitted}} Submitted</span>
                                 <span>{{$percent_submitted_payout}}%</span>
                             </div>
                             

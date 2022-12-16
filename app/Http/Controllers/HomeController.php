@@ -1,569 +1,383 @@
 <?php
 
-namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
-use App\Models\Contact;
-use App\Models\DrcSendMoneyTransac;
-use Carbon\Carbon;
-use GuzzleHttp\Client;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Session;
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
 
-class HomeController extends Controller
+Route::get('/', function () {
+    return view('auth.login');
+});
+
+Route::group(['middleware'=>'auth'],function()
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    Route::get('home',function()
     {
-        ini_set('max_execution_time', 300);
-        $this->middleware('auth');
-    }
+        return view('home');
+    });
+});
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
+Auth::routes();
 
-    public function index(){
-        $contacts = Contact::all();
-        return view("index", compact('contacts'));
-    }
+// -----------------------------settings----------------------------------------//
+Route::get('company/settings/page', [App\Http\Controllers\SettingController::class, 'companySettings'])->middleware('auth')->name('company/settings/page');
+Route::get('roles/permissions/page', [App\Http\Controllers\SettingController::class, 'rolesPermissions'])->middleware('auth')->name('roles/permissions/page');
+Route::post('roles/permissions/save', [App\Http\Controllers\SettingController::class, 'addRecord'])->middleware('auth')->name('roles/permissions/save');
+Route::post('roles/permissions/update', [App\Http\Controllers\SettingController::class, 'editRolesPermissions'])->middleware('auth')->name('roles/permissions/update');
+Route::post('roles/permissions/delete', [App\Http\Controllers\SettingController::class, 'deleteRolesPermissions'])->middleware('auth')->name('roles/permissions/delete');
 
-    public function bulkSelect(Request $request){
+// -----------------------------login----------------------------------------//
+Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login');
+Route::get('session_validate', [App\Http\Controllers\Auth\LoginController::class, 'session'])->name('session.validate');
+Route::post('start_new_session', [App\Http\Controllers\Auth\LoginController::class, 'start_new_session'])->name('start.new.session');
+Route::get('session_stay_in', [App\Http\Controllers\Auth\LoginController::class, 'session_stay_in'])->name('session.stay.in');
 
-        $contact_ids = explode(",",$request->ids);
-     
-        $contacts = Contact::whereIn('id', $contact_ids)->get();
+Route::post('authenticate', [App\Http\Controllers\Auth\LoginController::class, 'authenticate'])->name('authenticate');
+Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
-        return response()->json(['view' => view("bulk-update", compact('contacts'))->render(),'status'=>true,'donnee'=>$contacts,'message'=>"Transaction deleted successfully."]);
+// ------------------------------ register ---------------------------------//
+Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('register');
+Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'storeUser'])->name('register');
 
-        // return view("bulk-update", compact('contacts'));
+// ----------------------------- forget password ----------------------------//
+Route::get('forget-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'getEmail'])->name('forget-password');
+Route::post('forget-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'postEmail'])->name('forget-password');
 
-    }
-
-    public function updateSelected(){
-
-        $contact_ids = Session::get('contact_ids');
-        $contacts = Contact::whereIn('id', $contact_ids)->get();
-        return view("bulk-update", compact('contacts'));
-
-    }
-
-    public function updateAll(Request $request)
-
-    {
-
-            $ids = $request->input('contact_id');
-
-            $email_addresses = $request->input('email_address');
-
-            $contact_numbers = $request->input('contact_number');
-
-            $contact_types = $request->input('contact_type');
-
-            foreach($ids as $k => $id){
-
-                $values = array(
-
-                    'email_address' => $email_addresses[$k],
-
-                    'phone_number' => $contact_numbers[$k],
-
-                    'type' => $contact_types[$k],
-
-                );
-
-                    DB::table('contacts')->where('id','=',$id)->update($values);
-
-            }
-
-        return redirect()->back()->with('success', true);
-
-    }
-    public function admin()
-    {
-        $client = new Client();
-        $response = $client->request('GET','http://167.71.131.224:4500/services/daily_transactions', ['timeout' => 60000]);
-        $responseBody = json_decode($response->getBody(), true);
-        $airtel_charge = $responseBody["airtel_charge"];
-        $orange_charge = $responseBody["orange_charge"];
-        $vodacom_charge = $responseBody["vodacom_charge"];
-        $airtel_payout = $responseBody["airtel_payout"];
-        $orange_payout = $responseBody["orange_payout"];
-        $vodacom_payout = $responseBody["vodacom_payout"];
-        $global_payout = $responseBody["global_payout"];
-        $global_charge = $responseBody["global_charge"];
+// ----------------------------- reset password -----------------------------//
+Route::get('reset-password/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'getPassword']);
+Route::post('reset-password', [App\Http\Controllers\Auth\ResetPasswordController::class, 'updatePassword']);
 
 
-        if ($global_payout == null) {
-            $credit_success = 0;
-            $credit_failed = 0;
-            $credit_pending = 0;
-            $credit_submitted = 0;
-        }
-        else {
-            foreach ($global_payout as $key => $value) {
-                $data_2[] = $value["status"];
-                $credit = array_count_values($data_2);
-            }
-            if (array_key_exists('Successful', $credit)) {
-                $credit_success = $credit["Successful"];
-            }
-            else {
-                $credit_success = 0;
-            }
-            if (array_key_exists('Failed', $credit)) {
-                $credit_failed = $credit["Failed"];
-            }
-            else {
-                $credit_failed = 0;
-            }
-            if (array_key_exists('Pending', $credit)) {
-                $credit_pending = $credit["Pending"];
-            }
-            else {
-                $credit_pending = 0;
-            }
-            if (array_key_exists('Submitted', $credit)) {
-                $credit_submitted = $credit["Submitted"];
-            }
-            else {
-                $credit_submitted = 0;
-            }
-            $total_payout = $credit_submitted + $credit_failed + $credit_pending + $credit_success;
-            $percent_success_payout = number_format(($credit_success * 100) / ($total_payout),2);
-            $percent_pending_payout =number_format(($credit_pending * 100) / ($total_payout),2);
-            $percent_failed_payout = number_format(($credit_failed * 100) / ($total_payout),2);
-            $percent_submitted_payout = number_format(($credit_submitted * 100) / ($total_payout),2);
-        }
+Route::group(['prefix'=>'admin', 'middleware'=>['admin','auth','PreventBackHistory']], function(){
+    // ----------------------------- dashboard -----------------------------//
+    Route::get('dashboard', [App\Http\Controllers\HomeController::class, 'admin'])->name('admin.dashboard');
 
-        if ($vodacom_payout == null) {
-            $credit_vodacom_success = 0;
-            $credit_vodacom_failed = 0;
-            $credit_vodacom_pending = 0;
-            $credit_vodacom_submitted = 0;
+    Route::get('ouverture-caisse', [App\Http\Controllers\API\CashRegisterController::class, 'ouverture'])->name('admin.ouverture_caisse');
+    Route::get('cloture-caisse', [App\Http\Controllers\API\CashRegisterController::class, 'cloture'])->name('admin.cloture_caisse');
+    Route::post('cloture-caisse', [App\Http\Controllers\API\CashRegisterController::class, 'postcloture'])->name('admin.postcloture_caisse');
+    Route::post('fond_de_caisse_ouverture', [App\Http\Controllers\API\CashRegisterController::class, 'fond_ouverture'])->name('admin.fondcaisse.ouverture');
+    Route::post('fond_de_caisse_cloture', [App\Http\Controllers\API\CashRegisterController::class, 'fond_cloture'])->name('admin.fondcaisse.cloture');
 
-            $total_vodacom_charge = $credit_vodacom_submitted + $credit_vodacom_failed + $credit_vodacom_pending + $credit_vodacom_success;
-            $p_vcredit_success = 0;
-            $p_vcredit_pending = 0;
-            $p_vcredit_failed = 0;
-            $p_vcredit_submitted = 0;
-        }
-        else {
-            foreach ($vodacom_payout as $key => $value) {
-                $data_3[] = $value["status"];
-                $vodacomp = array_count_values($data_3);
-            }
-            if (array_key_exists('Successful', $vodacomp)) {
-                $credit_vodacom_success = $vodacomp["Successful"];
-            }
-            else {
-                $credit_vodacom_success = 0;
-            }
-            if (array_key_exists('Failed', $vodacomp)) {
-                $credit_vodacom_failed = $vodacomp["Failed"];
-            }
-            else {
-                $credit_vodacom_failed = 0;
-            }
-            if (array_key_exists('Pending', $vodacomp)) {
-                $credit_vodacom_pending = $vodacomp["Pending"];
-            }
-            else {
-                $credit_vodacom_pending = 0;
-            }
-            if (array_key_exists('Submitted', $vodacomp)) {
-                $credit_vodacom_submitted = $vodacomp["Submitted"];
-            }
-            else {
-                $credit_vodacom_submitted = 0;
-            }
-            $total_vodacom_charge = $credit_vodacom_submitted + $credit_vodacom_failed + $credit_vodacom_pending + $credit_vodacom_success;
-            if ($total_vodacom_charge == 0) {
-                $p_vcredit_success = number_format(($credit_vodacom_success * 100),2);
-            $p_vcredit_pending =number_format(($credit_vodacom_pending * 100),2);
-            $p_vcredit_failed = number_format(($credit_vodacom_failed * 100),2);
-            $p_vcredit_submitted = number_format(($credit_vodacom_submitted * 100),2);
-            }
-            else {
-                $p_vcredit_success = number_format(($credit_vodacom_success * 100) / ($total_vodacom_charge),2);
-            $p_vcredit_pending =number_format(($credit_vodacom_pending * 100) / ($total_vodacom_charge),2);
-            $p_vcredit_failed = number_format(($credit_vodacom_failed * 100) / ($total_vodacom_charge),2);
-            $p_vcredit_submitted = number_format(($credit_vodacom_submitted * 100) / ($total_vodacom_charge),2);
-            }
-            
-        }
+    Route::get('autocomplete', [App\Http\Controllers\API\CustomerAPI::class, 'autocomplete'])->name('admin.autocomplete');
+    Route::get('search_autocomplete', [App\Http\Controllers\API\CustomerAPI::class, 'search_autocomplete'])->name('admin.search_autocomplete');
+    Route::get('donwload-file/{file_name}', [App\Http\Controllers\Ticket\TicketController::class, 'downloadFile'])->name('admin.download.file');
+    Route::get('liste-client', [App\Http\Controllers\UtilisateurController::class, 'liste_client'])->name('admin.liste_client');
+    Route::post('creation-client', [App\Http\Controllers\UtilisateurController::class, 'creation_client'])->name('admin.creation_client');
+    Route::post('modification-client', [App\Http\Controllers\UtilisateurController::class, 'modification_client'])->name('admin.modification_client');
+    Route::post('supprimer-client', [App\Http\Controllers\UtilisateurController::class, 'supprimer_client'])->name('admin.supprimer_client');
+    Route::get('liste-caissier', [App\Http\Controllers\UtilisateurController::class, 'liste_caissier'])->name('admin.liste_caissier');
+    Route::post('creation-caissier', [App\Http\Controllers\UtilisateurController::class, 'creation_caissier'])->name('admin.creation_caissier');
+    Route::get('liste-gerant', [App\Http\Controllers\UtilisateurController::class, 'liste_gerant'])->name('admin.liste_gerant');
+    Route::post('creation-gerant', [App\Http\Controllers\UtilisateurController::class, 'creation_gerant'])->name('admin.creation_gerant');
+    Route::post('modification-gerant', [App\Http\Controllers\UtilisateurController::class, 'modification_gerant'])->name('admin.modification_gerant');
+    Route::post('supprimer-gerant', [App\Http\Controllers\UtilisateurController::class, 'supprimer_gerant'])->name('admin.supprimer_gerant');
+    Route::get('liste-admin', [App\Http\Controllers\UtilisateurController::class, 'liste_admin'])->name('admin.liste_admin');
+    Route::post('creation-admin', [App\Http\Controllers\UtilisateurController::class, 'creation_admin'])->name('admin.creation_admin');
+    Route::post('modification-admin', [App\Http\Controllers\UtilisateurController::class, 'modification_admin'])->name('admin.modification_admin');
+    Route::post('supprimer-admin', [App\Http\Controllers\UtilisateurController::class, 'supprimer_admin'])->name('admin.supprimer_admin');
+    Route::get('liste-marchand', [App\Http\Controllers\UtilisateurController::class, 'liste_marchand'])->name('admin.liste_marchand');
+    Route::post('creation-marchand', [App\Http\Controllers\UtilisateurController::class, 'creation_marchand'])->name('admin.creation_marchand');
 
-        if ($airtel_payout == null) {
-            $credit_airtel_success = 0;
-            $credit_airtel_failed = 0;
-            $credit_airtel_pending = 0;
-            $credit_airtel_submitted = 0;
+    Route::get('compte-client/{id}', [App\Http\Controllers\API\AccountController::class, 'client'])->name('admin.account.create.client');
+    Route::get('depot/cash/{id}', [App\Http\Controllers\API\AccountController::class, 'client_depot'])->name('admin.account.create.client.depot.create');
+    Route::get('retrait/cash/{id}', [App\Http\Controllers\API\AccountController::class, 'client_retrait'])->name('admin.account.create.client.retrait.create');
+    Route::get('transfert/interne/{id}', [App\Http\Controllers\API\AccountController::class, 'client_transfert'])->name('admin.account.create.client.transfert.create');
+    Route::get('mobile-money/interne/{id}', [App\Http\Controllers\API\AccountController::class, 'client_mobile'])->name('admin.account.create.client.mobile.create');
+    Route::get('compte-gerant/{id}', [App\Http\Controllers\API\AccountController::class, 'gerant'])->name('admin.account.create.gerant');
+    Route::get('compte-caissier/{id}', [App\Http\Controllers\API\AccountController::class, 'caissier'])->name('admin.account.create.caissier');
+    Route::get('transfert/compte-compte/{id}', [App\Http\Controllers\API\AccountController::class, 'transfert_compte_compte'])->name('admin.account.transfert_compte_compte');
+    Route::post('transfert/compte-compte', [App\Http\Controllers\API\TransferController::class, 'Current_Saving'])->name('admin.account.transfert_current_saving');
+    Route::get('retrait/compte-epargne/{id}', [App\Http\Controllers\API\AccountController::class, 'retrait_compte_epargne'])->name('admin.account.retrait_compte_epargne');
+    Route::post('retrait-compte-epargne', [App\Http\Controllers\Manager\WithdrawalController::class, 'retrait_compte_epargne'])->name('admin.withdrawal.epargne.store');
 
-            $p_acredit_success = 0;
-            $p_acredit_pending = 0;
-            $p_acredit_failed = 0;
-            $p_acredit_submitted = 0;
-        }
-        else {
-            foreach ($airtel_payout as $key => $value) {
-                $data_4[] = $value["status"];
-                $airtelp = array_count_values($data_4);
-            }
-            if (array_key_exists('Successful', $airtelp)) {
-                $credit_airtel_success = $airtelp["Successful"];
-            }
-            else {
-                $credit_airtel_success = 0;
-            }
-            if (array_key_exists('Failed', $airtelp)) {
-                $credit_airtel_failed = $airtelp["Failed"];
-            }
-            else {
-                $credit_airtel_failed = 0;
-            }
-            if (array_key_exists('Pending', $airtelp)) {
-                $credit_airtel_pending = $airtelp["Pending"];
-            }
-            else {
-                $credit_airtel_pending = 0;
-            }
-            if (array_key_exists('Submitted', $airtelp)) {
-                $credit_airtel_submitted = $airtelp["Submitted"];
-            }
-            else {
-                $credit_airtel_submitted = 0;
-            }
-            $total_airtel_charge = $credit_airtel_submitted + $credit_airtel_failed + $credit_airtel_pending + $credit_airtel_success;
-            $p_acredit_success = number_format(($credit_airtel_success * 100) / ($total_airtel_charge),2);
-            $p_acredit_pending =number_format(($credit_airtel_pending * 100) / ($total_airtel_charge),2);
-            $p_acredit_failed = number_format(($credit_airtel_failed * 100) / ($total_airtel_charge),2);
-            $p_acredit_submitted = number_format(($credit_airtel_submitted * 100) / ($total_airtel_charge),2);
-        }
+    Route::get('activity-log', [App\Http\Controllers\API\LogController::class, 'activity_log'])->name('admin.activity_log');
+    Route::get('user-activity-log', [App\Http\Controllers\API\LogController::class, 'user_activity_log'])->name('admin.user_activity_log');
 
-        if ($orange_payout == null) {
-            $credit_orange_success = 0;
-            $credit_orange_failed = 0;
-            $credit_orange_pending = 0;
-            $credit_orange_submitted = 0;
-            $p_ocredit_success = 0;
-            $p_ocredit_pending = 0;
-            $p_ocredit_failed = 0;
-            $p_ocredit_submitted = 0;
-        }
-        else {
-            foreach ($orange_payout as $key => $value) {
-                $data_5[] = $value["status"];
-                $orangep = array_count_values($data_5);
-            }
-            if (array_key_exists('Successful', $orangep)) {
-                $credit_orange_success = $orangep["Successful"];
-            }
-            else {
-                $credit_orange_success = 0;
-            }
-            if (array_key_exists('Failed', $orangep)) {
-                $credit_orange_failed = $orangep["Failed"];
-            }
-            else {
-                $credit_orange_failed = 0;
-            }
-            if (array_key_exists('Pending', $orangep)) {
-                $credit_orange_pending = $orangep["Pending"];
-            }
-            else {
-                $credit_orange_pending = 0;
-            }
-            if (array_key_exists('Submitted', $orangep)) {
-                $credit_orange_submitted = $orangep["Submitted"];
-            }
-            else {
-                $credit_orange_submitted = 0;
-            }
-            $total_orange_charge = $credit_orange_submitted + $credit_orange_failed + $credit_orange_pending + $credit_orange_success;
-            $p_ocredit_success = number_format(($credit_orange_success * 100) / ($total_orange_charge),2);
-            $p_ocredit_pending =number_format(($credit_orange_pending * 100) / ($total_orange_charge),2);
-            $p_ocredit_failed = number_format(($credit_orange_failed * 100) / ($total_orange_charge),2);
-            $p_ocredit_submitted = number_format(($credit_orange_submitted * 100) / ($total_orange_charge),2);
-        }
+    Route::post('create-wallet', [App\Http\Controllers\API\WalletController::class, 'create'])->name('admin.wallet.create');
+    Route::post('delete-wallet', [App\Http\Controllers\API\WalletController::class, 'delete'])->name('admin.wallet.delete');
+    Route::post('topup-wallet', [App\Http\Controllers\API\WalletController::class, 'topup'])->name('admin.wallet.topup');
+    Route::get('liste-wallet', [App\Http\Controllers\API\WalletController::class, 'all'])->name('admin.wallet.all');
 
-        ####################################################################################################"
+    Route::get('liste-gateway', [App\Http\Controllers\API\PaymentGatewayController::class, 'all'])->name('admin.gateway.all');
 
-        if ($global_charge == null) {
-            $debit_success = 0;
-            $debit_failed = 0;
-            $debit_pending = 0;
-            $debit_submitted = 0;
-            
-        }
-        else {
-            foreach ($global_charge as $key => $value) {
-                $result_2[] = $value["status"];
-                $debit = array_count_values($result_2);
-            }
-            if (array_key_exists('Successful', $debit)) {
-                $debit_success = $debit["Successful"];
-            }
-            else {
-                $debit_success = 0;
-            }
-            if (array_key_exists('Failed', $debit)) {
-                $debit_failed = $debit["Failed"];
-            }
-            else {
-                $debit_failed = 0;
-            }
-            if (array_key_exists('Pending', $debit)) {
-                $debit_pending = $debit["Pending"];
-            }
-            else {
-                $debit_pending = 0;
-            }
-            if (array_key_exists('Submitted', $debit)) {
-                $debit_submitted = $debit["Submitted"];
-            }
-            else {
-                $debit_submitted = 0;
-            }
-            $total_charge = $debit_submitted + $debit_failed + $debit_pending + $debit_success;
-            $percent_success = number_format(($debit_success * 100) / ($total_charge),2);
-            $percent_pending =number_format(($debit_pending * 100) / ($total_charge),2);
-            $percent_failed = number_format(($debit_failed * 100) / ($total_charge),2);
-            $percent_submitted = number_format(($debit_submitted * 100) / ($total_charge),2);
-        }
+    Route::get('liste-branche', [App\Http\Controllers\API\BrancheController::class, 'all'])->name('admin.branche.all');
+    Route::get('branche-treller', [App\Http\Controllers\API\BrancheController::class, 'allTreller'])->name('admin.branche.all.treller');
+    Route::get('branche-account', [App\Http\Controllers\API\BrancheController::class, 'allAccount'])->name('admin.branche.all.account');
+    Route::get('branche-account-manager', [App\Http\Controllers\API\BrancheController::class, 'Manager'])->name('admin.branche.account.manager');
+    Route::post('topup-account', [App\Http\Controllers\API\BrancheController::class, 'topup'])->name('admin.branche.account.topup');
+    Route::get('topup-branche', [App\Http\Controllers\API\BrancheController::class, 'topup_agence'])->name('admin.branche.manager.all');
+    Route::post('topup-branche', [App\Http\Controllers\API\BrancheController::class, 'recharge_agence'])->name('admin.branche.account.recharge');
+    Route::get('profil-utilisateur', [App\Http\Controllers\API\AccountController::class, 'profilUser'])->name('admin.account.profil.user');
 
-        if ($vodacom_charge == null) {
-            $debit_vodacom_success = 0;
-            $debit_vodacom_failed = 0;
-            $debit_vodacom_pending = 0;
-            $debit_vodacom_submitted = 0;
+    Route::get('create-ticket', [App\Http\Controllers\Ticket\TicketController::class, 'create'])->name('admin.ticket.create');
+    Route::post('create-ticket', [App\Http\Controllers\Ticket\TicketController::class, 'store'])->name('admin.ticket.store');
+    Route::get('create-recharge-request', [App\Http\Controllers\Ticket\TicketController::class, 'create_recharge'])->name('admin.reharge.request.create');
+    Route::post('create-recharge-request', [App\Http\Controllers\Ticket\TicketController::class, 'store_recharge'])->name('admin.reharge.request.store');
+    Route::post('create-recharge-success', [App\Http\Controllers\Ticket\TicketController::class, 'success_recharge'])->name('admin.reharge.request.success');
+    Route::post('create-recharge-failed', [App\Http\Controllers\Ticket\TicketController::class, 'failed_recharge'])->name('admin.reharge.request.failed');
 
-            $p_vdebit_success = 0;
-            $p_vdebit_pending = 0;
-            $p_vdebit_failed = 0;
-            $p_vdebit_submitted = 0;
-        }
-        else {
-            foreach ($vodacom_charge as $key => $value) {
-                $result_3[] = $value["status"];
-                $vodacom = array_count_values($result_3);
-            }
-            if (array_key_exists('Successful', $vodacom)) {
-                $debit_vodacom_success = $vodacom["Successful"];
-            }
-            else {
-                $debit_vodacom_success = 0;
-            }
-            if (array_key_exists('Failed', $vodacom)) {
-                $debit_vodacom_failed = $vodacom["Failed"];
-            }
-            else {
-                $debit_vodacom_failed = 0;
-            }
-            if (array_key_exists('Pending', $vodacom)) {
-                $debit_vodacom_pending = $vodacom["Pending"];
-            }
-            else {
-                $debit_vodacom_pending = 0;
-            }
-            if (array_key_exists('Submitted', $vodacom)) {
-                $debit_vodacom_submitted = $vodacom["Submitted"];
-            }
-            else {
-                $debit_vodacom_submitted = 0;
-            }
-            $total_mpesa_charge = $debit_vodacom_submitted + $debit_vodacom_failed + $debit_vodacom_pending + $debit_vodacom_success;
-            if ($total_mpesa_charge == 0) {
-                $p_vdebit_success = number_format(($debit_vodacom_success * 100),2);
-            $p_vdebit_pending =number_format(($debit_vodacom_pending * 100),2);
-            $p_vdebit_failed = number_format(($debit_vodacom_failed * 100),2);
-            $p_vdebit_submitted = number_format(($debit_vodacom_submitted * 100),2);
-            }
-            else {
-                $p_vdebit_success = number_format(($debit_vodacom_success * 100) / ($total_mpesa_charge),2);
-            $p_vdebit_pending =number_format(($debit_vodacom_pending * 100) / ($total_mpesa_charge),2);
-            $p_vdebit_failed = number_format(($debit_vodacom_failed * 100) / ($total_mpesa_charge),2);
-            $p_vdebit_submitted = number_format(($debit_vodacom_submitted * 100) / ($total_mpesa_charge),2);
-            }
-            
-        }
+    Route::post('branche-treller', [App\Http\Controllers\API\BrancheController::class, 'StoreTreller'])->name('admin.branche.store.treller');
+    Route::post('create-branche', [App\Http\Controllers\API\BrancheController::class, 'create'])->name('admin.branche.create');
+    Route::post('assign-branche', [App\Http\Controllers\API\BrancheController::class, 'assign'])->name('admin.branche.assign');
+    Route::post('update-branche', [App\Http\Controllers\API\BrancheController::class, 'UpdateBranche'])->name('admin.branche.update');
 
-        if ($airtel_charge == null) {
-            $debit_airtel_success = 0;
-            $debit_airtel_failed = 0;
-            $debit_airtel_pending = 0;
-            $debit_airtel_submitted = 0;
-            $p_adebit_success = 0;
-            $p_adebit_pending = 0;
-            $p_adebit_failed = 0;
-            $p_adebit_submitted = 0;
-        }
-        else {
-            foreach ($airtel_charge as $key => $value) {
-                $result_4[] = $value["status"];
-                $airtel = array_count_values($result_4);
-            }
-            if (array_key_exists('Successful', $airtel)) {
-                $debit_airtel_success = $airtel["Successful"];
-            }
-            else {
-                $debit_airtel_success = 0;
-            }
-            if (array_key_exists('Failed', $airtel)) {
-                $debit_airtel_failed = $airtel["Failed"];
-            }
-            else {
-                $debit_airtel_failed = 0;
-            }
-            if (array_key_exists('Pending', $airtel)) {
-                $debit_airtel_pending = $airtel["Pending"];
-            }
-            else {
-                $debit_airtel_pending = 0;
-            }
-            if (array_key_exists('Submitted', $airtel)) {
-                $debit_airtel_submitted = $airtel["Submitted"];
-            }
-            else {
-                $debit_airtel_submitted = 0;
-            }
-            $total_airtel_charge = $debit_airtel_submitted + $debit_airtel_failed + $debit_airtel_pending + $debit_airtel_success;
-            $p_adebit_success = number_format(($debit_airtel_success * 100) / ($total_airtel_charge),2);
-            $p_adebit_pending =number_format(($debit_airtel_pending * 100) / ($total_airtel_charge),2);
-            $p_adebit_failed = number_format(($debit_airtel_failed * 100) / ($total_airtel_charge),2);
-            $p_adebit_submitted = number_format(($debit_airtel_submitted * 100) / ($total_airtel_charge),2);
-        }
+    Route::get('comingsoon', [App\Http\Controllers\Comingsoon::class, 'comingsoon'])->name('admin.comingsoon');
 
-        if ($orange_charge == null) {
-            $debit_orange_success = 0;
-            $debit_orange_failed = 0;
-            $debit_orange_pending = 0;
-            $debit_orange_submitted = 0;
-            $p_odebit_success = 0;
-            $p_odebit_pending = 0;
-            $p_odebit_failed = 0;
-            $p_odebit_submitted = 0;
-        }
-        else {
-            foreach ($orange_charge as $key => $value) {
-                $result_5[] = $value["status"];
-                $orange = array_count_values($result_5);
-            }
-            if (array_key_exists('Successful', $orange)) {
-                $debit_orange_success = $orange["Successful"];
-            }
-            else {
-                $debit_orange_success = 0;
-            }
-            if (array_key_exists('Failed', $orange)) {
-                $debit_orange_failed = $orange["Failed"];
-            }
-            else {
-                $debit_orange_failed = 0;
-            }
-            if (array_key_exists('Pending', $orange)) {
-                $debit_orange_pending = $orange["Pending"];
-            }
-            else {
-                $debit_orange_pending = 0;
-            }
-            if (array_key_exists('Submitted', $orange)) {
-                $debit_orange_submitted = $orange["Submitted"];
-            }
-            else {
-                $debit_orange_submitted = 0;
-            }
-            $total_orange_charge = $debit_orange_submitted + $debit_orange_failed + $debit_orange_pending + $debit_orange_success;
-            $p_odebit_success = number_format(($debit_orange_success * 100) / ($total_orange_charge),2);
-            $p_odebit_pending =number_format(($debit_orange_pending * 100) / ($total_orange_charge),2);
-            $p_odebit_failed = number_format(($debit_orange_failed * 100) / ($total_orange_charge),2);
-            $p_odebit_submitted = number_format(($debit_orange_submitted * 100) / ($total_orange_charge),2);
-        }
+    Route::get('create-saving', [App\Http\Controllers\Admin\SavingController::class, 'create'])->name('admin.saving.create');
+    Route::get('create-current', [App\Http\Controllers\Admin\CurrentController::class, 'create'])->name('admin.current.create');
+    Route::post('create-saving', [App\Http\Controllers\Admin\SavingController::class, 'store'])->name('admin.saving.store');
+    Route::post('create-current', [App\Http\Controllers\Admin\CurrentController::class, 'store'])->name('admin.current.store');
+    Route::get('verification-du-compte', [App\Http\Controllers\Admin\SavingController::class, 'verify'])->name('admin.saving.verify');
+    Route::post('verification-du-compte', [App\Http\Controllers\Admin\SavingController::class, 'verify_post'])->name('admin.saving.verify-post');
+    
+    Route::get('internal-deposit', [App\Http\Controllers\API\DepositController::class, 'internal'])->name('admin.internal.deposit');
+    Route::get('external-deposit', [App\Http\Controllers\API\DepositController::class, 'external'])->name('admin.external.deposit');
+    Route::post('internal-deposit', [App\Http\Controllers\API\DepositController::class, 'internal_store'])->name('admin.internal.deposit.store');
+    Route::post('external-deposit', [App\Http\Controllers\API\DepositController::class, 'external_store'])->name('admin.external.deposit.store');
+
+    Route::get('create-transfer-externe', [App\Http\Controllers\API\TransferController::class, 'create_emala'])->name('admin.transfer.emala_externe');
+    Route::get('create-transfer-interne', [App\Http\Controllers\API\TransferController::class, 'create_emala_interne'])->name('admin.transfer.emala_interne');
+    Route::get('create-transfer-virement', [App\Http\Controllers\API\TransferController::class, 'create_emala_virement'])->name('admin.transfer.emala_virement');
+    Route::post('create-transfer-externe', [App\Http\Controllers\API\TransferController::class, 'EmalaStore'])->name('admin.transfer.emala.store');
+    Route::post('create-transfer-interne', [App\Http\Controllers\API\TransferController::class, 'EmalaStoreInterne'])->name('admin.transfer.emala_interne.store');
+    Route::post('create-transfer-virement', [App\Http\Controllers\API\TransferController::class, 'EmalaStoreVirement'])->name('admin.transfer.emala_virement.store');
+    Route::get('create-transfer-emala-mobile-money', [App\Http\Controllers\API\TransferController::class, 'create_mobile'])->name('admin.transfer.mobile');
+
+    Route::get('withdrawal-transfert-cash', [App\Http\Controllers\API\WithdrawalController::class, 'transfert_cash'])->name('admin.withdrawal.transfert');
+    Route::post('withdrawal-transfert-cash', [App\Http\Controllers\API\WithdrawalController::class, 'transfert_cash_store'])->name('admin.withdrawal.transfert.store');
+    Route::get('withdrawal-compte-cash', [App\Http\Controllers\API\WithdrawalController::class, 'compte_cash'])->name('admin.withdrawal.compte');
+    Route::post('withdrawal-compte-cash', [App\Http\Controllers\API\WithdrawalController::class, 'compte_cash_store'])->name('admin.withdrawal.compte.store');
+
+    Route::get('create-withdrawal-emala-mobile-money', [App\Http\Controllers\API\WithdrawalController::class, 'create_mobile'])->name('admin.withdrawal.mobile');
+    Route::post('create-withdrawal-emala-mobile-money', [App\Http\Controllers\API\MobileMoneyController::class, 'credit'])->name('admin.withdrawal.mobile.credit');
 
 
-        $hour = DrcSendMoneyTransac::select(DB::raw("Hour(created_at) as hour"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('hour');
-        $_orange_credit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->where('action', 'credit')
-                ->where('method', 'orange')
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('count');
+    Route::get('payment-request', [App\Http\Controllers\API\PaymentRequestController::class, 'PaymentRequest'])->name('admin.payment.index');
 
-        $_orange_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->where('action', 'debit')
-                ->where('method', 'orange')
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('count');
+    Route::get('transaction-all', [App\Http\Controllers\API\TransactionController::class, 'all'])->name('admin.transaction.all');
+    Route::post('transaction-all', [App\Http\Controllers\API\TransactionController::class, 'recherche'])->name('admin.transaction.recherche');
+    Route::get('transaction-deposit', [App\Http\Controllers\API\TransactionController::class, 'deposit'])->name('admin.transaction.deposit');
+    Route::get('transaction-withdrawal', [App\Http\Controllers\API\TransactionController::class, 'withdrawal'])->name('admin.transaction.withdrawal');
+    Route::get('transaction-transfer', [App\Http\Controllers\API\TransactionController::class, 'transfer'])->name('admin.transaction.transfer');
+    Route::get('transaction-limit', [App\Http\Controllers\API\TransactionController::class, 'limit'])->name('admin.transaction.limit');
+    Route::post('transaction-limit', [App\Http\Controllers\API\TransactionController::class, 'limitPOST'])->name('admin.transaction.limit.post');
 
-        $_airtel_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->where('action', 'debit')
-                ->where('method', 'airtel')
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('count');
+});
 
-        $_vodacom_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->where('action', 'mpesa')
-                ->where('method', 'orange')
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('count');
 
-                $_success = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->where('action', 'mpesa')
-                ->where('method', 'orange')
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('count');
+Route::group(['prefix'=>'manager', 'middleware'=>['manager','auth','PreventBackHistory']], function(){
+    // ----------------------------- dashboard -----------------------------//
+    Route::get('dashboard', [App\Http\Controllers\HomeController::class, 'manager'])->name('manager.dashboard');
 
-        return view('dashboard.admin', compact(
-            'hour','_orange_debit','_airtel_debit','_vodacom_debit',
-            'percent_success','percent_failed','percent_pending','percent_submitted',
-            'percent_success_payout','percent_failed_payout','percent_pending_payout','percent_submitted_payout',
-            'p_odebit_success','p_odebit_failed','p_odebit_pending','p_odebit_submitted',
-            'p_vdebit_success','p_vdebit_failed','p_vdebit_pending','p_vdebit_submitted',
-            'p_adebit_success','p_adebit_failed','p_adebit_pending','p_adebit_submitted',
-            'p_ocredit_success','p_ocredit_failed','p_ocredit_pending','p_ocredit_submitted',
-            'p_vcredit_success','p_vcredit_failed','p_vcredit_pending','p_vcredit_submitted',
-            'p_acredit_success','p_acredit_failed','p_acredit_pending','p_acredit_submitted',
-            'debit_success','debit_failed','debit_pending','debit_submitted',
-            'debit_airtel_success','debit_airtel_failed','debit_airtel_pending','debit_airtel_submitted',
-            'debit_orange_success','debit_orange_failed','debit_orange_pending','debit_orange_submitted',
-            'debit_vodacom_success','debit_vodacom_failed','debit_vodacom_pending','debit_vodacom_submitted',
-            'credit_success','credit_failed','credit_pending','credit_submitted',
-            'credit_airtel_success','credit_airtel_failed','credit_airtel_pending','credit_airtel_submitted',
-            'credit_orange_success','credit_orange_failed','credit_orange_pending','credit_orange_submitted',
-            'credit_vodacom_success','credit_vodacom_failed','credit_vodacom_pending','credit_vodacom_submitted',
-        ));
-    }
+    Route::get('transaction-all', [App\Http\Controllers\Manager\TransactionController::class, 'all'])->name('manager.transaction.all');
+    Route::post('transaction-all', [App\Http\Controllers\Manager\TransactionController::class, 'recherche'])->name('manager.transaction.recherche');
+    Route::get('transaction-deposit', [App\Http\Controllers\Manager\TransactionController::class, 'deposit'])->name('manager.transaction.deposit');
+    Route::get('transaction-withdrawal', [App\Http\Controllers\Manager\TransactionController::class, 'withdrawal'])->name('manager.transaction.withdrawal');
+    Route::get('transaction-transfer', [App\Http\Controllers\Manager\TransactionController::class, 'transfer'])->name('manager.transaction.transfer');
+    Route::get('transaction-limit', [App\Http\Controllers\Manager\TransactionController::class, 'limit'])->name('manager.transaction.limit');
+    Route::post('transaction-limit', [App\Http\Controllers\Manager\TransactionController::class, 'limitPOST'])->name('manager.transaction.limit.post');
 
-    public function finance()
-    {
-        return view('dashboard.finance');
-    }
+    Route::get('ouverture-caisse', [App\Http\Controllers\Manager\CashRegisterController::class, 'ouverture'])->name('manager.ouverture_caisse');
+    Route::get('cloture-caisse', [App\Http\Controllers\Manager\CashRegisterController::class, 'cloture'])->name('manager.cloture_caisse');
+    Route::post('cloture-caisse', [App\Http\Controllers\Manager\CashRegisterController::class, 'postcloture'])->name('manager.postcloture_caisse');
+    Route::post('fond_de_caisse_ouverture', [App\Http\Controllers\Manager\CashRegisterController::class, 'fond_ouverture'])->name('manager.fondcaisse.ouverture');
+    Route::post('fond_de_caisse_cloture', [App\Http\Controllers\Manager\CashRegisterController::class, 'fond_cloture'])->name('manager.fondcaisse.cloture');
 
-    public function support_1()
-    {
-        return view('dashboard.support.level_1');
-    }
+    Route::get('autocomplete', [App\Http\Controllers\Manager\CustomerAPI::class, 'autocomplete'])->name('manager.autocomplete');
+    Route::get('search_autocomplete', [App\Http\Controllers\Manager\CustomerAPI::class, 'search_autocomplete'])->name('manager.search_autocomplete');
 
-    public function support_2()
-    {
-        return view('dashboard.support.level_2');
-    }
 
-    public function support_3()
-    {
-        return view('dashboard.support.level_3');
-    }
-}
+    Route::get('donwload-file/{file_name}', [App\Http\Controllers\Ticket\TicketController::class, 'downloadFile'])->name('manager.download.file');
+
+
+    Route::get('create-ticket', [App\Http\Controllers\Ticket\TicketController::class, 'create'])->name('manager.ticket.create');
+    Route::post('create-ticket', [App\Http\Controllers\Ticket\TicketController::class, 'store'])->name('manager.ticket.store');
+    Route::get('create-recharge-request', [App\Http\Controllers\Ticket\TicketController::class, 'create_recharge'])->name('manager.reharge.request.create');
+    Route::post('create-recharge-request', [App\Http\Controllers\Ticket\TicketController::class, 'store_recharge'])->name('manager.reharge.request.store');
+    Route::post('create-recharge-success', [App\Http\Controllers\Ticket\TicketController::class, 'success_recharge'])->name('manager.reharge.request.success');
+    Route::post('create-recharge-failed', [App\Http\Controllers\Ticket\TicketController::class, 'failed_recharge'])->name('manager.reharge.request.failed');
+
+
+    Route::get('liste-client', [App\Http\Controllers\Manager\UtilisateurController::class, 'liste_client'])->name('manager.liste_client');
+    Route::post('creation-client', [App\Http\Controllers\Manager\UtilisateurController::class, 'creation_client'])->name('manager.creation_client');
+    Route::post('modification-client', [App\Http\Controllers\Manager\UtilisateurController::class, 'modification_client'])->name('manager.modification_client');
+    Route::post('supprimer-client', [App\Http\Controllers\Manager\UtilisateurController::class, 'supprimer_client'])->name('manager.supprimer_client');
+    Route::get('liste-caissier', [App\Http\Controllers\Manager\UtilisateurController::class, 'liste_caissier'])->name('manager.liste_caissier');
+    Route::post('creation-caissier', [App\Http\Controllers\Manager\UtilisateurController::class, 'creation_caissier'])->name('manager.creation_caissier');
+    Route::post('supprimer-caissier', [App\Http\Controllers\Manager\UtilisateurController::class, 'supprimer_caissier'])->name('manager.supprimer_caissier');
+    Route::get('liste-gerant', [App\Http\Controllers\Manager\UtilisateurController::class, 'liste_gerant'])->name('manager.liste_gerant');
+    Route::post('creation-gerant', [App\Http\Controllers\Manager\UtilisateurController::class, 'creation_gerant'])->name('manager.creation_gerant');
+    Route::post('modification-gerant', [App\Http\Controllers\Manager\UtilisateurController::class, 'modification_gerant'])->name('manager.modification_gerant');
+    Route::post('supprimer-gerant', [App\Http\Controllers\Manager\UtilisateurController::class, 'supprimer_gerant'])->name('manager.supprimer_gerant');
+    Route::get('liste-marchand', [App\Http\Controllers\Manager\UtilisateurController::class, 'liste_marchand'])->name('manager.liste_marchand');
+    Route::post('creation-marchand', [App\Http\Controllers\Manager\UtilisateurController::class, 'creation_marchand'])->name('manager.creation_marchand');
+
+    Route::get('profil-utilisateur', [App\Http\Controllers\Manager\AccountController::class, 'profilUser'])->name('manager.account.profil.user');
+    Route::get('compte-client/{id}', [App\Http\Controllers\Manager\AccountController::class, 'client'])->name('manager.account.create.client');
+    Route::get('compte-client-phone/{phone}', [App\Http\Controllers\Manager\AccountController::class, 'customerByPhone'])->name('manager.account.create.clientByPhone');
+    Route::get('depot/cash/{id}', [App\Http\Controllers\Manager\AccountController::class, 'client_depot'])->name('manager.account.create.client.depot.create');
+    Route::get('retrait/cash/{id}', [App\Http\Controllers\Manager\AccountController::class, 'client_retrait'])->name('manager.account.create.client.retrait.create');
+    Route::get('transfert/interne/{id}', [App\Http\Controllers\Manager\AccountController::class, 'client_transfert'])->name('manager.account.create.client.transfert.create');
+    Route::get('mobile-money/interne/{id}', [App\Http\Controllers\Manager\AccountController::class, 'client_mobile'])->name('manager.account.create.client.mobile.create');
+    Route::get('compte-gerant/{id}', [App\Http\Controllers\Manager\AccountController::class, 'gerant'])->name('manager.account.create.gerant');
+    Route::get('compte-caissier/{id}', [App\Http\Controllers\Manager\AccountController::class, 'caissier'])->name('manager.account.create.caissier');
+    Route::get('transfert/compte-compte/{id}', [App\Http\Controllers\Manager\AccountController::class, 'transfert_compte_compte'])->name('manager.account.transfert_compte_compte');
+    Route::post('transfert/compte-compte', [App\Http\Controllers\Manager\TransferController::class, 'Current_Saving'])->name('manager.account.transfert_current_saving');
+    Route::get('retrait/compte-epargne/{id}', [App\Http\Controllers\Manager\AccountController::class, 'retrait_compte_epargne'])->name('manager.account.retrait_compte_epargne');
+    Route::post('retrait-compte-epargne', [App\Http\Controllers\Manager\WithdrawalController::class, 'retrait_compte_epargne'])->name('manager.withdrawal.epargne.store');
+
+
+    Route::get('activity-log', [App\Http\Controllers\Manager\LogController::class, 'activity_log'])->name('manager.activity_log');
+    Route::get('user-activity-log', [App\Http\Controllers\Manager\LogController::class, 'user_activity_log'])->name('manager.user_activity_log');
+
+    Route::get('liste-gateway', [App\Http\Controllers\Manager\PaymentGatewayController::class, 'all'])->name('manager.gateway.all');
+
+    Route::get('liste-branche', [App\Http\Controllers\Manager\BrancheController::class, 'all'])->name('manager.branche.all');
+    Route::get('branche-treller', [App\Http\Controllers\Manager\BrancheController::class, 'allTreller'])->name('manager.branche.all.treller');
+    Route::post('branche-treller', [App\Http\Controllers\API\BrancheController::class, 'StoreTreller'])->name('manager.branche.store.treller');
+    Route::get('branche-account-cashier', [App\Http\Controllers\Manager\BrancheController::class, 'allAccount'])->name('manager.branche.all.account');
+    Route::get('branche-account-manager', [App\Http\Controllers\Manager\BrancheController::class, 'Manager'])->name('manager.branche.account.manager');
+    Route::post('topup-account', [App\Http\Controllers\Manager\BrancheController::class, 'topup'])->name('manager.branche.account.topup');
+
+    Route::get('comingsoon', [App\Http\Controllers\Manager\Comingsoon::class, 'comingsoon'])->name('manager.comingsoon');
+
+    Route::get('create-saving', [App\Http\Controllers\Manager\SavingController::class, 'create'])->name('manager.saving.create');
+    Route::get('create-current', [App\Http\Controllers\Manager\CurrentController::class, 'create'])->name('manager.current.create');
+    Route::post('create-saving', [App\Http\Controllers\Manager\SavingController::class, 'store'])->name('manager.saving.store');
+    Route::post('create-current', [App\Http\Controllers\Manager\CurrentController::class, 'store'])->name('manager.current.store');
+    Route::get('verification-du-compte', [App\Http\Controllers\Manager\SavingController::class, 'verify'])->name('manager.saving.verify');
+    Route::post('verification-du-compte', [App\Http\Controllers\Manager\SavingController::class, 'verify_post'])->name('manager.saving.verify-post');
+    
+    Route::get('internal-deposit', [App\Http\Controllers\Manager\DepositController::class, 'internal'])->name('manager.internal.deposit');
+    Route::get('external-deposit', [App\Http\Controllers\Manager\DepositController::class, 'external'])->name('manager.external.deposit');
+    Route::post('internal-deposit', [App\Http\Controllers\Manager\DepositController::class, 'internal_store'])->name('manager.internal.deposit.store');
+    Route::post('external-deposit', [App\Http\Controllers\Manager\DepositController::class, 'external_store'])->name('manager.external.deposit.store');
+
+    Route::get('create-transfer-externe', [App\Http\Controllers\Manager\TransferController::class, 'create_emala'])->name('manager.transfer.emala_externe');
+    Route::get('create-transfer-interne', [App\Http\Controllers\Manager\TransferController::class, 'create_emala_interne'])->name('manager.transfer.emala_interne');
+    Route::get('create-transfer-virement', [App\Http\Controllers\Manager\TransferController::class, 'create_emala_virement'])->name('manager.transfer.emala_virement');
+    Route::post('create-transfer-externe', [App\Http\Controllers\Manager\TransferController::class, 'EmalaStore'])->name('manager.transfer.emala.store');
+    Route::post('create-transfer-interne', [App\Http\Controllers\Manager\TransferController::class, 'EmalaStoreInterne'])->name('manager.transfer.emala_interne.store');
+    Route::post('create-transfer-virement', [App\Http\Controllers\Manager\TransferController::class, 'EmalaStoreVirement'])->name('manager.transfer.emala_virement.store');
+    Route::get('create-transfer-emala-mobile-money', [App\Http\Controllers\Manager\TransferController::class, 'create_mobile'])->name('manager.transfer.mobile');
+
+    Route::get('withdrawal-transfert-cash', [App\Http\Controllers\Manager\WithdrawalController::class, 'transfert_cash'])->name('manager.withdrawal.transfert');
+    Route::post('withdrawal-transfert-cash', [App\Http\Controllers\Manager\WithdrawalController::class, 'transfert_cash_store'])->name('manager.withdrawal.transfert.store');
+    Route::get('withdrawal-compte-cash', [App\Http\Controllers\Manager\WithdrawalController::class, 'compte_cash'])->name('manager.withdrawal.compte');
+    Route::post('withdrawal-compte-cash', [App\Http\Controllers\Manager\WithdrawalController::class, 'compte_cash_store'])->name('manager.withdrawal.compte.store');
+
+    Route::get('create-withdrawal-emala-mobile-money', [App\Http\Controllers\Manager\WithdrawalController::class, 'create_mobile'])->name('manager.withdrawal.mobile');
+    Route::post('create-withdrawal-emala-mobile-money', [App\Http\Controllers\Manager\MobileMoneyController::class, 'credit'])->name('manager.withdrawal.mobile.credit');
+
+
+    Route::get('payment-request', [App\Http\Controllers\Manager\PaymentRequestController::class, 'PaymentRequest'])->name('manager.payment.index');
+});
+
+
+Route::group(['prefix'=>'cashier', 'middleware'=>['cashier','auth','PreventBackHistory']], function(){
+    // ----------------------------- dashboard -----------------------------//
+    Route::get('dashboard', [App\Http\Controllers\HomeController::class, 'cashier'])->name('cashier.dashboard');
+
+    Route::get('transaction-all', [App\Http\Controllers\Manager\TransactionController::class, 'all'])->name('cashier.transaction.all');
+    Route::post('transaction-all', [App\Http\Controllers\Manager\TransactionController::class, 'recherche'])->name('cashier.transaction.recherche');
+    Route::get('transaction-deposit', [App\Http\Controllers\Manager\TransactionController::class, 'deposit'])->name('cashier.transaction.deposit');
+    Route::get('transaction-withdrawal', [App\Http\Controllers\Manager\TransactionController::class, 'withdrawal'])->name('cashier.transaction.withdrawal');
+    Route::get('transaction-transfer', [App\Http\Controllers\Manager\TransactionController::class, 'transfer'])->name('cashier.transaction.transfer');
+    Route::get('transaction-limit', [App\Http\Controllers\Manager\TransactionController::class, 'limit'])->name('cashier.transaction.limit');
+    Route::post('transaction-limit', [App\Http\Controllers\Manager\TransactionController::class, 'limitPOST'])->name('cashier.transaction.limit.post');
+
+    Route::get('ouverture-caisse', [App\Http\Controllers\Manager\CashRegisterController::class, 'ouverture'])->name('cashier.ouverture_caisse');
+    Route::get('cloture-caisse', [App\Http\Controllers\Manager\CashRegisterController::class, 'cloture'])->name('cashier.cloture_caisse');
+    Route::post('cloture-caisse', [App\Http\Controllers\Manager\CashRegisterController::class, 'postcloture'])->name('cashier.postcloture_caisse');
+    Route::post('fond_de_caisse_ouverture', [App\Http\Controllers\Manager\CashRegisterController::class, 'fond_ouverture'])->name('cashier.fondcaisse.ouverture');
+    Route::post('fond_de_caisse_cloture', [App\Http\Controllers\Manager\CashRegisterController::class, 'fond_cloture'])->name('cashier.fondcaisse.cloture');
+
+    Route::get('autocomplete', [App\Http\Controllers\Manager\CustomerAPI::class, 'autocomplete'])->name('cashier.autocomplete');
+    Route::get('search_autocomplete', [App\Http\Controllers\Manager\CustomerAPI::class, 'search_autocomplete'])->name('cashier.search_autocomplete');
+    Route::get('donwload-file/{file_name}', [App\Http\Controllers\Ticket\TicketController::class, 'downloadFile'])->name('cashier.download.file');
+
+    Route::get('create-ticket', [App\Http\Controllers\Ticket\TicketController::class, 'create'])->name('cashier.ticket.create');
+    Route::post('create-ticket', [App\Http\Controllers\Ticket\TicketController::class, 'store'])->name('cashier.ticket.store');
+    Route::get('create-recharge-request', [App\Http\Controllers\Ticket\TicketController::class, 'create_recharge'])->name('cashier.reharge.request.create');
+    Route::post('create-recharge-request', [App\Http\Controllers\Ticket\TicketController::class, 'store_recharge'])->name('cashier.reharge.request.store');
+
+    Route::get('liste-client', [App\Http\Controllers\Manager\UtilisateurController::class, 'liste_client'])->name('cashier.liste_client');
+    Route::post('creation-client', [App\Http\Controllers\Manager\UtilisateurController::class, 'creation_client'])->name('cashier.creation_client');
+    Route::post('modification-client', [App\Http\Controllers\Manager\UtilisateurController::class, 'modification_client'])->name('cashier.modification_client');
+    Route::post('supprimer-client', [App\Http\Controllers\Manager\UtilisateurController::class, 'supprimer_client'])->name('cashier.supprimer_client');
+    Route::get('liste-caissier', [App\Http\Controllers\Manager\UtilisateurController::class, 'liste_caissier'])->name('cashier.liste_caissier');
+    Route::post('creation-caissier', [App\Http\Controllers\Manager\UtilisateurController::class, 'creation_caissier'])->name('cashier.creation_caissier');
+    Route::post('supprimer-caissier', [App\Http\Controllers\Manager\UtilisateurController::class, 'supprimer_caissier'])->name('cashier.supprimer_caissier');
+    Route::get('liste-gerant', [App\Http\Controllers\Manager\UtilisateurController::class, 'liste_gerant'])->name('cashier.liste_gerant');
+    Route::post('creation-gerant', [App\Http\Controllers\Manager\UtilisateurController::class, 'creation_gerant'])->name('cashier.creation_gerant');
+    Route::post('modification-gerant', [App\Http\Controllers\Manager\UtilisateurController::class, 'modification_gerant'])->name('cashier.modification_gerant');
+    Route::post('supprimer-gerant', [App\Http\Controllers\Manager\UtilisateurController::class, 'supprimer_gerant'])->name('cashier.supprimer_gerant');
+    Route::get('liste-marchand', [App\Http\Controllers\Manager\UtilisateurController::class, 'liste_marchand'])->name('cashier.liste_marchand');
+    Route::post('creation-marchand', [App\Http\Controllers\Manager\UtilisateurController::class, 'creation_marchand'])->name('cashier.creation_marchand');
+
+    Route::get('compte-client/{id}', [App\Http\Controllers\Manager\AccountController::class, 'client'])->name('cashier.account.create.client');
+    Route::get('profil-utilisateur', [App\Http\Controllers\Manager\AccountController::class, 'profilUser'])->name('cashier.account.profil.user');
+    Route::get('compte-client-phone/{phone}', [App\Http\Controllers\Manager\AccountController::class, 'customerByPhone'])->name('cashier.account.create.clientByPhone');
+    Route::get('depot/cash/{id}', [App\Http\Controllers\Manager\AccountController::class, 'client_depot'])->name('cashier.account.create.client.depot.create');
+    Route::get('retrait/cash/{id}', [App\Http\Controllers\Manager\AccountController::class, 'client_retrait'])->name('cashier.account.create.client.retrait.create');
+    Route::get('transfert/interne/{id}', [App\Http\Controllers\Manager\AccountController::class, 'client_transfert'])->name('cashier.account.create.client.transfert.create');
+    Route::get('transfert/compte-compte/{id}', [App\Http\Controllers\Manager\AccountController::class, 'transfert_compte_compte'])->name('cashier.account.transfert_compte_compte');
+    Route::post('transfert/compte-compte', [App\Http\Controllers\Manager\TransferController::class, 'Current_Saving'])->name('cashier.account.transfert_current_saving');
+    Route::get('retrait/compte-epargne/{id}', [App\Http\Controllers\Manager\AccountController::class, 'retrait_compte_epargne'])->name('cashier.account.retrait_compte_epargne');
+    Route::get('mobile-money/interne/{id}', [App\Http\Controllers\Manager\AccountController::class, 'client_mobile'])->name('cashier.account.create.client.mobile.create');
+    Route::get('compte-gerant/{id}', [App\Http\Controllers\Manager\AccountController::class, 'gerant'])->name('cashier.account.create.gerant');
+    Route::get('compte-caissier/{id}', [App\Http\Controllers\Manager\AccountController::class, 'caissier'])->name('cashier.account.create.caissier');
+    Route::post('retrait-compte-epargne', [App\Http\Controllers\Manager\WithdrawalController::class, 'retrait_compte_epargne'])->name('cashier.withdrawal.epargne.store');
+
+    Route::get('activity-log', [App\Http\Controllers\Manager\LogController::class, 'activity_log'])->name('cashier.activity_log');
+    Route::get('user-activity-log', [App\Http\Controllers\Manager\LogController::class, 'user_activity_log'])->name('cashier.user_activity_log');
+
+    Route::get('liste-gateway', [App\Http\Controllers\Manager\PaymentGatewayController::class, 'all'])->name('cashier.gateway.all');
+
+    Route::get('liste-branche', [App\Http\Controllers\Manager\BrancheController::class, 'all'])->name('cashier.branche.all');
+    Route::get('branche-treller', [App\Http\Controllers\Manager\BrancheController::class, 'allTreller'])->name('cashier.branche.all.treller');
+    Route::post('branche-treller', [App\Http\Controllers\API\BrancheController::class, 'StoreTreller'])->name('cashier.branche.store.treller');
+    Route::get('branche-account-all', [App\Http\Controllers\Manager\BrancheController::class, 'allAccount'])->name('cashier.branche.all.account');
+    Route::get('branche-account-cashier', [App\Http\Controllers\Manager\BrancheController::class, 'Manager'])->name('cashier.branche.account.cashier');
+    Route::post('topup-account', [App\Http\Controllers\Manager\BrancheController::class, 'topup'])->name('cashier.branche.account.topup');
+
+    Route::get('comingsoon', [App\Http\Controllers\Manager\Comingsoon::class, 'comingsoon'])->name('cashier.comingsoon');
+
+    Route::get('create-saving', [App\Http\Controllers\Manager\SavingController::class, 'create'])->name('cashier.saving.create');
+    Route::get('create-current', [App\Http\Controllers\Manager\CurrentController::class, 'create'])->name('cashier.current.create');
+    Route::post('create-saving', [App\Http\Controllers\Manager\SavingController::class, 'store'])->name('cashier.saving.store');
+    Route::post('create-current', [App\Http\Controllers\Manager\CurrentController::class, 'store'])->name('cashier.current.store');
+    Route::get('verification-du-compte', [App\Http\Controllers\Manager\SavingController::class, 'verify'])->name('cashier.saving.verify');
+    Route::post('verification-du-compte', [App\Http\Controllers\Manager\SavingController::class, 'verify_post'])->name('cashier.saving.verify-post');
+    
+    Route::get('internal-deposit', [App\Http\Controllers\Manager\DepositController::class, 'internal'])->name('cashier.internal.deposit');
+    Route::get('external-deposit', [App\Http\Controllers\Manager\DepositController::class, 'external'])->name('cashier.external.deposit');
+    Route::post('internal-deposit', [App\Http\Controllers\Manager\DepositController::class, 'internal_store'])->name('cashier.internal.deposit.store');
+    Route::post('external-deposit', [App\Http\Controllers\Manager\DepositController::class, 'external_store'])->name('cashier.external.deposit.store');
+
+    Route::get('create-transfer-externe', [App\Http\Controllers\Manager\TransferController::class, 'create_emala'])->name('cashier.transfer.emala_externe');
+    Route::get('create-transfer-interne', [App\Http\Controllers\Manager\TransferController::class, 'create_emala_interne'])->name('cashier.transfer.emala_interne');
+    Route::get('create-transfer-virement', [App\Http\Controllers\Manager\TransferController::class, 'create_emala_virement'])->name('cashier.transfer.emala_virement');
+    Route::post('create-transfer-externe', [App\Http\Controllers\Manager\TransferController::class, 'EmalaStore'])->name('cashier.transfer.emala.store');
+    Route::post('create-transfer-interne', [App\Http\Controllers\Manager\TransferController::class, 'EmalaStoreInterne'])->name('cashier.transfer.emala_interne.store');
+    Route::post('create-transfer-virement', [App\Http\Controllers\Manager\TransferController::class, 'EmalaStoreVirement'])->name('cashier.transfer.emala_virement.store');
+    Route::get('create-transfer-emala-mobile-money', [App\Http\Controllers\Manager\TransferController::class, 'create_mobile'])->name('cashier.transfer.mobile');
+
+    Route::get('withdrawal-transfert-cash', [App\Http\Controllers\Manager\WithdrawalController::class, 'transfert_cash'])->name('cashier.withdrawal.transfert');
+    Route::post('withdrawal-transfert-cash', [App\Http\Controllers\Manager\WithdrawalController::class, 'transfert_cash_store'])->name('cashier.withdrawal.transfert.store');
+    Route::get('withdrawal-compte-cash', [App\Http\Controllers\Manager\WithdrawalController::class, 'compte_cash'])->name('cashier.withdrawal.compte');
+    Route::post('withdrawal-compte-cash', [App\Http\Controllers\Manager\WithdrawalController::class, 'compte_cash_store'])->name('cashier.withdrawal.compte.store');
+
+    Route::get('create-withdrawal-emala-mobile-money', [App\Http\Controllers\Manager\WithdrawalController::class, 'create_mobile'])->name('cashier.withdrawal.mobile');
+    Route::post('create-withdrawal-emala-mobile-money', [App\Http\Controllers\Manager\MobileMoneyController::class, 'credit'])->name('cashier.withdrawal.mobile.credit');
+    Route::get('payment-request', [App\Http\Controllers\Manager\PaymentRequestController::class, 'PaymentRequest'])->name('cashier.payment.index');
+});

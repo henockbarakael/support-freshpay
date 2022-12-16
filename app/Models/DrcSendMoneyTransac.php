@@ -9,7 +9,6 @@ class DrcSendMoneyTransac extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mysql';
     protected $table = 'drc_send_money_transac';
     protected $guarded = [];
 }

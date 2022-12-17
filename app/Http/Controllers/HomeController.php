@@ -86,8 +86,18 @@ class HomeController extends Controller
         return redirect()->back()->with('success', true);
 
     }
-    public function admin()
-    {
+    public function admin(){
+
+        $charge_success = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Successful'])->count();
+        $charge_failed = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Failed'])->count();
+        $charge_pending = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Pending'])->count();
+        $charge_submitted = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Submitted'])->count();
+
+        $payout_success = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Successful'])->count();
+        $payout_failed = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Failed'])->count();
+        $payout_pending = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Pending'])->count();
+        $payout_submitted = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Submitted'])->count();
+
 
         // $hour = DrcSendMoneyTransac::select(DB::raw("Hour(created_at) as hour"))
         //         ->whereDate('created_at', Carbon::today()->toDateString())
@@ -128,7 +138,10 @@ class HomeController extends Controller
         //         ->groupBy(DB::raw("Hour(created_at)"))
         //         ->pluck('count');
 
-        return view('dashboard.admin');
+        return view('dashboard.admin',compact(
+            'charge_success','charge_failed','charge_pending','charge_submitted',
+            'payout_success','payout_failed','payout_pending','payout_submitted'
+        ));
     }
 
     public function finance()

@@ -484,7 +484,7 @@
 <script src="{{ asset('assets/js/scripts.bundle.js')}}"></script>
 <script src="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.js')}}"></script>
 <script src="{{ asset('assets/js/custom/widgets.js')}}"></script>
-<script type="text/javascript">
+{{-- <script type="text/javascript">
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
@@ -3651,6 +3651,6 @@ KTUtil.onDOMContentLoaded(function() {
 /******/ })()
 ;
 //# sourceMappingURL=widgets.js.map
-</script>
+</script> --}}
 @endsection
 @endsection

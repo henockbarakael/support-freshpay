@@ -88,49 +88,47 @@ class HomeController extends Controller
     }
     public function admin()
     {
- 
 
-        $hour = DrcSendMoneyTransac::select(DB::raw("Hour(created_at) as hour"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('hour');
-        $_orange_credit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->where('action', 'credit')
-                ->where('method', 'orange')
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('count');
+        // $hour = DrcSendMoneyTransac::select(DB::raw("Hour(created_at) as hour"))
+        //         ->whereDate('created_at', Carbon::today()->toDateString())
+        //         ->groupBy(DB::raw("Hour(created_at)"))
+        //         ->pluck('hour');
+        // $_orange_credit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
+        //         ->whereDate('created_at', Carbon::today()->toDateString())
+        //         ->where('action', 'credit')
+        //         ->where('method', 'orange')
+        //         ->groupBy(DB::raw("Hour(created_at)"))
+        //         ->pluck('count');
 
-        $_orange_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->where('action', 'debit')
-                ->where('method', 'orange')
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('count');
+        // $_orange_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
+        //         ->whereDate('created_at', Carbon::today()->toDateString())
+        //         ->where('action', 'debit')
+        //         ->where('method', 'orange')
+        //         ->groupBy(DB::raw("Hour(created_at)"))
+        //         ->pluck('count');
 
-        $_airtel_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->where('action', 'debit')
-                ->where('method', 'airtel')
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('count');
+        // $_airtel_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
+        //         ->whereDate('created_at', Carbon::today()->toDateString())
+        //         ->where('action', 'debit')
+        //         ->where('method', 'airtel')
+        //         ->groupBy(DB::raw("Hour(created_at)"))
+        //         ->pluck('count');
 
-        $_vodacom_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->where('action', 'mpesa')
-                ->where('method', 'orange')
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('count');
+        // $_vodacom_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
+        //         ->whereDate('created_at', Carbon::today()->toDateString())
+        //         ->where('action', 'mpesa')
+        //         ->where('method', 'orange')
+        //         ->groupBy(DB::raw("Hour(created_at)"))
+        //         ->pluck('count');
 
-                $_success = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-                ->whereDate('created_at', Carbon::today()->toDateString())
-                ->where('action', 'mpesa')
-                ->where('method', 'orange')
-                ->groupBy(DB::raw("Hour(created_at)"))
-                ->pluck('count');
+        //         $_success = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
+        //         ->whereDate('created_at', Carbon::today()->toDateString())
+        //         ->where('action', 'mpesa')
+        //         ->where('method', 'orange')
+        //         ->groupBy(DB::raw("Hour(created_at)"))
+        //         ->pluck('count');
 
-        return view('dashboard.admin', compact(
-            'hour','_orange_debit','_airtel_debit','_vodacom_debit'));
+        return view('dashboard.admin');
     }
 
     public function finance()

@@ -450,7 +450,7 @@
                 </div>
                 <!--end::Charts Widget 1-->
             </div>
-            <div class="col-xl-6">
+            {{-- <div class="col-xl-6">
                 <!--begin::Charts Widget 1-->
                 <div class="card card-xl-stretch mb-xl-8 myshadow">
                     <!--begin::Header-->
@@ -470,7 +470,7 @@
                     <!--end::Body-->
                 </div>
                 <!--end::Charts Widget 1-->
-            </div>
+            </div> --}}
         </div>
 
  

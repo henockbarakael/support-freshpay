@@ -32,7 +32,7 @@
         <!--begin::Row-->
         <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
                         <!--begin::Col-->
-            <div class="col-lg-6 col-xxl-4">
+            {{-- <div class="col-lg-6 col-xxl-4">
                 <!--begin::Card widget 20-->
                 <div class="card card-flush myshadow" style="background-color: #2196f3;background-image:url('{{ asset('assets/media/patterns/vector-1.png')}}')">
                     <!--begin::Header-->
@@ -128,7 +128,7 @@
                     <!--end::Card body-->
                 </div>
                 <!--end::Card widget 20-->
-            </div>
+            </div> --}}
             <!--begin::Col-->
             <!--begin::Col-->
 

@@ -88,6 +88,16 @@ class HomeController extends Controller
     }
     public function admin(){
 
+        $totals = DB::table('drc_send_money_transac')
+        ->selectRaw('count(*) as total')
+        ->selectRaw("count(case when status = 'Successful' when action = 'debit' when method = 'airtel' then 1 end) as success")
+        ->selectRaw("count(case when status = 'Failed' when action = 'debit' when method = 'airtel' then 1 end) as failed")
+        ->selectRaw("count(case when status = 'Pending' when action = 'debit' when method = 'airtel' then 1 end) as pending")
+        ->selectRaw("count(case when status = 'Submitted' when action = 'debit' when method = 'airtel' then 1 end) as submitted")
+        ->first();
+
+        dd($totals);
+
         $charge_success = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Successful'])->count();
         $charge_failed = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Failed'])->count();
         $charge_pending = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Pending'])->count();
@@ -98,49 +108,107 @@ class HomeController extends Controller
         $payout_pending = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Pending'])->count();
         $payout_submitted = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Submitted'])->count();
 
+        $airtel_payout_success = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Successful','method'=>'airtel'])->count();
+        $airtel_payout_failed = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Failed','method'=>'airtel'])->count();
+        $airtel_payout_pending = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Pending','method'=>'airtel'])->count();
+        $airtel_payout_submitted = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Submitted','method'=>'airtel'])->count();
 
-        // $hour = DrcSendMoneyTransac::select(DB::raw("Hour(created_at) as hour"))
-        //         ->whereDate('created_at', Carbon::today()->toDateString())
-        //         ->groupBy(DB::raw("Hour(created_at)"))
-        //         ->pluck('hour');
-        // $_orange_credit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-        //         ->whereDate('created_at', Carbon::today()->toDateString())
-        //         ->where('action', 'credit')
-        //         ->where('method', 'orange')
-        //         ->groupBy(DB::raw("Hour(created_at)"))
-        //         ->pluck('count');
+        $airtel_charge_success = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Successful','method'=>'airtel'])->count();
+        $airtel_charge_failed = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Failed','method'=>'airtel'])->count();
+        $airtel_charge_pending = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Pending','method'=>'airtel'])->count();
+        $airtel_charge_submitted = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Submitted','method'=>'airtel'])->count();
 
-        // $_orange_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-        //         ->whereDate('created_at', Carbon::today()->toDateString())
-        //         ->where('action', 'debit')
-        //         ->where('method', 'orange')
-        //         ->groupBy(DB::raw("Hour(created_at)"))
-        //         ->pluck('count');
+        $mpesa_payout_success = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Successful','method'=>'mpesa'])->count();
+        $mpesa_payout_failed = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Failed','method'=>'mpesa'])->count();
+        $mpesa_payout_pending = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Pending','method'=>'mpesa'])->count();
+        $mpesa_payout_submitted = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Submitted','method'=>'mpesa'])->count();
 
-        // $_airtel_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-        //         ->whereDate('created_at', Carbon::today()->toDateString())
-        //         ->where('action', 'debit')
-        //         ->where('method', 'airtel')
-        //         ->groupBy(DB::raw("Hour(created_at)"))
-        //         ->pluck('count');
+        $mpesa_charge_success = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Successful','method'=>'mpesa'])->count();
+        $mpesa_charge_failed = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Failed','method'=>'mpesa'])->count();
+        $mpesa_charge_pending = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Pending','method'=>'mpesa'])->count();
+        $mpesa_charge_submitted = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Submitted','method'=>'mpesa'])->count();
 
-        // $_vodacom_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-        //         ->whereDate('created_at', Carbon::today()->toDateString())
-        //         ->where('action', 'mpesa')
-        //         ->where('method', 'orange')
-        //         ->groupBy(DB::raw("Hour(created_at)"))
-        //         ->pluck('count');
+        $orange_payout_success = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Successful','method'=>'orange'])->count();
+        $orange_payout_failed = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Failed','method'=>'orange'])->count();
+        $orange_payout_pending = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Pending','method'=>'orange'])->count();
+        $orange_payout_submitted = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'credit','status'=>'Submitted','method'=>'orange'])->count();
 
-        //         $_success = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
-        //         ->whereDate('created_at', Carbon::today()->toDateString())
-        //         ->where('action', 'mpesa')
-        //         ->where('method', 'orange')
-        //         ->groupBy(DB::raw("Hour(created_at)"))
-        //         ->pluck('count');
+        $orange_charge_success = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Successful','method'=>'orange'])->count();
+        $orange_charge_failed = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Failed','method'=>'orange'])->count();
+        $orange_charge_pending = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Pending','method'=>'orange'])->count();
+        $orange_charge_submitted = DB::table('drc_send_money_transac')->whereDate('created_at', Carbon::today()->toDateString())->where(['action'=>'debit','status'=>'Submitted','method'=>'orange'])->count();
+
+        $hour = DrcSendMoneyTransac::select(DB::raw("Hour(created_at) as hour"))
+                ->whereDate('created_at', Carbon::today()->toDateString())
+                ->groupBy(DB::raw("Hour(created_at)"))
+                ->pluck('hour');
+        $_orange_credit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
+                ->whereDate('created_at', Carbon::today()->toDateString())
+                ->where('action', 'credit')
+                ->where('method', 'orange')
+                ->groupBy(DB::raw("Hour(created_at)"))
+                ->pluck('count');
+
+        $_orange_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
+                ->whereDate('created_at', Carbon::today()->toDateString())
+                ->where('action', 'debit')
+                ->where('method', 'orange')
+                ->groupBy(DB::raw("Hour(created_at)"))
+                ->pluck('count');
+
+        $_airtel_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
+                ->whereDate('created_at', Carbon::today()->toDateString())
+                ->where('action', 'debit')
+                ->where('method', 'airtel')
+                ->groupBy(DB::raw("Hour(created_at)"))
+                ->pluck('count');
+
+        $_vodacom_debit = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
+                ->whereDate('created_at', Carbon::today()->toDateString())
+                ->where('action', 'mpesa')
+                ->where('method', 'orange')
+                ->groupBy(DB::raw("Hour(created_at)"))
+                ->pluck('count');
+
+                $_success = DrcSendMoneyTransac::select(DB::raw("SUM(amount) as count"))
+                ->whereDate('created_at', Carbon::today()->toDateString())
+                ->where('action', 'mpesa')
+                ->where('method', 'orange')
+                ->groupBy(DB::raw("Hour(created_at)"))
+                ->pluck('count');
 
         return view('dashboard.admin',compact(
             'charge_success','charge_failed','charge_pending','charge_submitted',
-            'payout_success','payout_failed','payout_pending','payout_submitted'
+            'payout_success','payout_failed','payout_pending','payout_submitted',
+            'airtel_payout_success',
+            'airtel_payout_failed',
+            'airtel_payout_pending',
+            'airtel_payout_submitted',
+
+            'airtel_charge_success',
+            'airtel_charge_failed',
+            'airtel_charge_pending',
+            'airtel_charge_submitted',
+
+            'mpesa_payout_success',
+            'mpesa_payout_failed',
+            'mpesa_payout_pending',
+            'mpesa_payout_submittedt',
+
+            'mpesa_charge_successt',
+            'mpesa_charge_failed',
+            'mpesa_charge_pending',
+            'mpesa_charge_submitted',
+
+            'orange_payout_successunt',
+            'orange_payout_failed',
+            'orange_payout_pending',
+            'orange_payout_submittednt',
+
+            'orange_charge_successnt',
+            'orange_charge_failed',
+            'orange_charge_pending',
+            'orange_charge_submitted'
         ));
     }
 

@@ -55,22 +55,22 @@
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
                                 <span>{{$charge_success}} Successful</span>
-                                {{-- <span>{{$percent_success}}%</span> --}}
+                                <span>{{$percent_success}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
                                 <span>{{$charge_failed}} Failed</span>
-                                {{-- <span>{{$percent_failed}}%</span> --}}
+                                <span>{{$percent_failed}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
                                 <span>{{$charge_pending}} Pending</span>
-                                {{-- <span>{{$percent_pending}}%</span> --}}
+                                <span>{{$percent_pending}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
                                 <span>{{$charge_submitted}} Submitted</span>
-                                {{-- <span>{{$percent_submitted}}%</span> --}}
+                                <span>{{$percent_submitted}}%</span>
                             </div>
                             
                         </div>
@@ -104,22 +104,22 @@
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
                                 <span>{{$payout_success}} Successful</span>
-                                {{-- <span>{{$percent_success_payout}}%</span> --}}
+                                <span>{{$percent_success_payout}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
                                 <span>{{$payout_failed}} Failed</span>
-                                {{-- <span>{{$percent_failed_payout}}%</span> --}}
+                                <span>{{$percent_failed_payout}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
                                 <span>{{$payout_pending}} Pending</span>
-                                {{-- <span>{{$percent_pending_payout}}%</span> --}}
+                                <span>{{$percent_pending_payout}}%</span>
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
                                 <span>{{$payout_submitted}} Submitted</span>
-                                {{-- <span>{{$percent_submitted_payout}}%</span> --}}
+                                <span>{{$percent_submitted_payout}}%</span>
                             </div>
                             
                         </div>
@@ -131,10 +131,7 @@
             </div>
             <!--begin::Col-->
             <!--begin::Col-->
-
-
-
-            {{-- <div class="col-lg-6 col-xxl-4">
+            <div class="col-lg-6 col-xxl-4">
                 <!--begin::Card widget 20-->
                 <div class="card card-flush myshadow" style="background-color: #DB1430;background-image:url('{{ asset('assets/media/patterns/vector-1.png')}}')">
                     <!--begin::Header-->
@@ -425,7 +422,7 @@
                     <!--end::Card body-->
                 </div>
                 <!--end::Card widget 20-->
-            </div> --}}
+            </div>
         </div>
 
         <div class="row g-5 g-xl-8">
@@ -450,7 +447,7 @@
                 </div>
                 <!--end::Charts Widget 1-->
             </div>
-            {{-- <div class="col-xl-6">
+            <div class="col-xl-6">
                 <!--begin::Charts Widget 1-->
                 <div class="card card-xl-stretch mb-xl-8 myshadow">
                     <!--begin::Header-->
@@ -470,7 +467,7 @@
                     <!--end::Body-->
                 </div>
                 <!--end::Charts Widget 1-->
-            </div> --}}
+            </div>
         </div>
 
  
@@ -484,7 +481,7 @@
 <script src="{{ asset('assets/js/scripts.bundle.js')}}"></script>
 <script src="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.js')}}"></script>
 <script src="{{ asset('assets/js/custom/widgets.js')}}"></script>
-{{-- <script type="text/javascript">
+<script type="text/javascript">
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
@@ -3651,6 +3648,6 @@ KTUtil.onDOMContentLoaded(function() {
 /******/ })()
 ;
 //# sourceMappingURL=widgets.js.map
-</script> --}}
+</script>
 @endsection
 @endsection

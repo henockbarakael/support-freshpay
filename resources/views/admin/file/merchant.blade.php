@@ -130,73 +130,82 @@
                         @csrf
                         <div class="rounded border  p-3">
                             <div class="form-group row">
-                                    <!--begin::Label-->
-                                    <label class="col-lg-2 col-form-label text-lg-right">Merchant file:</label>
-                                    <!--end::Label-->
-        
-                                    <!--begin::Col-->
-                                    <div class="col-lg-10">
-                                        <!--begin::Dropzone-->
-                                        <div class="dropzone dropzone-queue mb-2" id="dropzone_freshpay">
-                                            <!--begin::Controls-->
-                                            <div class="dropzone-panel mb-lg-0 mb-2">
-                                                <a class="dropzone-select btn btn-sm btn-primary me-2">Attach files</a>
-                                                <a class="dropzone-upload btn btn-sm btn-light-primary me-2">Upload All</a>
-                                                <a class="dropzone-remove-all btn btn-sm btn-light-primary">Remove All</a>
-                                            </div>
-                                            <!--end::Controls-->
-        
-                                            <!--begin::Items-->
-                                            <div class="dropzone-items wm-200px">
-                                                <div class="dropzone-item" style="display:none">
-                                                    <!--begin::File-->
-                                                    <div class="dropzone-file">
-                                                        <div class="dropzone-filename" title="some_image_file_name.jpg">
-                                                            <span data-dz-name>some_image_file_name.jpg</span>
-                                                            <strong>(<span data-dz-size>340kb</span>)</strong>
-                                                        </div>
-        
-                                                        <div class="dropzone-error" data-dz-errormessage></div>
-                                                    </div>
-                                                    <!--end::File-->
-        
-                                                    <!--begin::Progress-->
-                                                    <div class="dropzone-progress">
-                                                        <div class="progress">
-                                                            <div
-                                                                class="progress-bar bg-primary"
-                                                                role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-dz-uploadprogress>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!--end::Progress-->
-        
-                                                    <!--begin::Toolbar-->
-                                                    <div class="dropzone-toolbar">
-                                                        <span class="dropzone-start"><i class="bi bi-play-fill fs-3"></i></span>
-                                                        <span class="dropzone-cancel" data-dz-remove style="display: none;"><i class="bi bi-x fs-3"></i></span>
-                                                        <span class="dropzone-delete" data-dz-remove><i class="bi bi-x fs-1"></i></span>
-                                                    </div>
-                                                    <!--end::Toolbar-->
-                                                </div>
-                                            </div>
-                                            <!--end::Items-->
+                                <label class="col-lg-2 col-form-label text-lg-right">Merchant file:</label>
+                                <div class="col-lg-6">
+                                    <!--begin::Dropzone-->
+                                    <div class="dropzone dropzone-queue mb-2" id="dropzone_freshpay">
+                                        <!--begin::Controls-->
+                                        <div class="dropzone-panel mb-lg-0 mb-2">
+                                            <a class="dropzone-select btn btn-sm btn-primary me-2">Attach files</a>
+                                            <a class="dropzone-upload btn btn-sm btn-light-primary me-2">Upload All</a>
+                                            <a class="dropzone-remove-all btn btn-sm btn-light-primary">Remove All</a>
                                         </div>
-                                        <!--end::Dropzone-->
+
+                                        <div class="dropzone-items wm-200px">
+                                            <div class="dropzone-item" style="display:none">
+                                                <!--begin::File-->
+                                                <div class="dropzone-file">
+                                                    <div class="dropzone-filename" title="some_image_file_name.jpg">
+                                                        <span data-dz-name>some_image_file_name.jpg</span>
+                                                        <strong>(<span data-dz-size>340kb</span>)</strong>
+                                                    </div>
         
-                                        <!--begin::Hint-->
-                                        <span class="form-text text-muted">Max file size is 1MB and max number of files is 5.</span>
-                                        <!--end::Hint-->
+                                                    <div class="dropzone-error" data-dz-errormessage></div>
+                                                </div>
+                                                <!--end::File-->
+        
+                                                <!--begin::Progress-->
+                                                <div class="dropzone-progress">
+                                                    <div class="progress">
+                                                        <div
+                                                            class="progress-bar bg-primary"
+                                                            role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-dz-uploadprogress>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--end::Progress-->
+        
+                                                <!--begin::Toolbar-->
+                                                <div class="dropzone-toolbar">
+                                                    <span class="dropzone-start"><i class="bi bi-play-fill fs-3"></i></span>
+                                                    <span class="dropzone-cancel" data-dz-remove style="display: none;"><i class="bi bi-x fs-3"></i></span>
+                                                    <span class="dropzone-delete" data-dz-remove><i class="bi bi-x fs-1"></i></span>
+                                                </div>
+                                                <!--end::Toolbar-->
+                                            </div>
+                                        </div>
+                                        <!--end::Items-->
                                     </div>
-                                    <!--end::Col-->
+                                    <!--end::Dropzone-->
+        
+                                    <!--begin::Hint-->
+                                    <span class="form-text text-muted">Max file size is 1MB and max number of files is 5.</span>
+                                    <!--end::Hint-->
+                                </div>
+                                {{-- <div class="col-sm-4">
+                                    <label class="fs-6 form-label fw-bold text-dark">Choose a reference</label>
+                                    <!--begin::Select-->
+                                    <select name="reference" class="form-select form-select-solid @error('reference') is-invalid @enderror" data-hide-search="true">
+                                        <option selected="selected" disable></option>
+                                        <option value="id">Transaction_Id</option>
+                                        <option value="paydrc_reference">Paydrc Reference</option>
+                                        <option value="switch_reference">Switch Reference</option>
+                                        <option value="telco_reference">Telco Reference</option>
+                                    </select>
+                                    <!--end::Select-->
+                                    @error('reference')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div> --}}
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-        
-        <!--end::Form-->
+
         <div class="card mt-6 myshadow2">
             <div class="card-header border-0 pt-6">
                 <div class="card-title">
@@ -216,61 +225,16 @@
                 </div>
 
                 <div class="card-toolbar">
-                    <!--begin::Toolbar-->
                     <div class="d-flex justify-content-end" data-kt-subscription-table-toolbar="base">
-                        <!--begin::Filter-->
-                        <button type="button" class="btn btn-light-success me-3 btn-border btn-sm  success-all myshadow">Success All</button>
-
-                        <!--end::Menu 1-->
-                        <!--end::Filter-->
-                        <!--begin::Export-->
-                        <button type="button" class="btn btn-light-danger me-3 btn-border failed-all btn-sm myshadow" data-url="">Failed All</button>
-
-                    </div>
-                    <!--end::Toolbar-->
-                    <!--begin::Group actions-->
-                    <div class="d-flex justify-content-end align-items-center d-none" data-kt-subscription-table-toolbar="selected">
-                        <button type="button" class="btn btn-light-danger me-3 btn-border failed-all btn-sm myshadow" data-url="">Failed All</button>
-
-                    </div>
-                    <!--end::Group actions-->
-                </div>
-            </div>
-            {{-- <!--begin::Card header-->
-            <div class="card-header border-0 pt-6">
-                <!--begin::Card title-->
-                <div class="card-title">
-                    <!--begin::Search-->
-                    <div class="d-flex align-items-center position-relative my-1">
-                        <input type="text" data-kt-filter="search" class="form-control form-control-solid w-350px ps-14" placeholder="" />
-                        <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                        <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
-                                <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
-                            </svg>
-                        </span>
-                        <!--end::Svg Icon-->
-                    </div>
-                    <!--end::Search-->
-                    <!--begin::Export buttons-->
-                    <div id="kt_datatable_example_1_export" class="d-none"></div>
-                    <!--end::Export buttons-->
-                </div>
-            </div>
-
-            <div class="card-header border-0 pt-6 ">
-        
-                <div class="card-toolbar">
-                    
-                    <div class="d-flex justify-content-end align-items-center d-none">
                         <button type="button" class="btn btn-light-success me-3 btn-border btn-sm  success-all myshadow">Success All</button>
                         <button type="button" class="btn btn-light-danger me-3 btn-border failed-all btn-sm myshadow" data-url="">Failed All</button>
                     </div>
+                    <div class="d-flex justify-content-end align-items-center d-none" data-kt-subscription-table-toolbar="selected">                        
+                        <button type="button" class="btn btn-light-danger me-3 btn-border failed-all btn-sm myshadow" data-url="">Failed All</button>
+                    </div>
                 </div>
-            </div> --}}
-            <!--end::Card header-->
-            <!--begin::Card body-->
+            </div>
+
             <div class="card-body py-4">
                 <!--begin::Table-->
                 <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_datatable_example">
@@ -292,8 +256,7 @@
                         </tr>
                         <!--end::Table row-->
                     </thead>
-                    <!--end::Table head-->
-                    <!--begin::Table body-->
+
                     <tbody class="text-gray-600 fw-semibold" id="tbody">
                         <!--begin::Table row-->
                         @if($rows->count())
@@ -495,9 +458,6 @@
                 // End Multiple paiement 
         });
 
-        
-
-        
 
         $('.delete-all').on('click', function(e) {
             var idsArr = [];  
@@ -536,12 +496,12 @@
             }  
         });
 
-        $('[data-toggle=confirmation]').confirmation({
-                rootSelector: '[data-toggle=confirmation]',
-                onConfirm: function (event, element) {
-                    element.closest('form').submit();
-                }
-        }); 
+        // $('[data-toggle=confirmation]').confirmation({
+        //         rootSelector: '[data-toggle=confirmation]',
+        //         onConfirm: function (event, element) {
+        //             element.closest('form').submit();
+        //         }
+        // }); 
     });
     // Add remove loading class on body element based on Ajax request status
     $(document).on({

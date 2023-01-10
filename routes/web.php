@@ -78,6 +78,8 @@ Route::group(['prefix'=>'admin','middleware' => ['auth','is_admin','prevent-back
     Route::post('verify-select-ids', [FreshPayAPIController::class, 'VerifyIds'])->name('admin.verifyids');
     Route::post('action-failed-all', [TransactionController::class, 'FailedIds'])->name('admin.failedids');
     Route::post('action-successfull-all', [TransactionController::class, 'SuccessfulIds'])->name('admin.successids');
+
+    Route::delete('delete-multiple', [TransactionController::class, 'deleteMultiple'])->name('admin.transaction.delete.multiple');
     #
     Route::post('success-single/{id}', [TransactionController::class, 'SuccessSingle'])->name('admin.success.single');
     Route::post('failed-single/{id}', [TransactionController::class, 'FailedSingle'])->name('admin.failed.single');
@@ -87,7 +89,7 @@ Route::group(['prefix'=>'admin','middleware' => ['auth','is_admin','prevent-back
     Route::post('paydrc/test/payment-request', [FreshPayAPIController::class, 'PostRequest'])->name('admin.api.post.request');
     Route::get('paydrc/transaction/verify', [FreshPayAPIController::class, 'verify'])->name('admin.transaction.verify');
     Route::resource('/paydrc/transaction/verify/search', FreshPayAPIController::class);
-    Route::post('/paydrc/transaction/verify/search/process', 'FreshPayAPIController@verifySearch')->name('admin.verify.search');
+    Route::post('/paydrc/transaction/verify/search/process', [FreshPayAPIController::class,'verifySearch'])->name('admin.verify.search');
     Route::post('paydrc/transaction/verify/upload', [FreshPayAPIController::class, 'uploadVerify'])->name('admin.transaction.verify.upload');
     // Route::post('paydrc/transaction/verify', [FreshPayAPIController::class, 'verifyTransaction'])->name('admin.transaction.verify.request');
 

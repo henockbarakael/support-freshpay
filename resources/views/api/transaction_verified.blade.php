@@ -109,10 +109,11 @@
                     <thead>
                         <tr class="fw-bolder text-muted fs-7 text-uppercase gs-0">
 							<th class="min-w-80px">Customer</th>
-                            {{-- <th class="min-w-80px">Paydrc Référence</th> --}}
+                            <th class="min-w-80px">Paydrc Référence</th>
                             <th class="min-w-80px">Switch Référence</th>
                             <th class="min-w-80px">Telco Référence</th>
-                            <th class="min-w-80px">Status</th>
+                            <th class="min-w-80px">Status Paydrc</th>
+                            <th class="min-w-80px">Status Verify</th>
                             <th class="min-w-300px">Description</th>
                         </tr>
                     </thead>
@@ -182,8 +183,10 @@ $("#kt_datatable_zero_configuration").DataTable();
                         bodyData+=
                         bodyData+='<tr>'+
                                     '<td>'+row.customer_number+'</td>'+
+                                    '<td>'+row.paydrc_reference+'</td>'+
                                     '<td>'+row.switch_reference+'</td>'+
                                     '<td>'+row.financial_institution_id+'</td>'+
+                                    '<td>'+row.status+'</td>'+
                                     '<td>'+row.new_status+'</td>'+
                                     '<td>'+row.financial_status_description+'</td>';
                                   '</tr>';

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Imports\VerifyImport;
+use App\Models\DrcSendMoneyTransac;
+use App\Models\ImportedTransaction;
 use App\Models\MobileMoney;
 use App\Models\Transaction;
 use App\Models\TransactionVerify;
@@ -119,8 +121,8 @@ class FreshPayAPIController extends Controller
                     "status" => $curl_decoded["Status"],
                     "transaction_id" => $curl_decoded["Transaction_id"],
                     "updated_at" => $curl_decoded["Updated_At"],
-                    "action" => $data['action'],
-                    "method" => $data['method'],
+                    // "action" => $data['action'],
+                    // "method" => $data['method'],
                     "user_id" => Auth::user()->id,
                 ];
 
@@ -200,14 +202,20 @@ class FreshPayAPIController extends Controller
           
         }
         else {
+            $paydrc = DrcSendMoneyTransac::where('switch_reference', $reference)->first();
+            $status = $paydrc->status;
+            $telco_reference = $paydrc->telco_reference;
+            $paydrc_reference = $paydrc->paydrc_reference;
+            $description = $paydrc->status_description;
             TransactionVerify::updateOrCreate([
-                "financial_institution_id"=>$result["financial_institution_id"],
-                "financial_status_description"=>$result["financial_status_description"],
+                "financial_institution_id"=>$telco_reference,
+                "financial_status_description"=>$description,
                 "resultCode"=>$result["resultCode"],
-                "status"=>$result["status"],
+                "status"=>$status,
                 "new_status"=>$result["status"],
                 "customer_number"=>$row["source_account_number"],
                 "switch_reference"=>$row["trans_ref_no"],
+                "paydrc_reference"=>$paydrc_reference,
                 "trans_partid"=>$row["partID"],
                 "user_id"=>Auth::user()->id
             ]);
@@ -318,4 +326,6 @@ class FreshPayAPIController extends Controller
  
         return $data;
     }
+
+
 }

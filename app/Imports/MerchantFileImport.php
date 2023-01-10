@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use App\Models\DrcSendMoneyTransac;
 use App\Models\MerchantFile;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -17,18 +18,9 @@ class MerchantFileImport implements ToModel, WithHeadingRow, WithChunkReading
     */
     public function model(array $row)
     {
-
+		// $result = DrcSendMoneyTransac::select('id','merchant_code','action','customer_details','amount','currency','method','thirdparty_reference','paydrc_reference','switch_reference','telco_reference','status','created_at','updated_at')->whereIn('paydrc_reference',$row['reference'])->get();
         return new MerchantFile([
-            "id" => $row['id'],
-            "thirdparty_reference"=>$row['thirdparty_reference'],
-            "amount"=>$row['amount'],
-            "currency"=>$row['currency'],
-            "method"=>$row['method'],
-            "customer_details"=>$row['customer_details'],
-            "paydrc_reference"=>$row['paydrc_reference'],
-            "action"=>$row['action'],
-            "switch_reference"=>$row['switch_reference'],
-            "telco_reference"=>$row['telco_reference'],
+            "id"=>$row['id'],
             "user_id"=>Auth::user()->id
         ]);
     }

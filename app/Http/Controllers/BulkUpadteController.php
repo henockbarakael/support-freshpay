@@ -13,23 +13,10 @@ use Illuminate\Support\Facades\Http;
 class BulkUpadteController extends Controller
 {
 
-    // public function paydrc($reference,$param,$describe) {
-
-    //     $paydrc = ImportedTransaction::select('merchant_reference','transaction_reference')->whereIn('transaction_reference', $reference)->get()->toArray();
-    //     dd($paydrc);
-    //     $response = Http::post('http://167.71.131.224:4500/services/bulk-update', [
-    //         'data' => $paydrc,
-    //         'paydrc' => True,
-    //         'status' => "Failed",
-    //     ]);
-    //     $result = json_decode($response->getBody(), true);
-    //     dd($result);
-
-
-    // }
+  
     public function __construct()
     {
-        ini_set('max_execution_time', 300);
+        ini_set('max_execution_time', 300000);
     }
 
     public function paydrc($reference,$param,$describe) {
@@ -68,11 +55,9 @@ class BulkUpadteController extends Controller
             $count ++;
         }
 
-
+        
         foreach($dataSet as $data) {
             DB::connection('paydrc')->update($data['sql'], $data['params']);
-            $this->callback($paydrc_reference, $param);
-            $this->removeData($ids);
         }
 
         
@@ -115,6 +100,7 @@ class BulkUpadteController extends Controller
 
         foreach($dataSet as $data) {
             DB::connection('switch')->update($data['sql'], $data['params']);
+            $this->removeData($ids);
         }
         
         
@@ -161,16 +147,34 @@ class BulkUpadteController extends Controller
 
     public function callback($reference, $status){
         $rows = Transaction::whereIn('merchant_ref', $reference)->get();
-        foreach ($rows as $key => $value) {
-            $action = $value->action;
-            $telco_reference = $value->telco_reference;
-            $switch_reference = $value->switch_reference;
-            $paydrc_reference = $value->paydrc_reference;
-            $telco_status_description = $value->telco_status_description;
-            $callbackRequest = new SendCallBackToMerchant;
-            $callbackRequest->callback($action,$switch_reference,$telco_reference,$status,$paydrc_reference,$telco_status_description);
 
+        foreach ($rows as $key => $value) {
+            $curl_post_data = [
+                "status" => $status,
+                "action" => $value["trans_type"],
+                "switch_reference" => $value["trans_ref_no"],
+                "telco_reference" => $value["financial_institution_transaction_id"],
+                "paydrc_reference" => $value["merchant_ref"],
+                "telco_status_description" => $value["financial_institution_status_description"]
+            ];
+    
+            $url ="http://143.198.138.97/services/callback";
+            $data = json_encode($curl_post_data);
+            $ch=curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+            curl_exec($ch); 
         }
+        $response = [
+            'success' => true
+        ];
+        return $response;
+        
     }
 
     public function removeData($reference){

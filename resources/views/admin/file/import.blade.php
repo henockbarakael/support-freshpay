@@ -220,11 +220,8 @@
                     <div class="d-flex justify-content-end" data-kt-subscription-table-toolbar="base">
                         <!--begin::Filter-->
                         <button type="button" class="btn btn-light-success me-3 btn-border btn-sm  success-all myshadow">Success All</button>
-
-                        <!--end::Menu 1-->
-                        <!--end::Filter-->
-                        <!--begin::Export-->
-                        <button type="button" class="btn btn-light-danger me-3 btn-border failed-all btn-sm myshadow" data-url="">Failed All</button>
+                        <button type="button" class="btn btn-light-warning me-3 btn-border failed-all btn-sm myshadow" data-url="">Failed All</button>
+                        <button type="button" class="btn btn-light-danger me-3 btn-border delete-all btn-sm myshadow" data-url="">Delete All</button>
 
                     </div>
                     <!--end::Toolbar-->
@@ -284,7 +281,7 @@
 							<th class="min-w-80px">Customer</th>
                             <th class="min-w-80px">Amount</th>
                             <th class="min-w-80px">Currency</th>
-                            <th class="min-w-80px">Telco Référence</th>
+                            <th class="min-w-80px">Référence</th>
                             <th class="min-w-80px">Status File</th>
                             <th class="min-w-80px text-center">Action</th>
                         </tr>
@@ -305,7 +302,7 @@
                             <td>{{$row['customer_details']}}</td>
                             <td>{{$row['amount']}}</td>
                             <td>{{$row['currency']}}</td>
-                            <td>{{$row['telco_reference']}}</td>
+                            <td>{{$row['paydrc_reference']}}</td>
                             @if($row['status'] == "Successful")
                             <td><div class="badge badge-light-success fw-bold">{{$row['status']}}</div></td>
                             @elseif($row['status'] == "Pending")
@@ -347,21 +344,11 @@
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js')}}"></script>
 <script type="text/javascript">
   
-    /*------------------------------------------
-    --------------------------------------------
-    Add Loading When fire Ajax Request
-    --------------------------------------------
-    --------------------------------------------*/
     $(document).ajaxStart(function() {
         $('#loading').addClass('loading');
         $('#loading-content').addClass('loading-content');
     });
-  
-    /*------------------------------------------
-    --------------------------------------------
-    Remove Loading When fire Ajax Request
-    --------------------------------------------
-    --------------------------------------------*/
+
     $(document).ajaxStop(function() {
         $('#loading').removeClass('loading');
         $('#loading-content').removeClass('loading-content');
@@ -424,22 +411,25 @@
                         $(".table").hide();
                         },
                         success: function (data) {
-                            if (data['status']==true) {
+                            if (data['success']==true) {
                                 toastr.success(data['message'], 'Success Alert', {
                                 timeOut: 600
                                 });
                                 location.reload();
                                 $('.table').load(document.URL +  ' .table');
                             }  
-                            else {
+                            else if (data['success']==false) {
                                 toastr.error(data['message'], 'Error Alert', {
                                 timeOut: 600
                                 });
-                                // location.reload();
+                                location.reload();
+                                $('.table').load(document.URL +  ' .table');
                             }
                         },
                         error: function (data) {
                             alert(data.responseText);
+                            location.reload();
+                            $('.table').load(document.URL +  ' .table');
                         },
                         complete:function(data){
                             /* Hide image container */
@@ -515,17 +505,25 @@
                 if(confirm("Are you sure, you want to delete the selected transactions?")){  
                     var strIds = idsArr.join(","); 
                     $.ajax({
-                        url: "",
+                        url: "{{ route('admin.transaction.delete.multiple') }}",
                         type: 'DELETE',
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         data: 'ids='+strIds,
+                        processData: true,
+                        beforeSend: function(){
+                        $('.ajax-load').show();
+                        $(".table").hide();
+                        },
                         success: function (data) {
                             if (data['status']==true) {
                                 $(".checkbox:checked").each(function() {  
                                     $(this).parents("tr").remove();
                                 });
-                                alert(data['message']);
-                                location.reload();
+                                toastr.success(data['message'], 'Success Alert', {
+                                        timeOut: 600
+                                    });
+                                    location.reload();
+                                    $('.table').load(document.URL +  ' .table');
                             } else {
                                 alert('Whoops Something went wrong!!');
                                 location.reload();
@@ -642,7 +640,7 @@ myDropzone.on("queuecomplete", function (progress) {
     toastr.success('Your File Uploaded Successfully!!', 'Success Alert', {
               timeOut: 600
             });
-    // location.reload();
+    location.reload();
     
 });
 

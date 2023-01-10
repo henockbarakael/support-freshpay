@@ -14,6 +14,7 @@ use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -23,8 +24,12 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class TransactionController extends Controller
 {
+    public function __construct()
+    {
+        ini_set('max_execution_time', 1200);
+    }
+
     public function import(){
-        // $rows = ImportedTransaction::limit(5)->orderBy('id','asc')->get();
         $rows = ImportedTransaction::orderBy('id','asc')->get();
         $todayDate = $this->todayDate();
         return view('admin.file.import',compact('rows','todayDate'));
@@ -40,8 +45,13 @@ class TransactionController extends Controller
         $request->validate([
             'file' => 'required|mimes:csv,txt,xlsx'
         ]);
-
-        Excel::import(new MerchantFileImport, request()->file('file'));
+        $filePath = $request->file('file')->getRealPath();
+        // Read the Excel file and get the list of IDs
+        $ids = Excel::toArray(new MerchantFileImport, $filePath)[0];
+        // Search for the records in the database
+        $records = DrcSendMoneyTransac::select('id','merchant_code','action','customer_details','amount','currency','method','thirdparty_reference','paydrc_reference','switch_reference','telco_reference','status','created_at','updated_at')->whereIn('id', $ids)->get();
+    
+        session::put('records',$records);
     }
 
     public function callbackRequest(){
@@ -57,25 +67,52 @@ class TransactionController extends Controller
             "paydrc_reference" => 'required',
             "telco_status_description" => 'required'
         ]);
-        $action = $request->action;
-        $switch_reference =$request->switch_reference;
-        $telco_reference = $request->telco_reference;
-        $status = $request->status;
-        $paydrc_reference = $request->paydrc_reference;
-        $telco_status_description = $request->telco_status_description;
 
-        $callbackRequest = new SendCallBackToMerchant;
-        $callbackRequest->callback($action,$switch_reference,$telco_reference,$status,$paydrc_reference,$telco_status_description);
-        // if ($done) {
-        //     Alert::success('Done!', 'Callback successfully sent');
-        //     return redirect()->back();
-        // }
-        // else {
-        //     Alert::error('Error!', 'Callback failed to send');
-        //     return redirect()->back();
-        // }
-        Alert::success('Done!', 'Callback successfully sent');
-        return redirect()->back();
+        $curl_post_data = [
+            "status" => $request->status,
+            "action" => $request->action,
+            "switch_reference" => $request->switch_reference,
+            "telco_reference" => $request->telco_reference,
+            "paydrc_reference" => $request->paydrc_reference,
+            "telco_status_description" => $request->telco_status_description
+        ];
+
+        $url ="http://143.198.138.97/services/callback";
+        $data = json_encode($curl_post_data);
+        $ch=curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+        $curl_response = curl_exec($ch);
+        if ($curl_response == false) {
+            $message = "Erreur de connexion! Vérifiez votre connexion internet";
+            return response()->json(['success'=>false,'message'=>$message]);
+        }
+        else {
+            $result = json_decode($curl_response,true);
+          
+            if ($result["status"] == 200) {
+                Alert::success('Done!', 'Callback successfully sent');
+                return redirect()->back();
+            }
+            else {
+                Alert::success('Failed!', 'Callback not sent to merchant!');
+                return redirect()->back();
+            }
+        }
+        
+    }
+
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->ids;
+        ImportedTransaction::whereIn('paydrc_reference',explode(",",$ids))->delete();
+        return response()->json(['status'=>true,'message'=>"Transaction deleted successfully."]);
+         
     }
 
     public function upload(Request $request){
@@ -86,19 +123,64 @@ class TransactionController extends Controller
         Excel::import(new TransactionsImport, request()->file('file')->store('temp'));
     }
 
+    // public function FailedIds(Request $request){
+    //     $reference = explode(",",$request->ids);
+
+    //     $curl_post_data = [
+    //         "merchant_reference" => $reference,
+    //         "status" => "Failed",
+    //     ];
+
+    //     $url ="http://143.198.138.97/services/update";
+    //     $data = json_encode($curl_post_data);
+    //     $ch=curl_init();
+    //     curl_setopt($ch, CURLOPT_URL, $url);
+    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    //     curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
+    //     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    //     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+    //     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    //     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+    //     $curl_response = curl_exec($ch);
+    //     if ($curl_response == false) {
+    //         $message = "Erreur de connexion! Vérifiez votre connexion internet";
+    //         return response()->json(['success'=>false,'message'=>$message]);
+    //     }
+    //     else {
+    //         $result = json_decode($curl_response,true);
+          
+    //         if ($result["success"] == true) {
+    //             // var_dump($result["callback"]);
+    //             ImportedTransaction::whereIn('paydrc_reference', $reference)->delete();
+    //             return response()->json(['success'=>true,'message'=>$result["message"]]);
+    //         }
+    //         else {
+    //             return response()->json(['success'=>false,'message'=>$result["message"]]);
+    
+    //         }
+    //     }
+        
+
+    // }
+
     public function FailedIds(Request $request){
         $reference = explode(",",$request->ids);
         $sendRequest = new BulkUpadteController;
         $status = "Failed";
         $describ = "Transaction updated manually!";
         $response = $sendRequest->paydrc($reference,$status,$describ);
+        
         if ($response["success"] == true) {
             $responseB = $sendRequest->switch($reference,$status);
             if ($responseB["success"] == true) {
-                return response()->json(['status'=>true,'message'=>"Transaction successfully updated."]);
+                $responseC = $sendRequest->callback($reference, $status);
+                if ($responseC["success"] == true) {
+                    ImportedTransaction::whereIn('paydrc_reference', $reference)->delete();
+                    return response()->json(['status'=>true,'message'=>"Transaction successfully updated."]);
+                }
             }
             else {
-                return response()->json(['status'=>false,'message'=>$response["message"]]);
+                return response()->json(['status'=>false,'message'=>$responseB["message"]]);
             }
         }
         else {
@@ -128,61 +210,81 @@ class TransactionController extends Controller
     }
 
     public function SuccessSingle($id){
+        $curl_post_data = [
+            "value" => $id,
+            "status" => "Successful",
+            "type" => "paydrc_reference",
+        ];
+        
+        $url ="http://143.198.138.97/services/paydrc/transaction/update";
+        $data = json_encode($curl_post_data);
+        $ch=curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
 
-        $paydrc = DrcSendMoneyTransac::select('status')->where('id',$id)->first();
-        if ($paydrc->status == "Failed" || $paydrc->status == "Successful") {
-            Alert::success('Nothing to do!', 'Transaction already up to date');
-            return redirect()->back();
+        Session::put('ref',$id);
+
+        $curl_response = curl_exec($ch);
+        if ($curl_response == false) {
+            $message = "Erreur de connexion! Vérifiez votre connexion internet";
+            return response()->json(['success'=>false,'message'=>$message]);
         }
         else {
-            $switch = Transaction::where('merchant_ref',$paydrc->paydrc_reference)->first();
-            $response = Http::post('http://167.71.131.224:4500/services/update', [
-                'merchant_reference' => $paydrc->thirdparty_reference,
-                'transaction_reference' => $paydrc->paydrc_reference,
-                'paydrc' => True,
-                'status' => True,
-            ]);
-            $result = json_decode($response->getBody(), true);
-
+            $result = json_decode($curl_response,true);
             if ($result["success"] == true) {
-                return response()->json(['success'=>true,'message'=>"Transaction successfully updated."]);
+                Alert::success('Great!', $result["message"]);
+                return redirect()->route('admin.updateResult');
             }
             else {
-                return redirect()->back();
-
+                Alert::error('Nothing to do!', $result["message"]);
+                return redirect()->route('admin.updateResult');
             }
-
         }
-
     }
 
     public function FailedSingle($id){
 
-        $paydrc = DrcSendMoneyTransac::select('status','paydrc_reference','thirdparty_reference','telco_reference')->where('id',$id)->first();
-        // if ($paydrc->status == "Failed" || $paydrc->status == "Successful") {
-        //     Alert::success('Nothing to do!', 'Transaction already up to date');
-        //     return redirect()->back();
-        // }
-        // else {
-            Session::put('ref',$paydrc->paydrc_reference);
-            Transaction::where('merchant_ref',$paydrc->paydrc_reference)->first();
-            $response = Http::post('http://167.71.131.224:4500/services/update', [
-                'merchant_reference' => $paydrc->thirdparty_reference,
-                'transaction_reference' => $paydrc->paydrc_reference,
-                'paydrc' => True,
-                'status' => False,
-            ]);
-            $result = json_decode($response->getBody(), true);
+        $curl_post_data = [
+            "value" => $id,
+            "status" => "Failed",
+            "type" => "paydrc_reference",
+        ];
+        
+        $url ="http://143.198.138.97/services/paydrc/transaction/update";
+        $data = json_encode($curl_post_data);
+        $ch=curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
 
+        Session::put('ref',$id);
+
+        $curl_response = curl_exec($ch);
+        if ($curl_response == false) {
+            $message = "Erreur de connexion! Vérifiez votre connexion internet";
+            return response()->json(['success'=>false,'message'=>$message]);
+        }
+        else {
+            $result = json_decode($curl_response,true);
             if ($result["success"] == true) {
-                return response()->json(['success'=>true,'message'=>"Transaction successfully updated."]);
+                Alert::success('Great!', $result["message"]);
+                return redirect()->route('admin.updateResult');
             }
             else {
-                return redirect()->back();
-
+                Alert::error('Nothing to do!', $result["message"]);
+                return redirect()->route('admin.updateResult');
             }
+        }
 
-        // }
 
     }
 
@@ -193,128 +295,4 @@ class TransactionController extends Controller
 		return view('transaction.update.index',compact('result','todayDate'));
 	}
 
-    // public function SuccessSingle($id){
-
-    //     $paydrc = DrcSendMoneyTransac::select('status')->where('id',$id)->first();
-    //     if ($paydrc->status == "Failed" || $paydrc->status == "Successful") {
-    //         Alert::success('Nothing to do!', 'Transaction already up to date');
-    //         return redirect()->back();
-    //     }
-    //     else {
-    //         $getSwitchData = new GetSwitchData;
-    //         $response = $getSwitchData->getTransactionByPayDrcRef($paydrc->paydrc_reference);
-    //         if ($response["success"] == true) {
-    //             $trans_type = $response["result"]["trans_type"];
-    //             if ($trans_type == "payout") {
-    //                 $action = "credit";
-    //             }
-    //             elseif ($trans_type == "charge") {
-    //                 $action = "debit";
-    //             }
-    //             $telco_status_description = $response["result"]["financial_institution_status_description"];
-    //             $status = "Successful";
-    //             $switch_reference = $response["result"]["trans_ref_no"];
-    //             $paydrc_reference = $response["result"]["merchant_ref"];
-    //             $telco_reference = $response["result"]["financial_institution_transaction_id"]; 
-    //         }
-    //         $data = [
-    //             "status" => "Successful",
-    //             "updated_at" => $this->todayDate(),
-    //             "telco_reference" => $telco_reference,
-    //             "status_description" => "Transaction updated manually!",
-    //         ];
-    //         $update = DrcSendMoneyTransac::where('id',$id)->update($data);
-    //         if ($update) {
-                
-    //             $data2 = [
-    //                 "status" => "Successful",
-    //                 "updated_at" => $this->todayDate(),
-    //             ];
-    //             $update2 = Transaction::where('id',$id)->update($data2);
-    //             if ($update2) {
-    //                 $callbackRequest = new SendCallBackToMerchant;
-    //                 $done = $callbackRequest->callback($action,$switch_reference,$telco_reference,$status,$paydrc_reference,$telco_status_description);
-    //                 if ($done) {
-    //                     // $transaction = ImportedTransaction::where('id',$id);
-    //                     // $transaction->delete();
-    //                     return response()->json(['success'=>true,'message'=>"Transaction successfully updated."]);
-    //                 }
-    //                 else {
-    //                     return response()->json(['success'=>true,'message'=>"Transaction successfully updated but failed to send callback"]);
-    //                 }
-    //             }
-    //             else {
-    //                 return response()->json(['success'=>true,'message'=>"Update failed from switch"]);
-    //             }
-                
-    //         }
-    //         else {
-    //             return response()->json(['success'=>false,'message'=>"Update failed! Please retry again!"]);
-    //         }
-            
-    //     }
-
-    // }
-
-    // public function FailedSingle($id){
-        
-    //     $paydrc = DrcSendMoneyTransac::select('status')->where('id',$id)->first();
-    //     if ($paydrc->status == "Failed" || $paydrc->status == "Successful") {
-    //         Alert::success('Nothing to do!', 'Transaction already up to date');
-    //         return redirect()->back();
-    //     }
-    //     else {
-    //         $getSwitchData = new GetSwitchData;
-    //         $response = $getSwitchData->getTransactionByPayDrcRef($paydrc->paydrc_reference);
-    //         if ($response["success"] == true) {
-    //             $trans_type = $response["result"]["trans_type"];
-    //             if ($trans_type == "payout") {
-    //                 $action = "credit";
-    //             }
-    //             elseif ($trans_type == "charge") {
-    //                 $action = "debit";
-    //             }
-    //             $telco_status_description = $response["result"]["financial_institution_status_description"];
-    //             $status = "Successful";
-    //             $switch_reference = $response["result"]["trans_ref_no"];
-    //             $paydrc_reference = $response["result"]["merchant_ref"];
-    //             $telco_reference = $response["result"]["financial_institution_transaction_id"]; 
-    //         }
-    //         $data = [
-    //             "status" => "Failed",
-    //             "updated_at" => $this->todayDate(),
-    //             "telco_reference" => $telco_reference,
-    //             "status_description" => "Transaction updated manually!",
-    //         ];
-    //         $update = DrcSendMoneyTransac::where('id',$id)->update($data);
-    //         if ($update) {
-                
-    //             $data2 = [
-    //                 "status" => "Failed",
-    //                 "updated_at" => $this->todayDate(),
-    //             ];
-    //             $update2 = Transaction::where('id',$id)->update($data2);
-    //             if ($update2) {
-    //                 $callbackRequest = new SendCallBackToMerchant;
-    //                 $done = $callbackRequest->callback($action,$switch_reference,$telco_reference,$status,$paydrc_reference,$telco_status_description);
-    //                 if ($done) {
-    //                     // $transaction = ImportedTransaction::where('id',$id);
-    //                     // $transaction->delete();
-    //                     return response()->json(['success'=>true,'message'=>"Transaction successfully updated."]);
-    //                 }
-    //                 else {
-    //                     return response()->json(['success'=>true,'message'=>"Transaction successfully updated but failed to send callback"]);
-    //                 }
-    //             }
-    //             else {
-    //                 return response()->json(['success'=>true,'message'=>"Update failed from switch"]);
-    //             }
-                
-    //         }
-    //         else {
-    //             return response()->json(['success'=>false,'message'=>"Update failed! Please retry again!"]);
-    //         }
-            
-    //     }
-    // }
 }

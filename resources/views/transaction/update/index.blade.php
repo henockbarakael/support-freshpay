@@ -64,12 +64,13 @@
 <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
     <!--begin::Content wrapper-->
     <div class="d-flex flex-column flex-column-fluid">
-        <section id="loading">
-            <div id="loading-content"></div>
-        </section>
+        
         <div id="kt_app_content" class="app-content flex-column-fluid">
             <!--begin::Content container-->
             <div id="kt_app_content_container" class="app-container container-xxl">
+                <section id="loading">
+                    <div id="loading-content"></div>
+                </section>
                 <form action="{{route('admin.update.search')}}" method="POST">
                     @csrf
                     <!--begin::Card-->

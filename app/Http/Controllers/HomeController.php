@@ -45,7 +45,7 @@ class HomeController extends Controller
     }
 
     public function merchantStatistiques(){
-        $statistique = Http::get('http://127.0.0.1:8086/services/paydrc/merchant_stat');
+        $statistique = Http::get('http://143.198.138.97/services/paydrc/merchant_stat');
         $result = $statistique->json();
         $todayDate = $this->todayDate();
         return view("api.statistique", compact('result','todayDate'));
@@ -183,8 +183,8 @@ class HomeController extends Controller
 
     public function manager()
     {
-        $statistique = Http::get('http://127.0.0.1:8086/services/management/revenu');
-        $success = Http::get('http://127.0.0.1:8086/services/paydrc/successful/sum_amount');
+        $statistique = Http::get('http://143.198.138.97/services/management/revenu');
+        $success = Http::get('http://143.198.138.97/services/paydrc/successful/sum_amount');
 
         $res = $statistique->json();
         $stmt = $success->json();

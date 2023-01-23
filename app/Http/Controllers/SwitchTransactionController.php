@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 class SwitchTransactionController extends Controller
 {
     public function charge(){
-        $total = Http::get('http://127.0.0.1:8086/services/switch/count-all-debit/transactions');
+        $total = Http::get('http://143.198.138.97/services/switch/count-all-debit/transactions');
         $result = $total->json();
         $count = $result[0]["total"];
         $todayDate = $this->todayDate();
@@ -19,7 +19,7 @@ class SwitchTransactionController extends Controller
         return view('transaction.switch.charge',compact('transactions','count','todayDate'));
     }
     public function payout(){
-        $total = Http::get('http://127.0.0.1:8086/services/switch/count-all-credit/transactions');
+        $total = Http::get('http://143.198.138.97/services/switch/count-all-credit/transactions');
         $result = $total->json();
         $count = $result[0]["total"];
         $todayDate = $this->todayDate();

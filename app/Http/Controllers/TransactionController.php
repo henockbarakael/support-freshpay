@@ -177,8 +177,9 @@ class TransactionController extends Controller
                 $responseC = $sendRequest->callback($reference, $status);
                 if ($responseC["success"] == true) {
                     ImportedTransaction::whereIn('paydrc_reference', $reference)->delete();
-                    return response()->json(['status'=>true,'message'=>"Transaction successfully updated."]);
+                    
                 }
+                return response()->json(['status'=>true,'message'=>"Transaction successfully updated."]);
             }
             else {
                 return response()->json(['status'=>false,'message'=>$responseB["message"]]);

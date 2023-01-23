@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @push('style')
 <head><base href="">
-    <title>FreshPay Bulk Update</title>
+    <title>Transaction Verify</title>
     <meta name="description" content="FreshPay Support Dashboard" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="utf-8" />
@@ -23,34 +23,7 @@
     <script src="https://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <style type="text/css">
-        .loading {
-            z-index: 20;
-            position: absolute;
-            top: 0;
-            left:-5px;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.4);
-        }
-        .loading-content {
-            position: absolute;
-            border: 16px solid #f3f3f3;
-            border-top: 16px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            top: 50%;
-            left:50%;
-            animation: spin 2s linear infinite;
-            }
-              
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-    </style>
-    {{-- <style>
+    <style>
         .ajax-load{
             display: none;
             position: center;
@@ -72,58 +45,23 @@
         body.loading .ajax-load{
             display: block;
         }
-    </style> --}}
+        </style>
 </head> 
 @endpush
 @section('content')
 @section('page','Dashboard')
-@section('page-title','FreshPay Bulk Update')
-@section('subtitle',$todayDate)
 {!! Toastr::message() !!}
 @include('sweetalert::alert')
 <div class="post d-flex flex-column-fluid" id="kt_post">
     <!--begin::Container-->
     <div id="kt_content_container" class="container-xxl">
-        <!--begin::Card-->
-        {{-- <div class="ajax-load text-center" style="display:none">
+        <div class="ajax-load text-center" style="display:none">
             <img src="{{asset('assets/Ellipsis-1s-200px.gif')}}">
-        </div> --}}
-        <section id="loading">
-            <div id="loading-content"></div>
-        </section>
-        <div class="card mb-10">
-            <div class="card-body d-flex align-items-center p-5 p-lg-8">
-                <!--begin::Icon-->
-                <div class="d-flex h-50px w-50px h-lg-80px w-lg-80px flex-shrink-0 flex-center position-relative align-self-start align-self-lg-center mt-3 mt-lg-0">
-                    <!--begin::Svg Icon | path: icons/duotune/abstract/abs051.svg-->
-                    <span class="svg-icon svg-icon-primary position-absolute opacity-15">
-                        <svg class=". h-50px w-50px h-lg-80px w-lg-80px ." xmlns="http://www.w3.org/2000/svg" width="70px" height="70px" viewBox="0 0 70 70" fill="none">
-                            <path d="M28 4.04145C32.3316 1.54059 37.6684 1.54059 42 4.04145L58.3109 13.4585C62.6425 15.9594 65.3109 20.5812 65.3109 25.5829V44.4171C65.3109 49.4188 62.6425 54.0406 58.3109 56.5415L42 65.9585C37.6684 68.4594 32.3316 68.4594 28 65.9585L11.6891 56.5415C7.3575 54.0406 4.68911 49.4188 4.68911 44.4171V25.5829C4.68911 20.5812 7.3575 15.9594 11.6891 13.4585L28 4.04145Z" fill="currentColor"></path>
-                        </svg>
-                    </span>
-                    <!--end::Svg Icon-->
-                    <!--begin::Svg Icon | path: icons/duotune/coding/cod009.svg-->
-                    <span class="svg-icon svg-icon-2x svg-icon-lg-3x svg-icon-primary position-absolute">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path opacity="0.3" d="M22.0318 8.59998C22.0318 10.4 21.4318 12.2 20.0318 13.5C18.4318 15.1 16.3318 15.7 14.2318 15.4C13.3318 15.3 12.3318 15.6 11.7318 16.3L6.93177 21.1C5.73177 22.3 3.83179 22.2 2.73179 21C1.63179 19.8 1.83177 18 2.93177 16.9L7.53178 12.3C8.23178 11.6 8.53177 10.7 8.43177 9.80005C8.13177 7.80005 8.73176 5.6 10.3318 4C11.7318 2.6 13.5318 2 15.2318 2C16.1318 2 16.6318 3.20005 15.9318 3.80005L13.0318 6.70007C12.5318 7.20007 12.4318 7.9 12.7318 8.5C13.3318 9.7 14.2318 10.6001 15.4318 11.2001C16.0318 11.5001 16.7318 11.3 17.2318 10.9L20.1318 8C20.8318 7.2 22.0318 7.59998 22.0318 8.59998Z" fill="currentColor"></path>
-                            <path d="M4.23179 19.7C3.83179 19.3 3.83179 18.7 4.23179 18.3L9.73179 12.8C10.1318 12.4 10.7318 12.4 11.1318 12.8C11.5318 13.2 11.5318 13.8 11.1318 14.2L5.63179 19.7C5.23179 20.1 4.53179 20.1 4.23179 19.7Z" fill="currentColor"></path>
-                        </svg>
-                    </span>
-                    <!--end::Svg Icon-->
-                </div>
-                <!--end::Icon-->
-                <!--begin::Description-->
-                <div class="ms-6">
-                    <p class="list-unstyled text-gray-600 fw-semibold fs-6 p-0 m-0 mb-1">In this page you can update the status of transactions to "cancelled" or "accepted" by uploading the Excel file downloaded directly from the PayDrc.</p>
-                    <p class="list-unstyled text-gray-600 fw-semibold fs-6 p-0 m-0">Dans cette page vous pouvez mettre à jour le statut des transactions à « annulées » ou « acceptées » en téléversant le fichier Excel téléchargé directement à partir du PayDrc.</p>
-                </div>
-                <!--end::Description-->
-            </div>
         </div>
         <div class="card  myshadow2">
             <div class="card-body">
                 <h1 style="font-size: 18px" class="anchor fw-bold mb-5" id="queue-upload" data-kt-scroll-offset="50">
-                <a href="#queue-upload" style="font-size: 12px"></a>File from paydrc</h1>
+                <a href="#queue-upload" style="font-size: 12px"></a>Bulk Verify</h1>
                 <div class="py-2">
                     <p>{{session('status')}}</p>
                     <form class="form" action="#" method="post">
@@ -219,71 +157,28 @@
                     <!--begin::Toolbar-->
                     <div class="d-flex justify-content-end" data-kt-subscription-table-toolbar="base">
                         <!--begin::Filter-->
-                        <button type="button" class="btn btn-light-success me-3 btn-border btn-sm  success-all myshadow">Success All</button>
-                        <button type="button" class="btn btn-light-warning me-3 btn-border failed-all btn-sm myshadow" data-url="">Failed All</button>
-                        <button type="button" class="btn btn-light-danger me-3 btn-border delete-all btn-sm myshadow" data-url="">Delete All</button>
+                        {{-- <button type="button" class="btn btn-light-success me-3 btn-border btn-sm  success-all myshadow">Success All</button> --}}
+                        <button type="button" class="btn btn-light-primary me-3 btn-border verify-all btn-sm myshadow" data-url="">Verify All</button>
 
                     </div>
-                    <!--end::Toolbar-->
-                    <!--begin::Group actions-->
-                    <div class="d-flex justify-content-end align-items-center d-none" data-kt-subscription-table-toolbar="selected">
-                        <button type="button" class="btn btn-light-danger me-3 btn-border failed-all btn-sm myshadow" data-url="">Failed All</button>
-
-                    </div>
-                    <!--end::Group actions-->
-                </div>
-            </div>
-            {{-- <!--begin::Card header-->
-            <div class="card-header border-0 pt-6">
-                <!--begin::Card title-->
-                <div class="card-title">
-                    <!--begin::Search-->
-                    <div class="d-flex align-items-center position-relative my-1">
-                        <input type="text" data-kt-filter="search" class="form-control form-control-solid w-350px ps-14" placeholder="" />
-                        <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                        <span class="svg-icon svg-icon-1 position-absolute ms-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
-                                <path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="black" />
-                            </svg>
-                        </span>
-                        <!--end::Svg Icon-->
-                    </div>
-                    <!--end::Search-->
-                    <!--begin::Export buttons-->
-                    <div id="kt_datatable_example_1_export" class="d-none"></div>
-                    <!--end::Export buttons-->
                 </div>
             </div>
 
-            <div class="card-header border-0 pt-6 ">
-        
-                <div class="card-toolbar">
-                    
-                    <div class="d-flex justify-content-end align-items-center d-none">
-                        <button type="button" class="btn btn-light-success me-3 btn-border btn-sm  success-all myshadow">Success All</button>
-                        <button type="button" class="btn btn-light-danger me-3 btn-border failed-all btn-sm myshadow" data-url="">Failed All</button>
-                    </div>
-                </div>
-            </div> --}}
-            <!--end::Card header-->
-            <!--begin::Card body-->
             <div class="card-body py-4">
                 <!--begin::Table-->
-                <table class="table table-dark table-striped align-middlefs-6 gy-5" id="kt_datatable_example">
+                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_datatable_example">
                     <thead>
                         <tr class="fw-bolder text-muted fs-7 text-uppercase gs-0">
-                            <th class="w-10px" style="vertical-align:middle; text-align:center">
-                                <div class="form-check form-check-sm form-check-custom form-check-solid ">
+                            <th class="w-10px pe-2">
+                                <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
                                     <input class="form-check-input" type="checkbox" id="check_all">
                                 </div>
                             </th>
 							<th class="min-w-80px">Customer</th>
-                            <th class="min-w-80px">Amount</th>
-                            <th class="min-w-80px">Currency</th>
-                            <th class="min-w-80px">Référence</th>
-                            <th class="min-w-80px">Status File</th>
-                            <th class="min-w-80px text-center">Action</th>
+                            <th class="min-w-80px">Switch Référence</th>
+                            <th class="min-w-80px">Status</th>
+                            <th class="min-w-80px">Verify Status</th>
+                            {{-- <th class="min-w-80px text-center">Action</th> --}}
                         </tr>
                         <!--end::Table row-->
                     </thead>
@@ -293,16 +188,14 @@
                         <!--begin::Table row-->
                         @if($rows->count())
                         @foreach ($rows as $row)
-                        <tr id="tr_{{$row->paydrc_reference}}" class="text-start">
+                        <tr id="tr_{{$row->switch_reference}}" class="text-start">
                             <td>
                                 <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                    <input class="form-check-input checkbox" type="checkbox" data-id="{{$row->paydrc_reference}}">
+                                    <input class="form-check-input checkbox" type="checkbox" data-id="{{$row->switch_reference}}">
                                 </div>
                             </td>
-                            <td>{{$row['customer_details']}}</td>
-                            <td>{{$row['amount']}}</td>
-                            <td>{{$row['currency']}}</td>
-                            <td>{{$row['paydrc_reference']}}</td>
+                            <td>{{$row['customer_number']}}</td>
+                            <td>{{$row['switch_reference']}}</td>
                             @if($row['status'] == "Successful")
                             <td><div class="badge badge-light-success fw-bold">{{$row['status']}}</div></td>
                             @elseif($row['status'] == "Pending")
@@ -312,15 +205,24 @@
                             @elseif($row['status'] == "Submitted")
                                 <td><div class="badge badge-light-primary fw-bold">{{$row['status']}}</div></td>
                             @endif
-                            <td class="text-center">
-                                {!! Form::open(['method' => 'POST','route' => ['admin.success.single', $row->paydrc_reference],'style'=>'display:inline']) !!}
+                            @if($row['new_status'] == "Successful")
+                            <td><div class="badge badge-light-success fw-bold">{{$row['new_status']}}</div></td>
+                            @elseif($row['new_status'] == "Pending")
+                                <td><div class="badge badge-light-warning fw-bold">{{$row['new_status']}}</div></td>
+                            @elseif($row['new_status'] == "Failed")
+                                <td><div class="badge badge-light-danger fw-bold">{{$row['new_status']}}</div></td>
+                            @elseif($row['new_status'] == "Submitted")
+                                <td><div class="badge badge-light-primary fw-bold">{{$row['new_status']}}</div></td>
+                            @endif
+                            {{-- <td class="text-center">
+                                {!! Form::open(['method' => 'POST','route' => ['admin.success.single', Crypt::encrypt($row->switch_reference)],'style'=>'display:inline']) !!}
                                 {!! Form::submit('S', ['class' => 'btn btn-success btn-border btn-sm rounded-2','data-toggle'=>'confirmation','data-placement'=>'left']) !!}
                                 {!! Form::close() !!}
 
-                                {!! Form::open(['method' => 'POST','route' => ['admin.failed.single', $row->paydrc_reference],'style'=>'display:inline']) !!}
+                                {!! Form::open(['method' => 'POST','route' => ['admin.failed.single', Crypt::encrypt($row->switch_reference)],'style'=>'display:inline']) !!}
                                 {!! Form::submit('F', ['class' => 'btn btn-danger btn-border btn-sm','data-toggle'=>'confirmation','data-placement'=>'left']) !!}
                                 {!! Form::close() !!}
-                            </td>
+                            </td> --}}
                         </tr> 
                         @endforeach
                         @endif
@@ -342,19 +244,7 @@
 <script src="{{ asset('assets/js/scripts.bundle.js')}}"></script>
 <script src="{{ asset('assets/js/custom/widgets.js')}}"></script>
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js')}}"></script>
-<script type="text/javascript">
-  
-    $(document).ajaxStart(function() {
-        $('#loading').addClass('loading');
-        $('#loading-content').addClass('loading-content');
-    });
 
-    $(document).ajaxStop(function() {
-        $('#loading').removeClass('loading');
-        $('#loading-content').removeClass('loading-content');
-    });
-      
-</script>
 <script type="text/javascript">
 	$("#kt_daterangepicker_3").daterangepicker({
         singleDatePicker: true,
@@ -386,7 +276,7 @@
             }
         });
 
-        $('.failed-all').on('click', function(e) {
+        $('.verify-all').on('click', function(e) {
                 var idsArr = [];  
                 $(".checkbox:checked").each(function() {  
                     idsArr.push($(this).attr('data-id'));
@@ -399,63 +289,9 @@
                 else {  
 
                     var strIds = idsArr.join(","); 
-                    var redirect = "{{ url('admin/action-failed-all') }}";
+                    var redirect = "{{ url('manager/paydrc/transaction/verify') }}";
                     $.ajax({
-                        url: "{{ url('admin/action-failed-all') }}",
-                        type: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        data: 'ids='+strIds,
-                        processData: true,
-                        beforeSend: function(){
-                        $('.ajax-load').show();
-                        $(".table").hide();
-                        },
-                        success: function (data) {
-                            if (data['success']==true) {
-                                toastr.success(data['message'], 'Success Alert', {
-                                timeOut: 600
-                                });
-                                location.reload();
-                                $('.table').load(document.URL +  ' .table');
-                            }  
-                            else if (data['success']==false) {
-                                toastr.error(data['message'], 'Error Alert', {
-                                timeOut: 600
-                                });
-                                location.reload();
-                                $('.table').load(document.URL +  ' .table');
-                            }
-                        },
-                        error: function (data) {
-                            alert(data.responseText);
-                            location.reload();
-                            $('.table').load(document.URL +  ' .table');
-                        },
-                        complete:function(data){
-                            /* Hide image container */
-                            $(".ajax-load").hide();
-                        }
-                    });
-                } 
-                // End Multiple paiement 
-        });
-
-        $('.success-all').on('click', function(e) {
-                var idsArr = [];  
-                $(".checkbox:checked").each(function() {  
-                    idsArr.push($(this).attr('data-id'));
-                });  
-                if(idsArr.length <=0)  
-                {  
-                    alert("Please select atleast one transaction to success.");  
-                }  
-                // Start Multiple Paiement
-                else {  
-
-                    var strIds = idsArr.join(","); 
-                    var redirect = "{{ url('admin/action-successfull-all') }}";
-                    $.ajax({
-                        url: "{{ url('admin/action-successfull-all') }}",
+                        url: "{{ url('manager/verify-select-ids') }}",
                         type: 'POST',
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         data: 'ids='+strIds,
@@ -469,8 +305,15 @@
                                 toastr.success(data['message'], 'Success Alert', {
                                 timeOut: 600
                                 });
-                                location.reload();
-                                $('.table').load(document.URL +  ' .table');
+                                // location.reload();
+                                // $('.table').load(document.URL +  ' .table');
+                            }
+                            else if (data['status']== "verify") {
+                                toastr.success(data['message'], 'Success Alert', {
+                                timeOut: 600
+                                });
+                                // location.reload();
+                                // $('.table').load(document.URL +  ' .table');
                             }  
                             else {
                                 alert('Whoops Something went wrong!!');
@@ -488,10 +331,6 @@
                 // End Multiple paiement 
         });
 
-        
-
-        
-
         $('.delete-all').on('click', function(e) {
             var idsArr = [];  
             $(".checkbox:checked").each(function() {  
@@ -505,25 +344,17 @@
                 if(confirm("Are you sure, you want to delete the selected transactions?")){  
                     var strIds = idsArr.join(","); 
                     $.ajax({
-                        url: "{{ route('admin.transaction.delete.multiple') }}",
+                        url: "",
                         type: 'DELETE',
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         data: 'ids='+strIds,
-                        processData: true,
-                        beforeSend: function(){
-                        $('.ajax-load').show();
-                        $(".table").hide();
-                        },
                         success: function (data) {
                             if (data['status']==true) {
                                 $(".checkbox:checked").each(function() {  
                                     $(this).parents("tr").remove();
                                 });
-                                toastr.success(data['message'], 'Success Alert', {
-                                        timeOut: 600
-                                    });
-                                    location.reload();
-                                    $('.table').load(document.URL +  ' .table');
+                                alert(data['message']);
+                                location.reload();
                             } else {
                                 alert('Whoops Something went wrong!!');
                                 location.reload();
@@ -566,7 +397,7 @@ var previewTemplate = previewNode.parentNode.innerHTML;
 previewNode.parentNode.removeChild(previewNode);
 
 var myDropzone = new Dropzone(id, { // Make the whole body a dropzone
-    url: "import-file", // Set the url for your upload script location
+    url: "{{route('manager.transaction.verify.upload')}}", // Set the url for your upload script location
     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
     parallelUploads: 20,
     previewTemplate: previewTemplate,
@@ -640,22 +471,11 @@ myDropzone.on("queuecomplete", function (progress) {
     toastr.success('Your File Uploaded Successfully!!', 'Success Alert', {
               timeOut: 600
             });
-    location.reload();
+    // location.reload();
     
 });
 
-// myDropzone.on("success", function (response) {
-//     // response = JSON.parse(response);
-//     // console.log(response.xhr.response.success); 
-//     if(response.success == true) {
-//         $("#text-output-recharge").html("<div class='alert alert-success'>" + response.message + " </div>");
-//     }
-    
 
-//     // alert(response.success); 
-// });
-
-// On all files removed
 myDropzone.on("removedfile", function (file) {
     if (myDropzone.files.length < 1) {
         dropzone.querySelector('.dropzone-upload').style.display = "none";

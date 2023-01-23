@@ -54,22 +54,22 @@
                         <!--begin::Progress-->
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
-                                <span>{{$result_global_charge[0]["success"]}} Successful</span>
+                                <span>{{$debit_mpesa_success + $debit_airtel_success + $debit_orange_success}} Successful</span>
                                 {{-- <span>{{$percent_success}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_global_charge[0]["failed"]}} Failed</span>
+                                <span>{{$debit_mpesa_failed + $debit_airtel_failed + $debit_orange_failed}} Failed</span>
                                 {{-- <span>{{$percent_failed}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_global_charge[0]["pending"]}} Pending</span>
+                                <span>{{$debit_mpesa_pending + $debit_airtel_pending + $debit_orange_pending}} Pending</span>
                                 {{-- <span>{{$percent_pending}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_global_charge[0]["submitted"]}} Submitted</span>
+                                <span>{{$debit_mpesa_submitted + $debit_airtel_submitted + $debit_orange_submitted}} Submitted</span>
                                 {{-- <span>{{$percent_submitted}}%</span> --}}
                             </div>
                             
@@ -103,23 +103,23 @@
                         <!--begin::Progress-->
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
-                                <span>{{$result_global_payout[0]["success"]}} Successful</span>
-                                {{-- <span>{{$percent_success_payout}}%</span> --}}
+                                <span>{{$credit_mpesa_success + $credit_airtel_success + $credit_orange_success}} Successful</span>
+                                {{-- <span>{{$percent_success}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_global_payout[0]["failed"]}} Failed</span>
-                                {{-- <span>{{$percent_failed_payout}}%</span> --}}
+                                <span>{{$credit_mpesa_failed + $credit_airtel_failed + $credit_orange_failed}} Failed</span>
+                                {{-- <span>{{$percent_failed}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_global_payout[0]["pending"]}} Pending</span>
-                                {{-- <span>{{$percent_pending_payout}}%</span> --}}
+                                <span>{{$credit_mpesa_pending + $credit_airtel_pending + $credit_orange_pending}} Pending</span>
+                                {{-- <span>{{$percent_pending}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_global_payout[0]["submitted"]}} Submitted</span>
-                                {{-- <span>{{$percent_submitted_payout}}%</span> --}}
+                                <span>{{$credit_mpesa_submitted + $credit_airtel_submitted + $credit_orange_submitted}} Submitted</span>
+                                {{-- <span>{{$percent_submitted}}%</span> --}}
                             </div>
                             
                         </div>
@@ -153,22 +153,22 @@
                         <!--begin::Progress-->
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
-                                <span>{{$result_debit_airtel[0]["success"]}} Successful</span>
+                                <span>{{$debit_airtel_success}} Successful</span>
                                 {{-- <span>{{$p_adebit_success}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_debit_airtel[0]["failed"]}} Failed</span>
+                                <span>{{$debit_airtel_failed}} Failed</span>
                                 {{-- <span>{{$p_adebit_failed}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_debit_airtel[0]["pending"]}} Pending</span>
+                                <span>{{$debit_airtel_pending}} Pending</span>
                                 {{-- <span>{{$p_adebit_pending}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_debit_airtel[0]["submitted"]}} Submitted</span>
+                                <span>{{$debit_airtel_submitted}} Submitted</span>
                                 {{-- <span>{{$p_adebit_submitted}}%</span> --}}
                             </div>
                             
@@ -202,22 +202,22 @@
                         <!--begin::Progress-->
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
-                                <span>{{$result_credit_airtel[0]["success"]}} Successful</span>
+                                <span>{{$credit_airtel_success}} Successful</span>
                                 {{-- <span>{{$p_acredit_success}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_credit_airtel[0]["failed"]}} Failed</span>
+                                <span>{{$credit_airtel_failed}} Failed</span>
                                 {{-- <span>{{$p_acredit_failed}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_credit_airtel[0]["pending"]}} Pending</span>
+                                <span>{{$credit_airtel_pending}} Pending</span>
                                 {{-- <span>{{$p_acredit_pending}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_credit_airtel[0]["submitted"]}} Submitted</span>
+                                <span>{{$credit_airtel_submitted}} Submitted</span>
                                 {{-- <span>{{$p_acredit_submitted}}%</span> --}}
                             </div>
                             
@@ -251,22 +251,22 @@
                         <!--begin::Progress-->
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
-                                <span>{{$result_debit_mpesa[0]["success"]}} Successful</span>
+                                <span>{{$debit_mpesa_success}} Successful</span>
                                 {{-- <span>{{$p_vdebit_success}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_debit_mpesa[0]["failed"]}} Failed</span>
+                                <span>{{$debit_mpesa_failed}} Failed</span>
                                 {{-- <span>{{$p_vdebit_failed}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_debit_mpesa[0]["pending"]}} Pending</span>
+                                <span>{{$debit_mpesa_pending}} Pending</span>
                                 {{-- <span>{{$p_vdebit_pending}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_debit_mpesa[0]["submitted"]}} Submitted</span>
+                                <span>{{$debit_mpesa_submitted}} Submitted</span>
                                 {{-- <span>{{$p_vdebit_submitted}}%</span> --}}
                             </div>
                             
@@ -300,22 +300,22 @@
                         <!--begin::Progress-->
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
-                                <span>{{$result_credit_mpesa[0]["success"]}} Successful</span>
+                                <span>{{$credit_mpesa_success}} Successful</span>
                                 {{-- <span>{{$p_vcredit_success}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_credit_mpesa[0]["failed"]}} Failed</span>
+                                <span>{{$credit_mpesa_failed}} Failed</span>
                                 {{-- <span>{{$p_vcredit_failed}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_credit_mpesa[0]["pending"]}} Pending</span>
+                                <span>{{$credit_mpesa_pending}} Pending</span>
                                 {{-- <span>{{$p_vcredit_pending}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_credit_mpesa[0]["submitted"]}} Submitted</span>
+                                <span>{{$credit_mpesa_submitted}} Submitted</span>
                                 {{-- <span>{{$p_vcredit_submitted}}%</span> --}}
                             </div>
                             
@@ -348,22 +348,22 @@
                         <!--begin::Progress-->
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
-                                <span>{{$result_debit_orange[0]["success"]}} Successful</span>
+                                <span>{{$debit_orange_success}} Successful</span>
                                 {{-- <span>{{$p_odebit_success}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_debit_orange[0]["failed"]}} Failed</span>
+                                <span>{{$debit_orange_failed}} Failed</span>
                                 {{-- <span>{{$p_odebit_failed}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_debit_orange[0]["pending"]}} Pending</span>
+                                <span>{{$debit_orange_pending}} Pending</span>
                                 {{-- <span>{{$p_odebit_pending}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_debit_orange[0]["submitted"]}} Submitted</span>
+                                <span>{{$debit_orange_submitted}} Submitted</span>
                                 {{-- <span>{{$p_odebit_submitted}}%</span> --}}
                             </div>
                             
@@ -397,22 +397,22 @@
                         <!--begin::Progress-->
                         <div class="d-flex align-items-center flex-column mt-3 w-100">
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-auto mb-2">
-                                <span>{{$result_credit_orange[0]["success"]}} Successful</span>
+                                <span>{{$credit_orange_success}} Successful</span>
                                 {{-- <span>{{$p_ocredit_success}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_credit_orange[0]["failed"]}} Failed</span>
+                                <span>{{$credit_orange_failed}} Failed</span>
                                 {{-- <span>{{$p_ocredit_failed}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_credit_orange[0]["pending"]}} Pending</span>
+                                <span>{{$credit_orange_pending}} Pending</span>
                                 {{-- <span>{{$p_ocredit_pending}}%</span> --}}
                             </div>
                             
                             <div class="d-flex justify-content-between fw-bold fs-6 text-white opacity-75 w-100 mt-2 mb-2">
-                                <span>{{$result_credit_orange[0]["submitted"]}} Submitted</span>
+                                <span>{{$credit_orange_submitted}} Submitted</span>
                                 {{-- <span>{{$p_ocredit_submitted}}%</span> --}}
                             </div>
                             

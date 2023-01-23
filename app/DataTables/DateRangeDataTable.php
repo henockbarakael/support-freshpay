@@ -4,26 +4,27 @@ namespace App\DataTables;
 
 use App\Models\DrcSendMoneyTransac;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
-use Yajra\DataTables\EloquentDataTable;
-use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class DrcSendMoneyTransacDataTable extends DataTable
+class DateRangeDataTable extends DataTable
 {
     /**
      * Build DataTable class.
      *
-     * @param QueryBuilder $query Results from query() method.
-     * @return \Yajra\DataTables\EloquentDataTable
+     * @param mixed $query Results from query() method.
+     * @return \Yajra\DataTables\DataTableAbstract
      */
-    public function dataTable(QueryBuilder $query): EloquentDataTable
+    public function dataTable($query)
     {
-        return (new EloquentDataTable($query));
+        return datatables()
+            ->eloquent($query);
+            // ->addColumn('action', 'daterangedatatable.action');
+
+        // return (new EloquentDataTable($query));
     }
 
     /**
@@ -32,9 +33,22 @@ class DrcSendMoneyTransacDataTable extends DataTable
      * @param \App\Models\DrcSendMoneyTransac $model
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function query(DrcSendMoneyTransac $model): QueryBuilder
+    public function query(DrcSendMoneyTransac $model)
     {
-        return $model->whereBetween('created_at', [Carbon::now()->subWeek()->startOfWeek(), Carbon::now()->subWeek()->endOfWeek()])->where(['action' => "debit"])->orderBy('created_at','desc')->newQuery();
+        $start_date = $this->request()->get(key:'start_date');
+        $end_date = $this->request()->get(key:'end_date');
+
+        // dd($start_date,$end_date);
+        $query = $model->newQuery();
+
+        if (!empty($start_date) && !empty($end_date)) {
+            $start_date = Carbon::parse($start_date);
+            $end_date = Carbon::parse($end_date);
+
+            $query = $query->whereBetween('created_at', [$start_date, $end_date]);
+        }
+
+        return $query;
     }
 
     /**
@@ -42,10 +56,10 @@ class DrcSendMoneyTransacDataTable extends DataTable
      *
      * @return \Yajra\DataTables\Html\Builder
      */
-    public function html(): HtmlBuilder
+    public function html()
     {
         return $this->builder()
-                    ->setTableId('drcsendmoneytransac-table')
+                    ->setTableId('baraka')
                     ->columns($this->getColumns())
                     ->minifiedAjax()
                     ->stateSave(true)
@@ -62,17 +76,17 @@ class DrcSendMoneyTransacDataTable extends DataTable
     }
 
     /**
-     * Get the dataTable columns definition.
+     * Get columns.
      *
      * @return array
      */
-    public function getColumns(): array
+    protected function getColumns()
     {
         return [
             Column::make('id'),
             Column::make('merchant_code'),
             Column::make('customer_details'),
-            Column::make( 'amount'),
+            Column::make('amount'),
             Column::make('currency'),
             Column::make('method'),
             Column::make('status'),

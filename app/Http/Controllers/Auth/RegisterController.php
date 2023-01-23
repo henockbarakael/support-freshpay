@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
@@ -47,13 +48,19 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+    // protected function validator(array $data)
+    // {
+    //     return Validator::make($data, [
+    //         'firstname' => ['required', 'string', 'max:255'],
+    //         'lastname' => ['required', 'string', 'max:255'],
+    //         'role_name' => ['required', 'string', 'max:255'],
+    //         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+    //         'password' => ['required', 'string', 'min:8', 'confirmed'],
+    //     ]);
+    // }
+
+    public function registration(){
+        return view('auth.register');
     }
 
     /**
@@ -62,12 +69,28 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(array $data)
+    public function create(Request $request)
     {
+        $this->validate($request, [
+            'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+            'role_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        if ($request['role_name'] == "Admin") {
+            $is_user = 1;
+        }
+        elseif ($request['role_name'] == "Manager") {
+            $is_user = 0;
+        }
         return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'firstname' => $request['firstname'],
+            'lastname' => $request['lastname'],
+            'email' => $request['email'],
+            'is_user' => $is_user,
+            'password' => Hash::make($request['password']),
         ]);
     }
 }

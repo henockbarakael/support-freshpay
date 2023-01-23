@@ -98,18 +98,20 @@
                                     <div class="col-sm-4">
                                         <label class="fs-6 form-label fw-bold text-dark">Option value</label>
                                         <!--begin::Select-->
-                                        <input type="text" class="form-control form-control form-control-solid" name="option_value" value="">
+                                        <input type="text" autocomplete="off" class="form-control form-control form-control-solid" name="option_value" >
                                         <!--end::Select-->
                                     </div>
-                                    {{-- <div class="col-lg-3">
-                                        <label class="fs-6 form-label fw-bold text-dark">Datetime</label>
+                                    <div class="col-lg-4">
+                                        <label class="fs-6 form-label fw-bold text-dark">Date</label>
                                         <!--begin::Select-->
-                                        <input class="form-control form-control-solid" name="datetime" placeholder="Pick date rage" id="kt_daterangepicker_3"/>
+                                        <input class="form-control form-control-solid" value="" name="date" type="date"/>
+                                        {{-- <input class="form-control form-control-solid" value="" onfocus="(this.type='date')" onblur="if(!this.value) this.type='text'" name="date"  type="text"/> --}}
+
                                         <!--end::Select-->
-                                    </div> --}}
-                                    <div class="col-sm-4">
+                                    </div>
+                                    <div class="col-sm-12">
                                         <!--begin::Radio group-->
-                                        <div class="nav-group nav-group-fluid mt-7">
+                                        <div class="nav-group nav-group-fluid mt-1">
                                             <!--begin::Option-->
                                             <label>
                                                 <button type="submit" class="btn btn-primary me-5">Search Transaction</button>
@@ -163,11 +165,11 @@
                         <!--begin::Table container-->
                         <div class="table-responsive">
                             <!--begin::Table-->
-                            <table class="table align-middle gs-0 gy-4" id="kt_datatable_example_1">
+                            <table class="table table-dark table-striped align-middle gs-0 gy-4" id="kt_datatable_example_1">
                                 <!--begin::Table head-->
                                 <thead>
                                     <tr class="fw-bold text-muted bg-light">
-                                        <th class="ps-4 min-w-40px rounded-start">#</th>
+                                        <th class="ps-4 min-w-40px">#</th>
                                         <th class="min-w-40px">Merchant</th>
                                         <th class="min-w-40px">Customer</th>
                                         <th class="min-w-40px">Amount</th>
@@ -180,64 +182,61 @@
                                         <th class="min-w-150px">Switch Ref.</th>
                                         <th class="min-w-150px">Telco Ref.</th>
                                         <th class="min-w-150px">Created_at</th>
-                                        <th class="min-w-150px rounded-end">Updated_at</th>
-                                        <th class="min-w-100px rounded-end text-center">Action</th>
+                                        <th class="min-w-150px">Updated_at</th>
+                                        <th class="min-w-100px text-center">Action</th>
                                     </tr>
                                 </thead>
 
                                 @if ($result == null)
                                 <tbody>
-                                    <tr>
-                                        <td></td>
-                                    </tr>
                                 </tbody>
                                 @else
                                 <tbody>
                                     {{-- @foreach ($result as $key => $value) --}}
                                     <tr>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->id}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["transaction_id"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->merchant_code}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["merchant_code"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->customer_details}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["customer_details"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->amount}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["amount"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->currency}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["currency"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->action}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["action"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->method}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["method"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->status}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["status"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->thirdparty_reference}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["thirdparty_reference"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->paydrc_reference}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["paydrc_reference"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->switch_reference}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["switch_reference"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->telco_reference}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["telco_reference"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->created_at}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["created_at"]}}</span>
                                         </td>
                                         <td>
-                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result->updated_at}}</span>
+                                            <span class="text-dark fw-semibold text-muted d-block fs-7">{{$result["updated_at"]}}</span>
                                         </td>
-                                        @if($result->status == "Failed" || $result->status == "Successful")
+                                        @if($result["status"] == "Failed" || $result["status"] == "Successful")
                                         
                                         <td class="text-center"><span class="text-success fw-semibold  d-block fs-7">Up to date</span></td>
                                         @else
@@ -246,8 +245,8 @@
                                                     @csrf
                                                     <input name="id" type="hidden" value="{{$result->id}}"> --}}
                                                     <div class="d-flex justify-content-end" data-kt-subscription-table-toolbar="base">
-                                                    <button type="submit" onclick="successConfirmation({{$result->id}})" class="btn btn-sm btn-success  me-3 btn-flat show_success" data-toggle="tooltip" title='Success'>Success</button>
-                                                    <button type="submit" onclick="failedConfirmation({{$result->id}})" class="btn btn-sm btn-danger  me-3 btn-flat show_failed" data-toggle="tooltip" title='Failed'>Failed</button>
+                                                    <button type="submit" onclick="successConfirmation({{$result["transaction_id"]}})" class="btn btn-sm btn-success  me-3 btn-flat show_success" data-toggle="tooltip" title='Success'>Success</button>
+                                                    <button type="submit" onclick="failedConfirmation({{$result["transaction_id"]}})" class="btn btn-sm btn-danger  me-3 btn-flat show_failed" data-toggle="tooltip" title='Failed'>Failed</button>
                                                     </div>
                                                 {{-- </form> --}}
 

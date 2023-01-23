@@ -10,6 +10,9 @@ var __webpack_exports__ = {};
 var KTFormsFlatpickrDemos = function() {
     // Private functions
     var example1 = function(element) {
+        $("#start_date").flatpickr();
+        $("#end_date").flatpickr();
+
         $("#kt_datepicker_1").flatpickr();
 
         $("#kt_datepicker_2").flatpickr();

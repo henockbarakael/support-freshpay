@@ -48,8 +48,8 @@
                         </span>
                         <span class="menu-title">Home Page</span>
                     </a>
-                    @elseif(Auth::user()->is_user == 2)
-                    <a class="menu-link {{ (request()->routeIs('admin.dashboard')) ? 'active' : '' }}" href="{{route('admin.dashboard')}}">
+                    @elseif(Auth::user()->is_user == 0)
+                    <a class="menu-link {{ (request()->routeIs('manager.dashboard')) ? 'active' : '' }}" href="{{route('manager.dashboard')}}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
                             <span class="svg-icon svg-icon-2">
@@ -116,6 +116,27 @@
                 </div>
 
                 <div class="menu-item">
+
+                    @if(Auth::user()->is_user == 0)
+                    <a class="menu-link {{ (request()->routeIs('manager.statistiques')) ? 'active' : '' }}" href="{{route('manager.statistiques')}}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/general/gen025.svg-->
+                            <span class="svg-icon svg-icon-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <rect x="2" y="2" width="9" height="9" rx="2" fill="black" />
+                                    <rect opacity="0.3" x="13" y="2" width="9" height="9" rx="2" fill="black" />
+                                    <rect opacity="0.3" x="13" y="13" width="9" height="9" rx="2" fill="black" />
+                                    <rect opacity="0.3" x="2" y="13" width="9" height="9" rx="2" fill="black" />
+                                </svg>
+                            </span>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title">Merchant Balance</span>
+                    </a>
+                    @endif
+                </div>
+
+                <div class="menu-item">
                     <div class="menu-content pt-8 pb-2">
                         <span class="menu-section text-muted text-uppercase fs-8 ls-1">FreshPay API</span>
                     </div>
@@ -123,6 +144,52 @@
 
                 <div class="menu-item">
                     @if(Auth::user()->is_user == 1)
+                    <a class="menu-link {{ (request()->routeIs('merchant.statistiques')) ? 'active' : '' }}" href="{{route('merchant.statistiques')}}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
+                            <span class="svg-icon svg-icon-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                                    <path opacity="0.3" d="M8.9 21L7.19999 22.6999C6.79999 23.0999 6.2 23.0999 5.8 22.6999L4.1 21H8.9ZM4 16.0999L2.3 17.8C1.9 18.2 1.9 18.7999 2.3 19.1999L4 20.9V16.0999ZM19.3 9.1999L15.8 5.6999C15.4 5.2999 14.8 5.2999 14.4 5.6999L9 11.0999V21L19.3 10.6999C19.7 10.2999 19.7 9.5999 19.3 9.1999Z" fill="black" />
+                                    <path d="M21 15V20C21 20.6 20.6 21 20 21H11.8L18.8 14H20C20.6 14 21 14.4 21 15ZM10 21V4C10 3.4 9.6 3 9 3H4C3.4 3 3 3.4 3 4V21C3 21.6 3.4 22 4 22H9C9.6 22 10 21.6 10 21ZM7.5 18.5C7.5 19.1 7.1 19.5 6.5 19.5C5.9 19.5 5.5 19.1 5.5 18.5C5.5 17.9 5.9 17.5 6.5 17.5C7.1 17.5 7.5 17.9 7.5 18.5Z" fill="black" />
+                                </svg>
+                            </span>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title">Statistiques</span>
+                    </a>
+                    @elseif(Auth::user()->is_user == 0)
+                    <a class="menu-link {{ (request()->routeIs('manager.statistiques')) ? 'active' : '' }}" href="{{route('manager.statistiques')}}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
+                            <span class="svg-icon svg-icon-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                                    <path opacity="0.3" d="M8.9 21L7.19999 22.6999C6.79999 23.0999 6.2 23.0999 5.8 22.6999L4.1 21H8.9ZM4 16.0999L2.3 17.8C1.9 18.2 1.9 18.7999 2.3 19.1999L4 20.9V16.0999ZM19.3 9.1999L15.8 5.6999C15.4 5.2999 14.8 5.2999 14.4 5.6999L9 11.0999V21L19.3 10.6999C19.7 10.2999 19.7 9.5999 19.3 9.1999Z" fill="black" />
+                                    <path d="M21 15V20C21 20.6 20.6 21 20 21H11.8L18.8 14H20C20.6 14 21 14.4 21 15ZM10 21V4C10 3.4 9.6 3 9 3H4C3.4 3 3 3.4 3 4V21C3 21.6 3.4 22 4 22H9C9.6 22 10 21.6 10 21ZM7.5 18.5C7.5 19.1 7.1 19.5 6.5 19.5C5.9 19.5 5.5 19.1 5.5 18.5C5.5 17.9 5.9 17.5 6.5 17.5C7.1 17.5 7.5 17.9 7.5 18.5Z" fill="black" />
+                                </svg>
+                            </span>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title">Statistiques</span>
+                    </a>
+                    @endif
+                </div>
+
+                <div class="menu-item">
+                    @if(Auth::user()->is_user == 1)
+                    <a class="menu-link {{ (request()->routeIs('admin.api.test')) ? 'active' : '' }}" href="{{route('admin.api.test')}}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
+                            <span class="svg-icon svg-icon-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                                    <path opacity="0.3" d="M8.9 21L7.19999 22.6999C6.79999 23.0999 6.2 23.0999 5.8 22.6999L4.1 21H8.9ZM4 16.0999L2.3 17.8C1.9 18.2 1.9 18.7999 2.3 19.1999L4 20.9V16.0999ZM19.3 9.1999L15.8 5.6999C15.4 5.2999 14.8 5.2999 14.4 5.6999L9 11.0999V21L19.3 10.6999C19.7 10.2999 19.7 9.5999 19.3 9.1999Z" fill="black" />
+                                    <path d="M21 15V20C21 20.6 20.6 21 20 21H11.8L18.8 14H20C20.6 14 21 14.4 21 15ZM10 21V4C10 3.4 9.6 3 9 3H4C3.4 3 3 3.4 3 4V21C3 21.6 3.4 22 4 22H9C9.6 22 10 21.6 10 21ZM7.5 18.5C7.5 19.1 7.1 19.5 6.5 19.5C5.9 19.5 5.5 19.1 5.5 18.5C5.5 17.9 5.9 17.5 6.5 17.5C7.1 17.5 7.5 17.9 7.5 18.5Z" fill="black" />
+                                </svg>
+                            </span>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title">Test Transaction</span>
+                    </a>
+                    @elseif(Auth::user()->is_user == 0)
                     <a class="menu-link {{ (request()->routeIs('admin.api.test')) ? 'active' : '' }}" href="{{route('admin.api.test')}}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
@@ -153,6 +220,20 @@
                         </span>
                         <span class="menu-title">Send Callback</span>
                     </a>
+                    @elseif(Auth::user()->is_user == 0)
+                    <a class="menu-link {{ (request()->routeIs('admin.callbackrequest')) ? 'active' : '' }}" href="{{route('admin.callbackrequest')}}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
+                            <span class="svg-icon svg-icon-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                                    <path opacity="0.3" d="M8.9 21L7.19999 22.6999C6.79999 23.0999 6.2 23.0999 5.8 22.6999L4.1 21H8.9ZM4 16.0999L2.3 17.8C1.9 18.2 1.9 18.7999 2.3 19.1999L4 20.9V16.0999ZM19.3 9.1999L15.8 5.6999C15.4 5.2999 14.8 5.2999 14.4 5.6999L9 11.0999V21L19.3 10.6999C19.7 10.2999 19.7 9.5999 19.3 9.1999Z" fill="black" />
+                                    <path d="M21 15V20C21 20.6 20.6 21 20 21H11.8L18.8 14H20C20.6 14 21 14.4 21 15ZM10 21V4C10 3.4 9.6 3 9 3H4C3.4 3 3 3.4 3 4V21C3 21.6 3.4 22 4 22H9C9.6 22 10 21.6 10 21ZM7.5 18.5C7.5 19.1 7.1 19.5 6.5 19.5C5.9 19.5 5.5 19.1 5.5 18.5C5.5 17.9 5.9 17.5 6.5 17.5C7.1 17.5 7.5 17.9 7.5 18.5Z" fill="black" />
+                                </svg>
+                            </span>
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title">Send Callback</span>
+                    </a>
                     @endif
                 </div>
                 <div class="menu-item">
@@ -170,12 +251,8 @@
                         </span>
                         <span class="menu-title">Verify Transaction</span>
                     </a>
-                    @endif
-                </div>
-
-                <div class="menu-item">
-                    @if(Auth::user()->is_user == 1)
-                    <a class="menu-link {{ (request()->routeIs('admin.transaction.verify')) ? 'active' : '' }}" href="{{route('admin.transaction.verify')}}">
+                    @elseif(Auth::user()->is_user == 0)
+                    <a class="menu-link {{ (request()->routeIs('verify_transaction.index')) ? 'active' : '' }}" href="{{route('verify_transaction.index')}}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
                             <span class="svg-icon svg-icon-2">
@@ -186,10 +263,26 @@
                             </span>
                             <!--end::Svg Icon-->
                         </span>
-                        <span class="menu-title">Bulk Verify</span>
+                        <span class="menu-title">Verify Transaction</span>
                     </a>
                     @endif
                 </div>
+
+                {{-- <div class="menu-item">
+                    @if(Auth::user()->is_user == 1)
+                    <a class="menu-link {{ (request()->routeIs('admin.transaction.verify')) ? 'active' : '' }}" href="{{route('admin.transaction.verify')}}">
+                        <span class="menu-icon">
+                            <span class="svg-icon svg-icon-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                                    <path opacity="0.3" d="M8.9 21L7.19999 22.6999C6.79999 23.0999 6.2 23.0999 5.8 22.6999L4.1 21H8.9ZM4 16.0999L2.3 17.8C1.9 18.2 1.9 18.7999 2.3 19.1999L4 20.9V16.0999ZM19.3 9.1999L15.8 5.6999C15.4 5.2999 14.8 5.2999 14.4 5.6999L9 11.0999V21L19.3 10.6999C19.7 10.2999 19.7 9.5999 19.3 9.1999Z" fill="black" />
+                                    <path d="M21 15V20C21 20.6 20.6 21 20 21H11.8L18.8 14H20C20.6 14 21 14.4 21 15ZM10 21V4C10 3.4 9.6 3 9 3H4C3.4 3 3 3.4 3 4V21C3 21.6 3.4 22 4 22H9C9.6 22 10 21.6 10 21ZM7.5 18.5C7.5 19.1 7.1 19.5 6.5 19.5C5.9 19.5 5.5 19.1 5.5 18.5C5.5 17.9 5.9 17.5 6.5 17.5C7.1 17.5 7.5 17.9 7.5 18.5Z" fill="black" />
+                                </svg>
+                            </span>
+                        </span>
+                        <span class="menu-title">Bulk Verify</span>
+                    </a>
+                    @endif
+                </div> --}}
 
                 <div class="menu-item">
                     <div class="menu-content pt-8 pb-2">
@@ -228,21 +321,19 @@
                     </a>
                 </div>
 
-                <div class="menu-item">
+                {{-- <div class="menu-item">
                     <a class="menu-link {{ (request()->routeIs('admin.merchant.import')) ? 'active' : '' }}" href="{{route('admin.merchant.import')}}">
                         <span class="menu-icon">
-                            <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
                             <span class="svg-icon svg-icon-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
                                     <path opacity="0.3" d="M8.9 21L7.19999 22.6999C6.79999 23.0999 6.2 23.0999 5.8 22.6999L4.1 21H8.9ZM4 16.0999L2.3 17.8C1.9 18.2 1.9 18.7999 2.3 19.1999L4 20.9V16.0999ZM19.3 9.1999L15.8 5.6999C15.4 5.2999 14.8 5.2999 14.4 5.6999L9 11.0999V21L19.3 10.6999C19.7 10.2999 19.7 9.5999 19.3 9.1999Z" fill="black" />
                                     <path d="M21 15V20C21 20.6 20.6 21 20 21H11.8L18.8 14H20C20.6 14 21 14.4 21 15ZM10 21V4C10 3.4 9.6 3 9 3H4C3.4 3 3 3.4 3 4V21C3 21.6 3.4 22 4 22H9C9.6 22 10 21.6 10 21ZM7.5 18.5C7.5 19.1 7.1 19.5 6.5 19.5C5.9 19.5 5.5 19.1 5.5 18.5C5.5 17.9 5.9 17.5 6.5 17.5C7.1 17.5 7.5 17.9 7.5 18.5Z" fill="black" />
                                 </svg>
                             </span>
-                            <!--end::Svg Icon-->
                         </span>
                         <span class="menu-title">Bulk update merchant file</span>
                     </a>
-                </div>
+                </div> --}}
 
                 <div class="menu-item">
                     <div class="menu-content pt-8 pb-2">
@@ -268,6 +359,13 @@
                         <div class="menu-item">
                             @if(Auth::user()->is_user == 1)
                             <a class="menu-link {{ (request()->routeIs('admin.paydrc.charge')) ? 'active' : '' }}" href="{{route('admin.paydrc.charge')}}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Charge Transaction</span>
+                            </a>
+                            @elseif(Auth::user()->is_user == 0)
+                            <a class="menu-link {{ (request()->routeIs('manager.paydrc.charge')) ? 'active' : '' }}" href="{{route('manager.paydrc.charge')}}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
@@ -308,6 +406,13 @@
                         <div class="menu-item">
                             @if(Auth::user()->is_user == 1)
                             <a class="menu-link {{ (request()->routeIs('admin.paydrc.payout')) ? 'active' : '' }}" href="{{route('admin.paydrc.payout')}}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Payout Transaction</span>
+                            </a>
+                            @elseif(Auth::user()->is_user == 0)
+                            <a class="menu-link {{ (request()->routeIs('manager.paydrc.payout')) ? 'active' : '' }}" href="{{route('manager.paydrc.payout')}}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
@@ -364,32 +469,59 @@
                     </span>
                     <div class="menu-sub menu-sub-accordion menu-active-bg" kt-hidden-height="273" style="">
                         <div class="menu-item">
+                            @if(Auth::user()->is_user == 1)
                             <a class="menu-link {{ (request()->routeIs('admin.report.week')) ? 'active' : '' }}" href="{{route('admin.report.week')}}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">Last Week</span>
                             </a>
+                            @elseif(Auth::user()->is_user == 0)
+                            <a class="menu-link {{ (request()->routeIs('manager.report.week')) ? 'active' : '' }}" href="{{route('manager.report.week')}}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Last Week</span>
+                            </a>
+                            @endif
                         </div>
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg" kt-hidden-height="273" style="">
                         <div class="menu-item">
+                            @if(Auth::user()->is_user == 1)
                             <a class="menu-link {{ (request()->routeIs('admin.report.month')) ? 'active' : '' }}" href="{{route('admin.report.month')}}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">Last Month</span>
                             </a>
+                            @elseif(Auth::user()->is_user == 0)
+                            <a class="menu-link {{ (request()->routeIs('manager.report.month')) ? 'active' : '' }}" href="{{route('manager.report.month')}}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Last Month</span>
+                            </a>
+                            @endif
                         </div>
                     </div>
                     <div class="menu-sub menu-sub-accordion menu-active-bg" kt-hidden-height="273" style="">
                         <div class="menu-item">
+                            @if(Auth::user()->is_user == 1)
                             <a class="menu-link {{ (request()->routeIs('admin.report.daterange')) ? 'active' : '' }}" href="{{route('admin.report.daterange')}}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title">Date Range Picker</span>
                             </a>
+                            @elseif(Auth::user()->is_user == 0)
+                            <a class="menu-link {{ (request()->routeIs('manager.report.daterange')) ? 'active' : '' }}" href="{{route('manager.report.daterange')}}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Date Range Picker</span>
+                            </a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -419,6 +551,13 @@
                         <div class="menu-item">
                             @if(Auth::user()->is_user == 1)
                             <a class="menu-link {{ (request()->routeIs('admin.switch.charge')) ? 'active' : '' }}" href="{{route('admin.switch.charge')}}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Charge Transaction</span>
+                            </a>
+                            @elseif(Auth::user()->is_user == 0)
+                            <a class="menu-link {{ (request()->routeIs('manager.switch.charge')) ? 'active' : '' }}" href="{{route('manager.switch.charge')}}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
@@ -459,6 +598,13 @@
                         <div class="menu-item">
                             @if(Auth::user()->is_user == 1)
                             <a class="menu-link {{ (request()->routeIs('admin.switch.payout')) ? 'active' : '' }}" href="{{route('admin.switch.payout')}}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Payout Transaction</span>
+                            </a>
+                            @elseif(Auth::user()->is_user == 0)
+                            <a class="menu-link {{ (request()->routeIs('manager.switch.payout')) ? 'active' : '' }}" href="{{route('manager.switch.payout')}}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>

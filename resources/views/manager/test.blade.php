@@ -93,7 +93,7 @@ License: For each use you must have a valid license purchased only from above li
 														</div>
 														<div class="col-md-6 mb-5 fv-row">
 															<label class="fs-5 fw-bold mb-2">Customer number</label>
-															<input type="text" autocomplete="off" class="form-control form-control-solid" placeholder="Insert a customer number" name="customer_number" />
+															<input type="text" class="form-control form-control-solid" placeholder="Insert a customer number" name="customer_number" />
 														</div>
                                                         <div class="col-md-6 mb-5 fv-row">
                                                             <label class="fs-5 fw-bold mb-2">Action</label>
@@ -106,7 +106,7 @@ License: For each use you must have a valid license purchased only from above li
 
                                                         <div class="col-md-6 mb-5 fv-row">
 															<label class="fs-5 fw-bold mb-2">Amount</label>
-															<input type="text" autocomplete="off" class="form-control form-control-solid" placeholder="Insert transaction amount" name="amount" />
+															<input type="text" class="form-control form-control-solid" placeholder="Insert transaction amount" name="amount" />
 														</div>
                                                         <div class="col-md-6 mb-5 fv-row">   
                                                             <label class="fs-5 fw-bold mb-2">Currency</label>

@@ -81,11 +81,11 @@
                             <!--begin::Table container-->
                             <div class="table-responsive">
                                 <!--begin::Table-->
-                                <table class="table align-middle gs-0 gy-4" id="kt_datatable_example_1">
+                                <table class="table table-dark table-striped align-middle gs-0 gy-4" id="kt_datatable_example_1">
                                     <!--begin::Table head-->
                                     <thead>
                                         <tr class="fw-bold text-muted bg-light">
-                                            <th class="ps-4 min-w-40px rounded-start">#</th>
+                                            <th class="ps-4 min-w-40px">#</th>
                                             <th class="min-w-40px">Customer</th>
                                             <th class="min-w-40px">Amount</th>
                                             <th class="min-w-40px">Currency</th>
@@ -96,14 +96,14 @@
                                             <th class="min-w-150px">Switch Ref.</th>
                                             <th class="min-w-150px">Telco Ref.</th>
                                             <th class="min-w-150px">Created_at</th>
-                                            <th class="min-w-150px rounded-end">Updated_at</th>
+                                            <th class="min-w-150px">Updated_at</th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
                                         @foreach ($transactions as $key => $value)
                                         <tr>
-                                            <td>
+                                            <td class="text-center">
                                                 <span class="text-dark fw-semibold text-muted d-block fs-7">{{$value["id"]}}</span>
                                             </td>
                                             <td>

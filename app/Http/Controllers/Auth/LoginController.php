@@ -38,7 +38,12 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        $this->middleware('guest')->except([
+            'logout',
+            'locked',
+            'unlock'
+        ]);
+        
     }
 
     public function index(){
@@ -75,6 +80,10 @@ class LoginController extends Controller
             elseif (Auth::user()->is_user == 5) {
                 Toastr::success('Login successfuly','Success');
                 return redirect()->route('support_3.dashboard');
+            }
+            elseif (Auth::user()->is_user == 0) {
+                Toastr::success('Login successfuly','Success');
+                return redirect()->route('manager.dashboard');
             }
             else{
                 Toastr::error('Something Wrong','Error');

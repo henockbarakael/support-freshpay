@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \JulioMotol\AuthTimeout\Middleware\AuthTimeoutMiddleware::class,
     ];
 
     /**
@@ -68,6 +69,7 @@ class Kernel extends HttpKernel
         'is_supportone' => \App\Http\Middleware\IsSupportOne::class,
         'is_supporttwo' => \App\Http\Middleware\IsSupportTwo::class,
         'is_supportthree' => \App\Http\Middleware\IsSupportThree::class,
+        'is_manager' => \App\Http\Middleware\IsManager::class,
         'prevent-back-history' => \App\Http\Middleware\PreventBackHistory::class,
     ];
 }

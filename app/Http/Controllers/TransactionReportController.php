@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\DateRangeDataTable;
 use App\DataTables\DrcSendMoneyTransacDataTable;
 use App\DataTables\LastMonthDataTable;
 use App\Models\DrcSendMoneyTransac;
@@ -17,8 +18,8 @@ class TransactionReportController extends Controller
     public function LastMonth(LastMonthDataTable $dataTable){
         return $dataTable->render('transaction.report.month');
     }
-    public function DateRangePicker(){
-        
+    public function DateRangePicker(DateRangeDataTable $dataTable, Request $request){
+        return $request->isMethod(method:'post') ? $this->create($request) : $dataTable->render(view :'transaction.report.daterange');
     }
     public function todayDate(){
         Carbon::setLocale('fr');

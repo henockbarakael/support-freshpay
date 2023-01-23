@@ -64,6 +64,11 @@
                         <input type="text" placeholder="Lastname" id="lastname" name="lastname" autocomplete="off" class="form-control bg-transparent myshadow">
                         <!--end::Lastname-->
                     </div>
+                    <div class="fv-row mb-8">
+                        <!--begin::Lastname-->
+                        <input type="email" placeholder="E-mail" id="email" name="email" autocomplete="off" class="form-control bg-transparent myshadow">
+                        <!--end::Lastname-->
+                    </div>
                     <!--begin::Input group-->
                     <div class="fv-row mb-8" data-kt-password-meter="true">
                         <!--begin::Wrapper-->
@@ -95,7 +100,7 @@
                     <!--end::Input group=-->
                     <div class="fv-row mb-8">
                         <!--begin::Repeat Password-->
-                        <input placeholder="Repeat Password" name="confirm-password" type="password" autocomplete="off" class="form-control bg-transparent myshadow">
+                        <input placeholder="Repeat Password" name="password_confirmation" type="password" autocomplete="off" class="form-control bg-transparent myshadow">
                         <!--end::Repeat Password-->
                     </div>
                     <!--end::Input group=-->
@@ -105,6 +110,7 @@
                             <option selected disabled>Assigner un rôle</option>
                             <option value="SuperAdmin">SuperAdmin</option>
                             <option value="Admin">Admin</option>
+                            <option value="Manager">Manager</option>
                             <option value="Finance">Finance</option>
                             <option value="Support_1">Support_1</option>
                             <option value="Support_2">Support_2</option>
@@ -180,17 +186,17 @@ var KTSignupGeneral = function() {
 							}
 						}
 					},
-					// 'email': {
-                    //     validators: {
-                    //         regexp: {
-                    //             regexp: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    //             message: 'The value is not a valid email address',
-                    //         },
-					// 		notEmpty: {
-					// 			message: 'Email address is required'
-					// 		}
-					// 	}
-					// },
+					'email': {
+                        validators: {
+                            regexp: {
+                                regexp: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: 'The value is not a valid email address',
+                            },
+							notEmpty: {
+								message: 'Email address is required'
+							}
+						}
+					},
                     'password': {
                         validators: {
                             notEmpty: {
@@ -263,10 +269,12 @@ var KTSignupGeneral = function() {
 
                         // Enable button
                         submitButton.disabled = false;
-                        var url = "signup";
+                        var url = "registration";
                         var password = $("input[name=password]").val();
+                        var password_confirmation = $("input[name=password_confirmation]").val();
                         var firstname = $("input[name=firstname]").val();
                         var lastname = $("input[name=lastname]").val();
+                        var email = $("input[name=email]").val();
                         var selector = document.getElementById('role_name');
                         var role_name = selector[selector.selectedIndex].value;
                             $.ajaxSetup({
@@ -282,6 +290,8 @@ var KTSignupGeneral = function() {
                                 lastname:lastname,
                                 role_name:role_name,
                                 password:password,
+                                email:email,
+                                password_confirmation:password_confirmation,
                                 },
                                 success:function(response){
                                     if(response.status == false) {

@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\DataTables\datatables;
 use App\Http\Controllers\API\FreshPayAPIController;
+use App\Http\Controllers\API\ManagerAPIController;
 use App\Http\Controllers\API\SendCallBackToMerchant;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DateRangeController;
 use App\Http\Controllers\ProfilController;
 
 /*
@@ -31,14 +34,15 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('login', [LoginController::class, 'index'])->name('login');
-Route::post('post-login', [LoginController::class, 'login'])->name('login.post'); 
-Route::get('registration', [LoginController::class, 'registration'])->name('register');
-Route::post('post-registration', [LoginController::class, 'postRegistration'])->name('register.post');
+Route::post('login', [LoginController::class, 'login'])->name('login.post'); 
+Route::get('registration', [RegisterController::class, 'registration'])->name('register');
+Route::post('registration', [RegisterController::class, 'create'])->name('register.post');
 Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::group(['prefix'=>'admin','middleware' => ['auth','is_admin','prevent-back-history']], function () {
     # Dashboard Overview
     Route::get('dashboard', [HomeController::class, 'admin'])->name('admin.dashboard');
+    Route::get('merchants/statistiques', [HomeController::class, 'merchantStatistiques'])->name('merchant.statistiques');
     # Callback
     Route::get('callback_url', [SendCallBackToMerchant::class, 'merchant_callback_url'])->name('admin.merchant_callback_url');
     Route::get('send-callback', [TransactionController::class, 'callbackRequest'])->name('admin.callbackrequest');
@@ -94,6 +98,66 @@ Route::group(['prefix'=>'admin','middleware' => ['auth','is_admin','prevent-back
     // Route::post('paydrc/transaction/verify', [FreshPayAPIController::class, 'verifyTransaction'])->name('admin.transaction.verify.request');
 
 });
+
+Route::group(['prefix'=>'manager','middleware' => ['auth','is_manager','prevent-back-history']], function () {
+    Route::get('dashboard', [HomeController::class, 'manager'])->name('manager.dashboard');
+    Route::get('statistiques', [HomeController::class, 'merchantStatistiques'])->name('manager.statistiques');
+    # PayDrc Transaction
+    Route::get('paydrc/charge/overview', [PayDrcTransactionController::class, 'charge'])->name('manager.paydrc.charge');
+    Route::get('paydrc/payout/overview', [PayDrcTransactionController::class, 'payout'])->name('manager.paydrc.payout');
+    # Switch Transaction
+    Route::get('switch/charge/overview', [SwitchTransactionController::class, 'charge'])->name('manager.switch.charge');
+    Route::get('switch/payout/overview', [SwitchTransactionController::class, 'payout'])->name('manager.switch.payout');
+    # Transaction Report
+    Route::get('transaction/report/last-week', [TransactionReportController::class, 'LastWeek'])->name('manager.report.week');
+    Route::get('transaction/report/last-week', [TransactionReportController::class, 'LastWeek'])->name('manager.report.week');
+    Route::get('transaction/report/last-month', [TransactionReportController::class, 'LastMonth'])->name('manager.report.month');
+    Route::get('transaction/report/daterangepicker', [TransactionReportController::class, 'DateRangePicker'])->name('manager.report.daterange');
+    # Callback
+    Route::get('callback_url', [SendCallBackToMerchant::class, 'merchant_callback_url'])->name('manager.merchant_callback_url');
+    Route::get('send-callback', [TransactionController::class, 'callbackRequest'])->name('manager.callbackrequest');
+    Route::post('send-callback', [TransactionController::class, 'sendCallback'])->name('manager.sendcallback');
+    # API
+    Route::get('paydrc/test/payment-request', [FreshPayAPIController::class, 'PaymentRequest'])->name('manager.api.test');
+    Route::post('paydrc/test/payment-request', [FreshPayAPIController::class, 'PostRequest'])->name('manager.api.post.request');
+    Route::get('paydrc/transaction/verify', [ManagerAPIController::class, 'verify'])->name('manager.transaction.verify');
+    Route::resource('/paydrc/transaction/verify-transaction', ManagerAPIController::class);
+    Route::post('/paydrc/transaction/verify/search/process', [ManagerAPIController::class,'verifySearch'])->name('manager.verify.search');
+    Route::post('paydrc/transaction/verify/upload', [ManagerAPIController::class, 'uploadVerify'])->name('manager.transaction.verify.upload');
+
+    # Import
+    Route::get('import-file', [TransactionController::class, 'import'])->name('manager.import');
+    Route::get('import-merchant-file', [TransactionController::class, 'merchantFile'])->name('manager.merchant.import');
+    Route::post('import-merchant-file', [TransactionController::class, 'uploadMerchantFile'])->name('manager.upload.merchant.file');
+    Route::post('import-file', [TransactionController::class, 'upload'])->name('manager.upload');
+    # 
+    Route::post('update-all', [TransactionController::class, 'updateAll'])->name('manager.updateAll');
+    Route::get('update-selected', [TransactionController::class, 'updateSelected'])->name('manager.updateSelected');
+    #
+    Route::get('profil', [ProfilController::class, 'index'])->name('manager.profil');
+    Route::get('edit-profil', [ProfilController::class, 'edit'])->name('manager.profil.edit');
+    Route::put('edit-profil', [ProfilController::class, 'update'])->name('manager.profil.update');
+    
+    #
+    // Route::get('import-file-verify', [FreshPayAPIController::class, 'verify'])->name('manager.import.verify');
+    Route::post('verify-select-ids', [FreshPayAPIController::class, 'VerifyIds'])->name('manager.verifyids');
+    Route::post('action-failed-all', [TransactionController::class, 'FailedIds'])->name('manager.failedids');
+    Route::post('action-successfull-all', [TransactionController::class, 'SuccessfulIds'])->name('manager.successids');
+    
+    Route::delete('delete-multiple', [TransactionController::class, 'deleteMultiple'])->name('manager.transaction.delete.multiple');
+    #
+    Route::post('success-single/{id}', [TransactionController::class, 'SuccessSingle'])->name('manager.success.single');
+    Route::post('failed-single/{id}', [TransactionController::class, 'FailedSingle'])->name('manager.failed.single');
+    Route::get('update-result', [TransactionController::class, 'updateResult'])->name('manager.updateResult');
+
+    # Update Transaction
+    Route::get('transaction/update-single', [UpdateTransactionController::class, 'update'])->name('manager.update');
+    Route::post('transaction/update-single', [UpdateTransactionController::class, 'updateSearch'])->name('manager.update.search');
+    // Route::post('transaction/update-single', [UpdateTransactionController::class, 'updatePost'])->name('manager.update.post');
+    Route::get('transaction/bulkupdate', [UpdateTransactionController::class, 'bulkupdate'])->name('manager.bulkupdate');
+    Route::post('transaction/bulkupdate', [UpdateTransactionController::class, 'bulkupdatePost'])->name('manager.bulkupdate.post');
+});
+
 Route::group(['middleware' => ['auth','is_finance','prevent-back-history']], function () {
     Route::get('finance/dashboard', [HomeController::class, 'finance'])->name('finance.dashboard');
 });

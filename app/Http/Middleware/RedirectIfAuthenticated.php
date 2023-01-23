@@ -36,6 +36,9 @@ class RedirectIfAuthenticated
             elseif( Auth::guard($guard)->check() && Auth::user()->is_user == 5){
                 return redirect()->route('support_3.dashboard');
             }
+            elseif( Auth::guard($guard)->check() && Auth::user()->is_user == 0){
+                return redirect()->route('manager.dashboard');
+            }
         }
 
         return $next($request);

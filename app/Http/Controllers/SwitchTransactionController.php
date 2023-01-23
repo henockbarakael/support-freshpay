@@ -5,19 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class SwitchTransactionController extends Controller
 {
     public function charge(){
-        $transactions = Transaction::whereDate('created_at', Carbon::today()->toDateString())->where(['trans_type' => "charge"])->orderBy('created_at','desc')->get();
-        $count = Transaction::whereDate('created_at', Carbon::today()->toDateString())->where(['trans_type' => "charge"])->count();
+        $total = Http::get('http://127.0.0.1:8086/services/switch/count-all-debit/transactions');
+        $result = $total->json();
+        $count = $result[0]["total"];
         $todayDate = $this->todayDate();
+        $charge = Http::get('http://143.198.138.97/services/switch/charge/daily_transactions');
+        $transactions = $charge->json();
         return view('transaction.switch.charge',compact('transactions','count','todayDate'));
     }
     public function payout(){
-        $transactions = Transaction::whereDate('created_at', Carbon::today()->toDateString())->where(['trans_type' => "payout"])->get();
-        $count = Transaction::whereDate('created_at', Carbon::today()->toDateString())->where(['trans_type' => "payout"])->count();
+        $total = Http::get('http://127.0.0.1:8086/services/switch/count-all-credit/transactions');
+        $result = $total->json();
+        $count = $result[0]["total"];
         $todayDate = $this->todayDate();
+        $charge = Http::get('http://143.198.138.97/services/switch/payout/daily_transactions');
+        $transactions = $charge->json();
         return view('transaction.switch.payout',compact('transactions','count','todayDate'));
     }
     public function todayDate(){

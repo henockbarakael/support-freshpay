@@ -85,19 +85,19 @@ License: For each use you must have a valid license purchased only from above li
 
 														<div class="col-md-6 mb-5 fv-row">
 															<label class="fs-5 fw-bold mb-2">Paydrc Reference</label>
-															<input type="text" class="form-control form-control-solid" placeholder="" name="paydrc_reference" />
+															<input type="text" autocomplete="off" class="form-control form-control-solid" placeholder="" name="paydrc_reference" />
 														</div>
                                                         <div class="col-md-6 mb-5 fv-row">
 															<label class="fs-5 fw-bold mb-2">Switch Reference</label>
-															<input type="text" class="form-control form-control-solid" placeholder="" name="switch_reference" />
+															<input type="text" autocomplete="off" class="form-control form-control-solid" placeholder="" name="switch_reference" />
 														</div>
                                                         <div class="col-md-6 mb-5 fv-row">
 															<label class="fs-5 fw-bold mb-2">Telco Reference</label>
-															<input type="text" class="form-control form-control-solid" placeholder="" name="telco_reference" />
+															<input type="text" autocomplete="off" class="form-control form-control-solid" placeholder="" name="telco_reference" />
 														</div>
                                                         <div class="col-md-6 mb-5 fv-row">
 															<label class="fs-5 fw-bold mb-2">Telco Status Description</label>
-															<input type="text" class="form-control form-control-solid" placeholder="" name="telco_status_description" />
+															<input type="text" autocomplete="off" class="form-control form-control-solid" placeholder="" name="telco_status_description" />
 														</div>
                                                         <div class="col-md-6 mb-5 fv-row">
                                                             <label class="fs-5 fw-bold mb-2">Action</label>

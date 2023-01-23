@@ -167,7 +167,7 @@ $("#kt_datatable_zero_configuration").DataTable();
         e.preventDefault();
   
         $.ajax({
-            url: "{{url('admin/paydrc/transaction/verify/search')}}",
+            url: "{{url('manager/paydrc/transaction/verify-transaction')}}",
             type: "POST",
             cache: false,
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -195,7 +195,7 @@ $("#kt_datatable_zero_configuration").DataTable();
                     $('#table_content').html(bodyData);
                     $("#postForm")[0].reset();
                 }
-                else if(responseOutput['success']==false){
+                else{
                     alert("Transaction not found. Please verify the reference!"); 
                     var responseInfo = responseOutput.data;
                     var bodyData = '';

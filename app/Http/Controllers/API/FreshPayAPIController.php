@@ -150,85 +150,96 @@ class FreshPayAPIController extends Controller
                 }
             })->orderBy('id','desc')->get();
 
-            return response()->json(['data'=>$data]);
+            return response()->json(['data'=>$data, 'success'=>true]);
         }
         else {
             $rows = null;
-            Toastr::error($response["message"],'Error');
-            return view('api.transaction_verified',compact('rows'));
+            return response()->json(['data'=>$rows, 'success'=>false]);
         }
 
     }
 
     public function VerifySwitchReference($reference){
         
-        $row = Transaction::where('trans_ref_no',$reference)->first();
-        $phone = new VerifyNumberController;
-        $customer_number = $phone->verify_number($row['source_account_number']);
-        $operator = $phone->operator($customer_number);
-
-        if ($operator == "orange") {
-            $data = [
-                "PartnId"=> $row['partID'],
-                "mermsisdn"=> $row['source_account_number'],
-                "transid"=>$row['trans_ref_no']
-            ];
-            $url = "http://35.233.0.76:2801/api/v1/verify";
-        }
-        elseif ($operator == "airtel") {
-            $data = [
-                "transid"=>$row['trans_ref_no']
-            ];
-            $url = "http://35.205.213.194:2801/api/v1/verify";
-        }
-        else {
+        $ref_search = Http::post('http://127.0.0.1:8086/services/swicth/search/switch_reference', ['reference' =>$reference]);
+        $row = json_decode($ref_search->getBody(), true);
+    
+        if ($row == null) {
             $response = [
                 'success' => false,
-                'message' =>"Can't verify mpesa transaction",
+                'reference' => "Not found",
+                'message'=> "Transation not found!"
             ];
             return $response;
-        }
-
-        $response = Http::post($url, $data);
-        $result = json_decode($response->getBody(), true);
-
-        if ($result["financial_institution_id"] == "null") {
-            $response = [
-                'success' => false,
-                'reference' => $row["trans_ref_no"],
-                'message'=>$result["financial_status_description"]
-            ];
-            return $response;
-          
         }
         else {
-            $paydrc = DrcSendMoneyTransac::where('switch_reference', $reference)->first();
-            $status = $paydrc->status;
-            $telco_reference = $paydrc->telco_reference;
-            $paydrc_reference = $paydrc->paydrc_reference;
-            $description = $paydrc->status_description;
-            TransactionVerify::updateOrCreate([
-                "financial_institution_id"=>$telco_reference,
-                "financial_status_description"=>$description,
-                "resultCode"=>$result["resultCode"],
-                "status"=>$status,
-                "new_status"=>$result["status"],
-                "customer_number"=>$row["source_account_number"],
-                "switch_reference"=>$row["trans_ref_no"],
-                "paydrc_reference"=>$paydrc_reference,
-                "trans_partid"=>$row["partID"],
-                "user_id"=>Auth::user()->id
-            ]);
+            $phone = new VerifyNumberController;
+            $customer_number = $phone->verify_number($row['source_account_number']);
+            $operator = $phone->operator($customer_number);
 
+            if ($operator == "orange") {
+                $data = [
+                    "PartnId"=> $row['partID'],
+                    "mermsisdn"=> $row['source_account_number'],
+                    "transid"=>$row['trans_ref_no']
+                ];
+                $url = "http://35.233.0.76:2801/api/v1/verify";
+            }
+            elseif ($operator == "airtel") {
+                $data = [
+                    "transid"=>$row['trans_ref_no']
+                ];
+                $url = "http://35.205.213.194:2801/api/v1/verify";
+            }
+            else {
+                $response = [
+                    'success' => false,
+                    'message' =>"Can't verify mpesa transaction",
+                ];
+                return $response;
+            }
 
-            $response = [
-                'success' => true,
-                'reference' => $row["trans_ref_no"],
-            ];
-            return $response;
+            $response = Http::post('http://127.0.0.1:8086/services/verify', ['operator' =>$operator,'url' =>$url,'data' =>$data]);
+            $result = json_decode($response->getBody(), true);
+
+            if ($result["financial_institution_id"] == "null") {
+                $response = [
+                    'success' => false,
+                    'reference' => $row["trans_ref_no"],
+                    'message'=>$result["financial_status_description"]
+                ];
+                return $response;
+            
+            }
+            else {
+                $ref_search_2 = Http::post('http://127.0.0.1:8086/services/paydrc/search/switch_reference', ['reference' =>$reference]);
+                $paydrc = json_decode($ref_search_2->getBody(), true);
+                $status = $paydrc["status"];
+                $telco_reference = $paydrc["telco_reference"];
+                $paydrc_reference = $paydrc["paydrc_reference"];
+                $description = $paydrc["status_description"];
+                TransactionVerify::updateOrCreate([
+                    "financial_institution_id"=>$telco_reference,
+                    "financial_status_description"=>$description,
+                    "resultCode"=>$result["resultCode"],
+                    "status"=>$status,
+                    "new_status"=>$result["status"],
+                    "customer_number"=>$row["source_account_number"],
+                    "switch_reference"=>$row["trans_ref_no"],
+                    "paydrc_reference"=>$paydrc_reference,
+                    "trans_partid"=>$row["partID"],
+                    "user_id"=>Auth::user()->id
+                ]);
+
+                $response = [
+                    'success' => true,
+                    'reference' => $row["trans_ref_no"],
+                ];
+                return $response;
+            }
         }
         
-
+        
     }
 
     public function index(){

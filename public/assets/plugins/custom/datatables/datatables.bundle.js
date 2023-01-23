@@ -11797,7 +11797,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sProcessing": "Processing...",
+			"sProcessing": "Processing data...",
 	
 	
 			/**

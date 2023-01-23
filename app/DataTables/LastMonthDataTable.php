@@ -53,12 +53,13 @@ class LastMonthDataTable extends DataTable
                     // ->responsive()
                     ->stateSave(true)
                     ->parameters(['scrollX' => true])
-                    ->addTableClass('align-middle table-row-dashed fs-6 gy-5')
+                    ->addTableClass('align-middle table-striped fs-6 gy-5')
                     ->orderBy(0)
                     ->selectStyleSingle()
                     ->buttons(
                         Button::make('csv'),
-                        Button::make('excel')
+                        Button::make('excel'),
+                        Button::make('pdf')
                     );
     }
 

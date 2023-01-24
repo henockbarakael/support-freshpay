@@ -212,8 +212,9 @@ class FreshPayAPIController extends Controller
             
             }
             else {
-                $ref_search_2 = Http::post('http://143.198.138.97/services/paydrc/search/switch_reference', ['reference' =>$reference]);
+                $ref_search_2 = Http::post('http://127.0.0.1:8086/services/paydrc/search/switch_reference', ['reference' =>$reference]);
                 $paydrc = json_decode($ref_search_2->getBody(), true);
+            
                 $status = $paydrc["status"];
                 $telco_reference = $paydrc["telco_reference"];
                 $paydrc_reference = $paydrc["paydrc_reference"];
@@ -221,7 +222,7 @@ class FreshPayAPIController extends Controller
                 TransactionVerify::updateOrCreate([
                     "financial_institution_id"=>$telco_reference,
                     "financial_status_description"=>$description,
-                    "resultCode"=>$result["resultCode"],
+                    "resultCode"=>"",
                     "status"=>$status,
                     "new_status"=>$result["status"],
                     "customer_number"=>$row["source_account_number"],

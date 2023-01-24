@@ -3,8 +3,8 @@
 <html lang="en">
 	<!--begin::Head-->
 	<head>
-		<title>FreshPay Bakery - Connexion</title>
-        <meta name="description" content="FreshPay Support Dashboard" />
+		<title>Welcome | Support FreshPay</title>
+		<meta name="description" content="FreshPay Support Dashboard" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta charset="utf-8" />
 		<meta property="og:locale" content="en_US">
@@ -15,9 +15,10 @@
 		<link rel="canonical" href="https://gofreshpay.com/">
 		<link rel="shortcut icon" href="{{ asset('assets/media/logos/favicon.png')}}">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+		<link href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css')}}" rel="stylesheet" type="text/css" />
 		<link href="{{ asset('assets/plugins/global/plugins.bundle.css')}}" rel="stylesheet" type="text/css" />
 		<link href="{{ asset('assets/css/style.bundle.css')}}" rel="stylesheet" type="text/css" />
-        <link rel=”stylesheet” href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">
+		<link rel=”stylesheet” href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.css">
 		<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 		<link rel="stylesheet" href="https://cdn.bootcss.com/toastr.js/latest/css/toastr.min.css">
 		<script src="https://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
@@ -43,8 +44,9 @@
 		<!--End::Google Tag Manager (noscript) -->
 		<!--begin::Main-->
 		<!--begin::Root-->
-        {!! Toastr::message() !!}
+        
 		<div class="d-flex flex-column flex-root">
+			{!! Toastr::message() !!}
 			<!--begin::Page bg image-->
 			<style>
                 body { background-image: url('assets/media/auth/bg6.jpg'); } [data-theme="dark"] body { background-image: url('assets/media/auth/bg6-dark.jpg'); }</style>

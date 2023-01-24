@@ -212,7 +212,7 @@ class FreshPayAPIController extends Controller
             
             }
             else {
-                $ref_search_2 = Http::post('http://127.0.0.1:8086/services/paydrc/search/switch_reference', ['reference' =>$reference]);
+                $ref_search_2 = Http::post('http://143.198.138.97/services/paydrc/search/switch_reference', ['reference' =>$reference]);
                 $paydrc = json_decode($ref_search_2->getBody(), true);
             
                 $status = $paydrc["status"];

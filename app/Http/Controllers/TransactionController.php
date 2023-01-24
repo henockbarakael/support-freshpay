@@ -258,7 +258,7 @@ class TransactionController extends Controller
             "type" => "paydrc_reference",
         ];
         
-        $url ="http://127.0.0.1:8086/services/paydrc/transaction/update";
+        $url ="http://143.198.138.97/services/paydrc/transaction/update";
         $data = json_encode($curl_post_data);
         $ch=curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);

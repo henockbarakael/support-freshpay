@@ -282,7 +282,7 @@ class TransactionController extends Controller
             if ($result["success"] == true) {
                 // Alert::success('Great!', $result["message"]);
                 return response()->json(['success'=>true,'message'=>$result["message"]]);
-                return redirect()->route('admin.updateResult');
+                // return redirect()->route('admin.updateResult');
             }
             else {
                 Alert::error('Nothing to do!', $result["message"]);

@@ -251,13 +251,14 @@ class TransactionController extends Controller
 
     public function FailedSingle($id){
 
+        // dd($id);
         $curl_post_data = [
             "value" => $id,
             "status" => "Failed",
             "type" => "paydrc_reference",
         ];
         
-        $url ="http://143.198.138.97/services/paydrc/transaction/update";
+        $url ="http://127.0.0.1:8086/services/paydrc/transaction/update";
         $data = json_encode($curl_post_data);
         $ch=curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -271,6 +272,7 @@ class TransactionController extends Controller
         Session::put('ref',$id);
 
         $curl_response = curl_exec($ch);
+        // dd($curl_response);
         if ($curl_response == false) {
             $message = "Erreur de connexion! Vérifiez votre connexion internet";
             return response()->json(['success'=>false,'message'=>$message]);
@@ -278,7 +280,8 @@ class TransactionController extends Controller
         else {
             $result = json_decode($curl_response,true);
             if ($result["success"] == true) {
-                Alert::success('Great!', $result["message"]);
+                // Alert::success('Great!', $result["message"]);
+                return response()->json(['success'=>true,'message'=>$result["message"]]);
                 return redirect()->route('admin.updateResult');
             }
             else {

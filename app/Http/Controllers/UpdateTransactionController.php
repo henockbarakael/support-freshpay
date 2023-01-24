@@ -33,8 +33,8 @@ class UpdateTransactionController extends Controller
             "type"=>$reference,
             "date"=>$madate
         ];
-        $url = "http://143.198.138.97/services/paydrc/transaction/search";
-        $response = Http::post('http://143.198.138.97/services/paydrc/transaction/search', $data);
+        $url = "http://127.0.0.1:8086/services/paydrc/transaction/search";
+        $response = Http::post('http://127.0.0.1:8086/services/paydrc/transaction/search', $data);
         $smt = json_decode($response->getBody(), true);
         $todayDate = $this->todayDate();
         if ($smt == null) {

@@ -245,8 +245,8 @@
                                                     @csrf
                                                     <input name="id" type="hidden" value="{{$result->id}}"> --}}
                                                     <div class="d-flex justify-content-end" data-kt-subscription-table-toolbar="base">
-                                                    <button type="submit" onclick="successConfirmation({{$result["transaction_id"]}})" class="btn btn-sm btn-success  me-3 btn-flat show_success" data-toggle="tooltip" title='Success'>Success</button>
-                                                    <button type="submit" onclick="failedConfirmation({{$result["transaction_id"]}})" class="btn btn-sm btn-danger  me-3 btn-flat show_failed" data-toggle="tooltip" title='Failed'>Failed</button>
+                                                    <button type="submit" onclick='successConfirmation({{$result["transaction_id"]}})' class="btn btn-sm btn-success  me-3 btn-flat show_success" data-toggle="tooltip" title='Success'>Success</button>
+                                                    <button type="submit" onclick='failedConfirmation({{$result["transaction_id"]}})' class="btn btn-sm btn-danger  me-3 btn-flat show_failed" data-toggle="tooltip" title='Failed'>Failed</button>
                                                     </div>
                                                 {{-- </form> --}}
 

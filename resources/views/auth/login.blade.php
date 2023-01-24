@@ -73,7 +73,7 @@
                                     </div>
                                 <div class="fv-row mb-8">
                                     <!--begin::Email-->
-                                    <input  type="email" placeholder="email@domain.com" id="email" name="email" autocomplete="off" class="form-control bg-transparent myshadow @error('email') is-invalid @enderror" required>
+                                    <input  type="email" placeholder="Email address" id="email" name="email" autocomplete="off" class="form-control bg-transparent myshadow @error('email') is-invalid @enderror" required>
                                     @error('email')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>

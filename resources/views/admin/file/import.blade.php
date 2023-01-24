@@ -270,7 +270,7 @@
             <!--begin::Card body-->
             <div class="card-body py-4">
                 <!--begin::Table-->
-                <table class="table table-dark table-striped align-middlefs-6 gy-5" id="kt_datatable_example">
+                <table class="table table-striped align-middlefs-6 gy-5" id="kt_datatable_example">
                     <thead>
                         <tr class="fw-bolder text-muted fs-7 text-uppercase gs-0">
                             <th class="w-10px" style="vertical-align:middle; text-align:center">
@@ -313,11 +313,11 @@
                                 <td><div class="badge badge-light-primary fw-bold">{{$row['status']}}</div></td>
                             @endif
                             <td class="text-center">
-                                {!! Form::open(['method' => 'POST','route' => ['admin.success.single', $row->paydrc_reference],'style'=>'display:inline']) !!}
+                                {!! Form::open(['method' => 'POST','route' => ['admin.success.single', $row->id],'style'=>'display:inline']) !!}
                                 {!! Form::submit('S', ['class' => 'btn btn-success btn-border btn-sm rounded-2','data-toggle'=>'confirmation','data-placement'=>'left']) !!}
                                 {!! Form::close() !!}
 
-                                {!! Form::open(['method' => 'POST','route' => ['admin.failed.single', $row->paydrc_reference],'style'=>'display:inline']) !!}
+                                {!! Form::open(['method' => 'POST','route' => ['admin.failed.single', $row->id],'style'=>'display:inline']) !!}
                                 {!! Form::submit('F', ['class' => 'btn btn-danger btn-border btn-sm','data-toggle'=>'confirmation','data-placement'=>'left']) !!}
                                 {!! Form::close() !!}
                             </td>

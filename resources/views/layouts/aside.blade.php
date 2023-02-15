@@ -1041,7 +1041,7 @@
                         <span class="menu-title">Bulk update paydrc file</span>
                     </a>
                     @elseif(Auth::user()->is_user == 3)
-                    <a class="menu-link {{ (request()->routeIs('suppinf.bulkupdate.create')) ? 'active' : '' }}" href="{{route('suppinf.bulkupdate.create')}}">
+                    <a class="menu-link {{ (request()->routeIs('suppfin.bulkupdate.create')) ? 'active' : '' }}" href="{{route('suppfin.bulkupdate.create')}}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
                             <span class="svg-icon svg-icon-2">

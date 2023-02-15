@@ -1,5 +1,5 @@
 @extends('layouts.auth')
-@section('title', 'FreshPay Bakery - Connexion')
+@section('title', 'FreshPay Congo - Connexion')
 @section('content')
 {!! Toastr::message() !!}
 <!--begin::Page bg image-->

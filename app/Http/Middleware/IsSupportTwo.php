@@ -17,7 +17,7 @@ class IsSupportTwo
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::user()->is_user == 5){
+        if(Auth::user()->is_user == 4){
             return $next($request);
         }
    

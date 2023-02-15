@@ -7,76 +7,82 @@ use App\Models\Callback;
 use App\Models\DrcSendMoneyMerchant;
 use App\Models\DrcSendMoneyTransac;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class SendCallBackToMerchant extends Controller
 {
-    public function callback($action,$switch_reference,$telco_reference,$status,$paydrc_reference,$telco_status_description){
+    public function __construct()
+    {
+        ini_set('max_execution_time', 1200);
+    }
 
-        // $params = [
-        //     "action"=> $action,
-        //     "switch_reference" =>$switch_reference,
-        //     "telco_reference" => $telco_reference,
-        //     "status" => $status,
-        //     "paydrc_reference" => $paydrc_reference,
-        //     "telco_status_description" => $telco_status_description
-        // ];
-        // $data = json_encode($params);
-  
-        // $response = Http::post('http://161.35.78.118:2808/api/v5/callback', $data
-        // );
+    public function index(){
+        if (Auth::user()->is_user == 0) {
+            return view('_admin.callback.index');
+        }
+        elseif (Auth::user()->is_user == 1) {
+            return view('_manager.callback.index');
+        }
+        elseif (Auth::user()->is_user == 2) {
+            return view('_finance.callback.index');
+        }
+        elseif (Auth::user()->is_user == 3) {
+            return view('_suppfin.callback.index');
+        }
+        elseif (Auth::user()->is_user == 4) {
+            return view('_support.callback.index');
+        }
+    }
 
-        // $result = json_decode($response->getBody(), true);
-        // dd($result);
-
-        $url = "http://161.35.78.118:2808/api/v5/callback";
+    public function process(Request $request){
+        $request->validate([
+            "action"=> 'required',
+            "switch_reference" =>'required',
+            "telco_reference" => 'required',
+            "status" => 'required',
+            "paydrc_reference" => 'required',
+            "telco_status_description" => 'required'
+        ]);
 
         $curl_post_data = [
-            "action"=> $action,
-            "switch_reference" =>$switch_reference,
-            "telco_reference" => $telco_reference,
-            "status" => $status,
-            "paydrc_reference" => $paydrc_reference,
-            "telco_status_description" => $telco_status_description
+            "status" => $request->status,
+            "action" => $request->action,
+            "switch_reference" => $request->switch_reference,
+            "telco_reference" => $request->telco_reference,
+            "paydrc_reference" => $request->paydrc_reference,
+            "telco_status_description" => $request->telco_status_description
         ];
 
+        $url ="http://143.198.138.97/services/callback";
+        
         $data = json_encode($curl_post_data);
-    
         $ch=curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-        curl_exec($ch);
-        // $curl_response = curl_exec($ch);
-
-        // $curl_decoded = json_decode($curl_response,true);
-
-        // dd($curl_decoded);
-        
-
-    }
-
-    public function merchant_callback_url(){
-        $result = DrcSendMoneyTransac::select('merchant_code','callback_url','action')->distinct()->get();
-        foreach ($result as $key => $value) {
-            $merchant_code = $value["merchant_code"];
-            $callback_url = $value["callback_url"];
-            Callback::updateOrCreate(['merchant_code' => $merchant_code],
-            ['callback_url' => $callback_url]);
+        $curl_response = curl_exec($ch);
+        if ($curl_response == false) {
+            $message = "Erreur de connexion! Vérifiez votre connexion internet";
+            return response()->json(['success'=>false,'message'=>$message]);
         }
-        return 'done!';
-       
+        else {
+            $result = json_decode($curl_response,true);
+          
+            if ($result["status"] == 200) {
+                Alert::success('Done!', 'Callback successfully sent');
+                return redirect()->back();
+            }
+            else {
+                Alert::success('Failed!', 'Callback not sent to merchant!');
+                return redirect()->back();
+            }
+        }
+        
     }
-
-
-    public function merchant_code(){
-        $result = DrcSendMoneyMerchant::select('merchant_code')->get();
-        return $result;
-    }
-
-
 }

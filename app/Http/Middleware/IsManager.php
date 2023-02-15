@@ -17,7 +17,7 @@ class IsManager
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::user()->is_user == 0){
+        if(Auth::user()->is_user == 2){
             return $next($request);
         }
    

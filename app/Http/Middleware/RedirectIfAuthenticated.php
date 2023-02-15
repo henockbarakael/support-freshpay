@@ -21,23 +21,20 @@ class RedirectIfAuthenticated
     {
         foreach ($guards as $guard) {
 
-            if( Auth::guard($guard)->check() && Auth::user()->is_user == 1){
+            if( Auth::guard($guard)->check() && Auth::user()->is_user == 0){
                 return redirect()->route('admin.dashboard');
+            }
+            elseif( Auth::guard($guard)->check() && Auth::user()->is_user == 1){
+                return redirect()->route('manager.dashboard');
             }
             elseif( Auth::guard($guard)->check() && Auth::user()->is_user == 2){
                 return redirect()->route('finance.dashboard');
             }
             elseif( Auth::guard($guard)->check() && Auth::user()->is_user == 3){
-                return redirect()->route('support_1.dashboard');
+                return redirect()->route('suppfin.dashboard');
             }
             elseif( Auth::guard($guard)->check() && Auth::user()->is_user == 4){
-                return redirect()->route('support_2.dashboard');
-            }
-            elseif( Auth::guard($guard)->check() && Auth::user()->is_user == 5){
-                return redirect()->route('support_3.dashboard');
-            }
-            elseif( Auth::guard($guard)->check() && Auth::user()->is_user == 0){
-                return redirect()->route('manager.dashboard');
+                return redirect()->route('support.dashboard');
             }
         }
 

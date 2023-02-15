@@ -39,48 +39,6 @@ class HomeController extends Controller
         return $todayDate;
     }
 
-    public function index(){
-        $contacts = Contact::all();
-        return view("index", compact('contacts'));
-    }
-
-    public function merchantStatistiques(){
-        $statistique = Http::get('http://143.198.138.97/services/paydrc/merchant_stat');
-        $result = $statistique->json();
-        $todayDate = $this->todayDate();
-        return view("api.statistique", compact('result','todayDate'));
-    }
-
-    public function bulkSelect(Request $request){
-        $contact_ids = explode(",",$request->ids);
-        $contacts = Contact::whereIn('id', $contact_ids)->get();
-        return response()->json(['view' => view("bulk-update", compact('contacts'))->render(),'status'=>true,'donnee'=>$contacts,'message'=>"Transaction deleted successfully."]);
-    }
-
-    public function updateSelected(){
-        $contact_ids = Session::get('contact_ids');
-        $contacts = Contact::whereIn('id', $contact_ids)->get();
-        return view("bulk-update", compact('contacts'));
-    }
-
-    public function updateAll(Request $request){
-        $ids = $request->input('contact_id');
-        $email_addresses = $request->input('email_address');
-        $contact_numbers = $request->input('contact_number');
-        $contact_types = $request->input('contact_type');
-
-        foreach($ids as $k => $id){
-            $values = array(
-                'email_address' => $email_addresses[$k],
-                'phone_number' => $contact_numbers[$k],
-                'type' => $contact_types[$k],
-            );
-
-        DB::table('contacts')->where('id','=',$id)->update($values);
-
-        }
-        return redirect()->back()->with('success', true);
-    }
     public function admin()
     {
         $statistique = Http::get('http://143.198.138.97/services/paydrc/statistiques');
@@ -174,11 +132,6 @@ class HomeController extends Controller
             'debit_airtel_submitted','debit_orange_submitted','debit_mpesa_submitted'
         ));
 
-    }
-
-    public function finance()
-    {
-        return view('dashboard.finance');
     }
 
     public function manager()
@@ -282,18 +235,289 @@ class HomeController extends Controller
         ));
     }
 
-    public function support_1()
+    public function finance()
     {
-        return view('dashboard.support.level_1');
+        $statistique = Http::get('http://143.198.138.97/services/paydrc/statistiques');
+
+        $res = $statistique->json();
+                
+        if ($res["mpesa_payout"] == null) {
+            $credit_mpesa_success = 0;
+            $credit_mpesa_submitted = 0;
+            $credit_mpesa_pending = 0;
+            $credit_mpesa_failed = 0;
+        } else {
+            $credit_mpesa_success = $res["mpesa_payout"][0]["success"];
+            $credit_mpesa_submitted = $res["mpesa_payout"][0]["submitted"];
+            $credit_mpesa_pending = $res["mpesa_payout"][0]["pending"];
+            $credit_mpesa_failed = $res["mpesa_payout"][0]["failed"];
+        }
+
+        if ($res["orange_payout"] == null) {
+            $credit_orange_success = 0;
+            $credit_orange_submitted = 0;
+            $credit_orange_pending = 0;
+            $credit_orange_failed = 0;
+        } else {
+            $credit_orange_success = $res["orange_payout"][0]["success"];
+            $credit_orange_submitted = $res["orange_payout"][0]["submitted"];
+            $credit_orange_pending = $res["orange_payout"][0]["pending"];
+            $credit_orange_failed = $res["orange_payout"][0]["failed"];
+        }
+
+        if ($res["airtel_payout"] == null) {
+            $credit_airtel_success = 0;
+            $credit_airtel_submitted = 0;
+            $credit_airtel_pending = 0;
+            $credit_airtel_failed = 0;
+        } else {
+            $credit_airtel_success = $res["airtel_payout"][0]["success"];
+            $credit_airtel_submitted = $res["airtel_payout"][0]["submitted"];
+            $credit_airtel_pending = $res["airtel_payout"][0]["pending"];
+            $credit_airtel_failed = $res["airtel_payout"][0]["failed"];
+        }
+
+        if ($res["mpesa_charge"] == null) {
+            $debit_mpesa_success = 0;
+            $debit_mpesa_submitted = 0;
+            $debit_mpesa_pending = 0;
+            $debit_mpesa_failed = 0;
+        } else {
+            $debit_mpesa_success = $res["mpesa_charge"][0]["success"];
+            $debit_mpesa_submitted = $res["mpesa_charge"][0]["submitted"];
+            $debit_mpesa_pending = $res["mpesa_charge"][0]["pending"];
+            $debit_mpesa_failed = $res["mpesa_charge"][0]["failed"];
+        }
+
+        if ($res["orange_charge"] == null) {
+            $debit_orange_success = 0;
+            $debit_orange_submitted = 0;
+            $debit_orange_pending = 0;
+            $debit_orange_failed = 0;
+        } else {
+            $debit_orange_success = $res["orange_charge"][0]["success"];
+            $debit_orange_submitted = $res["orange_charge"][0]["submitted"];
+            $debit_orange_pending = $res["orange_charge"][0]["pending"];
+            $debit_orange_failed = $res["orange_charge"][0]["failed"];
+        }
+
+        if ($res["airtel_charge"] == null) {
+            $debit_airtel_success = 0;
+            $debit_airtel_submitted = 0;
+            $debit_airtel_pending = 0;
+            $debit_airtel_failed = 0;
+        } else {
+            $debit_airtel_success = $res["airtel_charge"][0]["success"];
+            $debit_airtel_submitted = $res["airtel_charge"][0]["submitted"];
+            $debit_airtel_pending = $res["airtel_charge"][0]["pending"];
+            $debit_airtel_failed = $res["airtel_charge"][0]["failed"];
+        }
+
+
+        return view('dashboard.finance', compact(
+            'credit_airtel_success','credit_orange_success','credit_mpesa_success',
+            'debit_airtel_success','debit_orange_success','debit_mpesa_success',
+
+            'credit_airtel_failed','credit_orange_failed','credit_mpesa_failed',
+            'debit_airtel_failed','debit_orange_failed','debit_mpesa_failed',
+
+            'credit_airtel_pending','credit_orange_pending','credit_mpesa_pending',
+            'debit_airtel_pending','debit_orange_pending','debit_mpesa_pending',
+
+            'credit_airtel_submitted','credit_orange_submitted','credit_mpesa_submitted',
+            'debit_airtel_submitted','debit_orange_submitted','debit_mpesa_submitted'
+        ));
+
     }
 
-    public function support_2()
+    public function suppfin()
     {
-        return view('dashboard.support.level_2');
+        $statistique = Http::get('http://143.198.138.97/services/paydrc/statistiques');
+
+        $res = $statistique->json();
+                
+        if ($res["mpesa_payout"] == null) {
+            $credit_mpesa_success = 0;
+            $credit_mpesa_submitted = 0;
+            $credit_mpesa_pending = 0;
+            $credit_mpesa_failed = 0;
+        } else {
+            $credit_mpesa_success = $res["mpesa_payout"][0]["success"];
+            $credit_mpesa_submitted = $res["mpesa_payout"][0]["submitted"];
+            $credit_mpesa_pending = $res["mpesa_payout"][0]["pending"];
+            $credit_mpesa_failed = $res["mpesa_payout"][0]["failed"];
+        }
+
+        if ($res["orange_payout"] == null) {
+            $credit_orange_success = 0;
+            $credit_orange_submitted = 0;
+            $credit_orange_pending = 0;
+            $credit_orange_failed = 0;
+        } else {
+            $credit_orange_success = $res["orange_payout"][0]["success"];
+            $credit_orange_submitted = $res["orange_payout"][0]["submitted"];
+            $credit_orange_pending = $res["orange_payout"][0]["pending"];
+            $credit_orange_failed = $res["orange_payout"][0]["failed"];
+        }
+
+        if ($res["airtel_payout"] == null) {
+            $credit_airtel_success = 0;
+            $credit_airtel_submitted = 0;
+            $credit_airtel_pending = 0;
+            $credit_airtel_failed = 0;
+        } else {
+            $credit_airtel_success = $res["airtel_payout"][0]["success"];
+            $credit_airtel_submitted = $res["airtel_payout"][0]["submitted"];
+            $credit_airtel_pending = $res["airtel_payout"][0]["pending"];
+            $credit_airtel_failed = $res["airtel_payout"][0]["failed"];
+        }
+
+        if ($res["mpesa_charge"] == null) {
+            $debit_mpesa_success = 0;
+            $debit_mpesa_submitted = 0;
+            $debit_mpesa_pending = 0;
+            $debit_mpesa_failed = 0;
+        } else {
+            $debit_mpesa_success = $res["mpesa_charge"][0]["success"];
+            $debit_mpesa_submitted = $res["mpesa_charge"][0]["submitted"];
+            $debit_mpesa_pending = $res["mpesa_charge"][0]["pending"];
+            $debit_mpesa_failed = $res["mpesa_charge"][0]["failed"];
+        }
+
+        if ($res["orange_charge"] == null) {
+            $debit_orange_success = 0;
+            $debit_orange_submitted = 0;
+            $debit_orange_pending = 0;
+            $debit_orange_failed = 0;
+        } else {
+            $debit_orange_success = $res["orange_charge"][0]["success"];
+            $debit_orange_submitted = $res["orange_charge"][0]["submitted"];
+            $debit_orange_pending = $res["orange_charge"][0]["pending"];
+            $debit_orange_failed = $res["orange_charge"][0]["failed"];
+        }
+
+        if ($res["airtel_charge"] == null) {
+            $debit_airtel_success = 0;
+            $debit_airtel_submitted = 0;
+            $debit_airtel_pending = 0;
+            $debit_airtel_failed = 0;
+        } else {
+            $debit_airtel_success = $res["airtel_charge"][0]["success"];
+            $debit_airtel_submitted = $res["airtel_charge"][0]["submitted"];
+            $debit_airtel_pending = $res["airtel_charge"][0]["pending"];
+            $debit_airtel_failed = $res["airtel_charge"][0]["failed"];
+        }
+
+
+        return view('dashboard.suppfin', compact(
+            'credit_airtel_success','credit_orange_success','credit_mpesa_success',
+            'debit_airtel_success','debit_orange_success','debit_mpesa_success',
+
+            'credit_airtel_failed','credit_orange_failed','credit_mpesa_failed',
+            'debit_airtel_failed','debit_orange_failed','debit_mpesa_failed',
+
+            'credit_airtel_pending','credit_orange_pending','credit_mpesa_pending',
+            'debit_airtel_pending','debit_orange_pending','debit_mpesa_pending',
+
+            'credit_airtel_submitted','credit_orange_submitted','credit_mpesa_submitted',
+            'debit_airtel_submitted','debit_orange_submitted','debit_mpesa_submitted'
+        ));
+
     }
 
-    public function support_3()
+    public function support()
     {
-        return view('dashboard.support.level_3');
+        $statistique = Http::get('http://143.198.138.97/services/paydrc/statistiques');
+
+        $res = $statistique->json();
+                
+        if ($res["mpesa_payout"] == null) {
+            $credit_mpesa_success = 0;
+            $credit_mpesa_submitted = 0;
+            $credit_mpesa_pending = 0;
+            $credit_mpesa_failed = 0;
+        } else {
+            $credit_mpesa_success = $res["mpesa_payout"][0]["success"];
+            $credit_mpesa_submitted = $res["mpesa_payout"][0]["submitted"];
+            $credit_mpesa_pending = $res["mpesa_payout"][0]["pending"];
+            $credit_mpesa_failed = $res["mpesa_payout"][0]["failed"];
+        }
+
+        if ($res["orange_payout"] == null) {
+            $credit_orange_success = 0;
+            $credit_orange_submitted = 0;
+            $credit_orange_pending = 0;
+            $credit_orange_failed = 0;
+        } else {
+            $credit_orange_success = $res["orange_payout"][0]["success"];
+            $credit_orange_submitted = $res["orange_payout"][0]["submitted"];
+            $credit_orange_pending = $res["orange_payout"][0]["pending"];
+            $credit_orange_failed = $res["orange_payout"][0]["failed"];
+        }
+
+        if ($res["airtel_payout"] == null) {
+            $credit_airtel_success = 0;
+            $credit_airtel_submitted = 0;
+            $credit_airtel_pending = 0;
+            $credit_airtel_failed = 0;
+        } else {
+            $credit_airtel_success = $res["airtel_payout"][0]["success"];
+            $credit_airtel_submitted = $res["airtel_payout"][0]["submitted"];
+            $credit_airtel_pending = $res["airtel_payout"][0]["pending"];
+            $credit_airtel_failed = $res["airtel_payout"][0]["failed"];
+        }
+
+        if ($res["mpesa_charge"] == null) {
+            $debit_mpesa_success = 0;
+            $debit_mpesa_submitted = 0;
+            $debit_mpesa_pending = 0;
+            $debit_mpesa_failed = 0;
+        } else {
+            $debit_mpesa_success = $res["mpesa_charge"][0]["success"];
+            $debit_mpesa_submitted = $res["mpesa_charge"][0]["submitted"];
+            $debit_mpesa_pending = $res["mpesa_charge"][0]["pending"];
+            $debit_mpesa_failed = $res["mpesa_charge"][0]["failed"];
+        }
+
+        if ($res["orange_charge"] == null) {
+            $debit_orange_success = 0;
+            $debit_orange_submitted = 0;
+            $debit_orange_pending = 0;
+            $debit_orange_failed = 0;
+        } else {
+            $debit_orange_success = $res["orange_charge"][0]["success"];
+            $debit_orange_submitted = $res["orange_charge"][0]["submitted"];
+            $debit_orange_pending = $res["orange_charge"][0]["pending"];
+            $debit_orange_failed = $res["orange_charge"][0]["failed"];
+        }
+
+        if ($res["airtel_charge"] == null) {
+            $debit_airtel_success = 0;
+            $debit_airtel_submitted = 0;
+            $debit_airtel_pending = 0;
+            $debit_airtel_failed = 0;
+        } else {
+            $debit_airtel_success = $res["airtel_charge"][0]["success"];
+            $debit_airtel_submitted = $res["airtel_charge"][0]["submitted"];
+            $debit_airtel_pending = $res["airtel_charge"][0]["pending"];
+            $debit_airtel_failed = $res["airtel_charge"][0]["failed"];
+        }
+
+
+        return view('dashboard.support', compact(
+            'credit_airtel_success','credit_orange_success','credit_mpesa_success',
+            'debit_airtel_success','debit_orange_success','debit_mpesa_success',
+
+            'credit_airtel_failed','credit_orange_failed','credit_mpesa_failed',
+            'debit_airtel_failed','debit_orange_failed','debit_mpesa_failed',
+
+            'credit_airtel_pending','credit_orange_pending','credit_mpesa_pending',
+            'debit_airtel_pending','debit_orange_pending','debit_mpesa_pending',
+
+            'credit_airtel_submitted','credit_orange_submitted','credit_mpesa_submitted',
+            'debit_airtel_submitted','debit_orange_submitted','debit_mpesa_submitted'
+        ));
+
     }
+
 }

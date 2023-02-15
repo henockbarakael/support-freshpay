@@ -52,18 +52,25 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {   
+        
         $input = $request->all();
    
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required',
         ]);
-   
+        
+
         if(Auth::attempt(array('email' => $input['email'], 'password' => $input['password'])))
         {
-            if (Auth::user()->is_user == 1) {
+            // dd('ok');
+            if (Auth::user()->is_user == 0) {
                 Toastr::success('Login successfuly','Success');
                 return redirect()->route('admin.dashboard');
+            }
+            elseif (Auth::user()->is_user == 1) {
+                Toastr::success('Login successfuly','Success');
+                return redirect()->route('manager.dashboard');
             }
             elseif (Auth::user()->is_user == 2) {
                 Toastr::success('Login successfuly','Success');
@@ -71,23 +78,15 @@ class LoginController extends Controller
             }
             elseif (Auth::user()->is_user == 3) {
                 Toastr::success('Login successfuly','Success');
-                return redirect()->route('support_1.dashboard');
+                return redirect()->route('suppfin.dashboard');
             }
             elseif (Auth::user()->is_user == 4) {
                 Toastr::success('Login successfuly','Success');
-                return redirect()->route('support_2.dashboard');
-            }
-            elseif (Auth::user()->is_user == 5) {
-                Toastr::success('Login successfuly','Success');
-                return redirect()->route('support_3.dashboard');
-            }
-            elseif (Auth::user()->is_user == 0) {
-                Toastr::success('Login successfuly','Success');
-                return redirect()->route('manager.dashboard');
+                return redirect()->route('support.dashboard');
             }
             else{
                 Toastr::error('Something Wrong','Error');
-            return redirect()->route('login');
+                return redirect()->route('login');
             }
         }else{
             Toastr::error('Email-Address And Password Are Wrong','Error');
@@ -99,9 +98,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
         Toastr::success('Déconnecter avec succès :)','Succès');
         return redirect('/');

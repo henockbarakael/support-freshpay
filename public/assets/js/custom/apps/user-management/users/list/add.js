@@ -1,10 +1,4 @@
-/******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
-var __webpack_exports__ = {};
-/*!*********************************************************************!*\
-  !*** ../demo1/src/js/custom/apps/user-management/users/list/add.js ***!
-  \*********************************************************************/
-
+"use strict";
 
 // Class definition
 var KTUsersAddUser = function () {
@@ -21,17 +15,24 @@ var KTUsersAddUser = function () {
             form,
             {
                 fields: {
-                    'user_name': {
+                    'institution_name': {
                         validators: {
                             notEmpty: {
                                 message: 'Full name is required'
                             }
                         }
                     },
-                    'user_email': {
+                    'institution_email': {
                         validators: {
                             notEmpty: {
                                 message: 'Valid email address is required'
+                            }
+                        }
+                    },
+                    'institution_phone': {
+                        validators: {
+                            notEmpty: {
+                                message: 'Valid phone number is required'
                             }
                         }
                     },
@@ -69,25 +70,56 @@ var KTUsersAddUser = function () {
                         setTimeout(function () {
                             // Remove loading indication
                             submitButton.removeAttribute('data-kt-indicator');
-
                             // Enable button
                             submitButton.disabled = false;
-
-                            // Show popup confirmation 
-                            Swal.fire({
-                                text: "Form has been successfully submitted!",
-                                icon: "success",
-                                buttonsStyling: false,
-                                confirmButtonText: "Ok, got it!",
-                                customClass: {
-                                    confirmButton: "btn btn-primary"
-                                }
-                            }).then(function (result) {
-                                if (result.isConfirmed) {
-                                    modal.hide();
+                            var url = "institution";
+                            var institution_name = $("input[name=institution_name]").val();
+                            var institution_phone = $("input[name=institution_phone]").val();
+                            var institution_email = $("input[name=institution_email]").val();
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                 }
                             });
-
+                            $.ajax({
+                                url: url,
+                                type:"POST",
+                                data:{
+                                institution_name:institution_name,
+                                institution_phone:institution_phone,
+                                institution_email:institution_email,
+                                },
+                                success:function(response){
+                                    if(response.status == false) {
+                                        // Show error popup. For more info check the plugin's official documentation: https://sweetalert2.github.io/
+                                        Swal.fire({
+                                            text: response.message,
+                                            icon: "error",
+                                            buttonsStyling: false,
+                                            confirmButtonText: "Ok, got it!",
+                                            customClass: {
+                                                confirmButton: "btn btn-primary"
+                                            }
+                                        });
+                                    }
+                                    else if(response.status == true) {
+                                        // Show message popup. For more info check the plugin's official documentation: https://sweetalert2.github.io/
+                                        Swal.fire({
+                                            text: response.message,
+                                            icon: "success",
+                                            buttonsStyling: false,
+                                            confirmButtonText: "Ok, got it!",
+                                            customClass: {
+                                                confirmButton: "btn btn-primary"
+                                            }
+                                        }).then(function (result) {
+                                            if (result.isConfirmed) { 
+                                                modal.hide();
+                                            }
+                                        });
+                                    }
+                                }
+                            });
                             //form.submit(); // Submit form
                         }, 2000);
                     } else {
@@ -187,6 +219,3 @@ var KTUsersAddUser = function () {
 KTUtil.onDOMContentLoaded(function () {
     KTUsersAddUser.init();
 });
-/******/ })()
-;
-//# sourceMappingURL=add.js.map

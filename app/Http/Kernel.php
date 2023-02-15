@@ -66,9 +66,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'is_admin' => \App\Http\Middleware\IsAdmin::class,
         'is_finance' => \App\Http\Middleware\IsFinance::class,
-        'is_supportone' => \App\Http\Middleware\IsSupportOne::class,
-        'is_supporttwo' => \App\Http\Middleware\IsSupportTwo::class,
-        'is_supportthree' => \App\Http\Middleware\IsSupportThree::class,
+        'is_suppfin' => \App\Http\Middleware\IsSupportOne::class,
+        'is_support' => \App\Http\Middleware\IsSupportTwo::class,
         'is_manager' => \App\Http\Middleware\IsManager::class,
         'prevent-back-history' => \App\Http\Middleware\PreventBackHistory::class,
     ];

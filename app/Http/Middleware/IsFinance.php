@@ -17,7 +17,7 @@ class IsFinance
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::user()->is_user == 2){
+        if(Auth::user()->is_user == 3){
             return $next($request);
         }
    

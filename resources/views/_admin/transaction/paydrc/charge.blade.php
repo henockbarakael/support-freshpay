@@ -240,7 +240,7 @@
                 var switchStatus = false;
                 var switchStatus=document.getElementById("switchValue").checked;
                 console.log(switchStatus);
-                if(from_date != '' &&  to_date != '' &&  action != ''){
+                if(from_date != '' ||  to_date != '' ||  action != ''){
                     $('#switch_table').DataTable().destroy();
                     switch_data(from_date, to_date, action, switchStatus);
                 } else{
@@ -305,7 +305,7 @@
                 var switchStatus = false;
                 var switchStatus=document.getElementById("switchValue").checked;
                 console.log(switchStatus);
-                if(from_date != '' &&  to_date != '' &&  action != ''){
+                if(from_date != '' ||  to_date != '' ||  action != ''){
                     $('#paydrc_table').DataTable().destroy();
                     paydrc_data(from_date, to_date, action, switchStatus);
                 } else{
@@ -367,7 +367,7 @@
                 var switchStatus = false;
                 var switchStatus=document.getElementById("switchValue").checked;
                 console.log(switchStatus);
-                if(from_date != '' &&  to_date != '' &&  action != ''){
+                if(from_date != '' ||  to_date != '' ||  action != ''){
                     $('#paydrc_table').DataTable().destroy();
                     paydrc_data(from_date, to_date, action, switchStatus);
                 } else{

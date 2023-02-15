@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 class FinanceController extends Controller
 {
     public function pendingPayout(Request $request){
-        $response = Http::get('http://127.0.0.1:8086/services/paydrc/institution');
+        $response = Http::get('http://143.198.138.97/services/paydrc/institution');
         $result = $response->json();
         $transactions = [];
         if(request()->ajax()) {
@@ -22,7 +22,7 @@ class FinanceController extends Controller
 
                 $data = ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd];
                 
-                $sendData = Http::post('http://127.0.0.1:8086/services/pending-payouts', $data);
+                $sendData = Http::post('http://143.198.138.97/services/pending-payouts', $data);
                 $transactions = $sendData->json();
                 // dd($transactions);
             } 
@@ -57,7 +57,7 @@ class FinanceController extends Controller
 
 
     public function indexBalance(Request $request){
-        $response = Http::get('http://127.0.0.1:8086/services/paydrc/merchant');
+        $response = Http::get('http://143.198.138.97/services/paydrc/merchant');
         $result = $response->json();
         $transactions = [];
         if(request()->ajax()) {
@@ -79,7 +79,7 @@ class FinanceController extends Controller
                     "action" => $action
                 ];
                 
-                $sendData = Http::post('http://127.0.0.1:8086/services/merchant-balance', $data);
+                $sendData = Http::post('http://143.198.138.97/services/merchant-balance', $data);
                 $transactions = $sendData->json();
                 // dd($transactions);
             } 
@@ -108,7 +108,7 @@ class FinanceController extends Controller
 
 
     public function TopUpWallet(){
-        $response = Http::get('http://127.0.0.1:8086/services/paydrc/merchant');
+        $response = Http::get('http://143.198.138.97/services/paydrc/merchant');
         $result = $response->json();
         // dd($rKesult);
         if (Auth::user()->is_user == 0) {
@@ -145,7 +145,7 @@ class FinanceController extends Controller
                 "currency" => $currency
             ];
 
-            $sendData = Http::post('http://127.0.0.1:8086/services/topup', $data);
+            $sendData = Http::post('http://143.198.138.97/services/topup', $data);
             $result = $sendData->json();
             if ($result["success"] == true) {
                 return response()->json(['success'=>true,'data'=>$result["dataTable"],'message'=>$result["message"]]);
@@ -157,7 +157,7 @@ class FinanceController extends Controller
     }
 
     public function transfer(){
-        $response = Http::get('http://127.0.0.1:8086/services/paydrc/merchant');
+        $response = Http::get('http://143.198.138.97/services/paydrc/merchant');
         $result = $response->json();
       
         if (Auth::user()->is_user == 0) {
@@ -213,7 +213,7 @@ class FinanceController extends Controller
                 "currency" => $currency
             ];
 
-            $sendData = Http::post('http://127.0.0.1:8086/services/transfert', $data);
+            $sendData = Http::post('http://143.198.138.97/services/transfert', $data);
             $result = $sendData->json();
             if ($result["success"] == true) {
                 return response()->json(['success'=>true,'data'=>$result["dataTable"],'message'=>$result["message"]]);
@@ -232,7 +232,7 @@ class FinanceController extends Controller
             if(!empty($request->start_date)) {
                 $dateStart = date('Y-m-d', strtotime($request->start_date));
                 
-                $sendData = Http::get('http://127.0.0.1:8086/services/topupList/<dateStart>?', ["dateStart"=>$dateStart]);
+                $sendData = Http::get('http://143.198.138.97/services/topupList/<dateStart>?', ["dateStart"=>$dateStart]);
                 $transactions = $sendData->json();
             } 
             return datatables()->of($transactions)->make(true);
@@ -263,7 +263,7 @@ class FinanceController extends Controller
         $data = [
             "merchant_code"=>$request->merchant_code,
         ];
-        $sendData = Http::post('http://127.0.0.1:8086/services/merchant-balance', $data);
+        $sendData = Http::post('http://143.198.138.97/services/merchant-balance', $data);
         $response = json_decode($sendData->getBody(), true);
       
         if ($response["success"] == true) {

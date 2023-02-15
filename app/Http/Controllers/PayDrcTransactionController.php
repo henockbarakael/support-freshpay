@@ -20,7 +20,7 @@ class PayDrcTransactionController extends Controller
                 $dateStart = date('Y-m-d', strtotime($request->start_date));
                 $dateEnd = date('Y-m-d', strtotime($request->end_date));
                 
-                $sendData = Http::post('http://127.0.0.1:8086/services/paydrc/daterange', ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd,"action"=>$request->action]);
+                $sendData = Http::post('http://143.198.138.97/services/paydrc/daterange', ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd,"action"=>$request->action]);
                 $transactions = $sendData->json();
             } 
             return datatables()->of($transactions)->make(true);
@@ -52,7 +52,7 @@ class PayDrcTransactionController extends Controller
                 $dateStart = date('Y-m-d', strtotime($request->start_date));
                 $dateEnd = date('Y-m-d', strtotime($request->end_date));
                 
-                $sendData = Http::post('http://127.0.0.1:8086/services/switch/daterange', ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd,"action"=>$request->action]);
+                $sendData = Http::post('http://143.198.138.97/services/switch/daterange', ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd,"action"=>$request->action]);
                 $transactions = $sendData->json();
             } 
             return datatables()->of($transactions)->make(true);

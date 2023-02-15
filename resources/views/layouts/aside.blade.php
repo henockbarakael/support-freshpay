@@ -399,7 +399,7 @@
                 {{-- END MODULE FINANCE --}}
 
                 {{-- START MODULE MARCHAND --}}
-                @if(Auth::user()->is_user != 4)
+                @if(Auth::user()->is_user != 4 && Auth::user()->is_user != 3)
                     <div class="menu-item">
                         <div class="menu-content pt-4 pb-2">
                             <span class="menu-section text-muted text-uppercase fs-8 ls-1">Manage Merchants</span>
@@ -444,13 +444,6 @@
                                     </span>
                                     <span class="menu-title">All Institutions</span>
                                 </a>
-                                @elseif(Auth::user()->is_user == 3)
-                                <a class="menu-link {{ (request()->routeIs('suppfin.institution.create')) ? 'active' : '' }}" href="{{route('suppfin.institution.create')}}">
-                                    <span class="menu-bullet">
-                                        <span class="bullet bullet-dot"></span>
-                                    </span>
-                                    <span class="menu-title">All Institutions</span>
-                                </a>
                                 @endif
                             </div>
                         </div>
@@ -472,13 +465,6 @@
                                 </a>
                                 @elseif(Auth::user()->is_user == 2)
                                 <a class="menu-link {{ (request()->routeIs('finance.institution-user.create')) ? 'active' : '' }}" href="{{route('finance.institution-user.create')}}">
-                                    <span class="menu-bullet">
-                                        <span class="bullet bullet-dot"></span>
-                                    </span>
-                                    <span class="menu-title">All Users</span>
-                                </a>
-                                @elseif(Auth::user()->is_user == 3)
-                                <a class="menu-link {{ (request()->routeIs('suppfin.institution-user.create')) ? 'active' : '' }}" href="{{route('suppfin.institution-user.create')}}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>
@@ -522,13 +508,6 @@
                                 </a>
                                 @elseif(Auth::user()->is_user == 2)
                                 <a class="menu-link {{ (request()->routeIs('finance.merchant.create')) ? 'active' : '' }}" href="{{route('finance.merchant.create')}}">
-                                    <span class="menu-bullet">
-                                        <span class="bullet bullet-dot"></span>
-                                    </span>
-                                    <span class="menu-title">All Merchants</span>
-                                </a>
-                                @elseif(Auth::user()->is_user == 3)
-                                <a class="menu-link {{ (request()->routeIs('suppfin.merchant.create')) ? 'active' : '' }}" href="{{route('suppfin.merchant.create')}}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>

@@ -309,7 +309,7 @@
                     $('#paydrc_table').DataTable().destroy();
                     paydrc_data(from_date, to_date, action, switchStatus);
                 } else{
-                    alert('Both Date is required');
+                    alert('Both item is required');
                 }
             });
             $('#refresh').click(function(){

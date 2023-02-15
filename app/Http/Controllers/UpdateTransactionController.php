@@ -27,7 +27,7 @@ class UpdateTransactionController extends Controller
             "type" => "paydrc_reference",
         ];
         
-        $url ="http://143.198.138.97/services/paydrc/transaction/update";
+        $url ="http://206.189.25.253/services/paydrc/transaction/update";
         $data = json_encode($curl_post_data);
         $ch=curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -95,7 +95,7 @@ class UpdateTransactionController extends Controller
             "type" => "paydrc_reference",
         ];
         
-        $url ="http://143.198.138.97/services/paydrc/transaction/update";
+        $url ="http://206.189.25.253/services/paydrc/transaction/update";
         $data = json_encode($curl_post_data);
         $ch=curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);

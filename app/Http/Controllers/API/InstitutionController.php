@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 class InstitutionController extends Controller
 {
     public function index(){
-        $response = Http::get('http://143.198.138.97/services/paydrc/institution');
+        $response = Http::get('http://206.189.25.253/services/paydrc/institution');
         $result = $response->json();
         if (Auth::user()->is_user == 0) {
             return view('_admin.institution.index',compact('result'));
@@ -36,7 +36,7 @@ class InstitutionController extends Controller
             "email"=>$request->institution_email,
             "telephone"=>$request->institution_phone
         ];
-        $sendData = Http::post('http://143.198.138.97/services/create-institution', $data);
+        $sendData = Http::post('http://206.189.25.253/services/create-institution', $data);
         $response = json_decode($sendData->getBody(), true);
 
         if ($response["success"] == true) {
@@ -49,9 +49,9 @@ class InstitutionController extends Controller
     }   
 
     public function user(){
-        $response = Http::get('http://143.198.138.97/services/paydrc/institution_user');
+        $response = Http::get('http://206.189.25.253/services/paydrc/institution_user');
         $result = $response->json();
-        $response_2 = Http::get('http://143.198.138.97/services/paydrc/institution');
+        $response_2 = Http::get('http://206.189.25.253/services/paydrc/institution');
         $result_2 = $response_2->json();
         if (Auth::user()->is_user == 0) {
             return view('_admin.institution.user',compact('result','result_2'));
@@ -81,7 +81,7 @@ class InstitutionController extends Controller
             "telephone"=>$request->telephone,
             "password"=>$request->password
         ];
-        $sendData = Http::post('http://143.198.138.97/services/create-institution-user', $data);
+        $sendData = Http::post('http://206.189.25.253/services/create-institution-user', $data);
         $response = json_decode($sendData->getBody(), true);
 
         if ($response["success"] == true) {

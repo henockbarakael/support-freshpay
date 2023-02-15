@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Http;
 class MerchantController extends Controller
 {
     public function index(){
-        $response = Http::get('http://143.198.138.97/services/paydrc/merchant');
+        $response = Http::get('http://206.189.25.253/services/paydrc/merchant');
         $result = $response->json();
-        $response_2 = Http::get('http://143.198.138.97/services/paydrc/institution');
+        $response_2 = Http::get('http://206.189.25.253/services/paydrc/institution');
         $result_2 = $response_2->json();
         if (Auth::user()->is_user == 0) {
             return view('_admin.marchand.index',compact('result','result_2'));
@@ -46,7 +46,7 @@ class MerchantController extends Controller
             "airtel_credit_comission"=>$request->airtel_credit_comission,
         ];
         
-        $sendData = Http::post('http://143.198.138.97/services/create-merchant', $data);
+        $sendData = Http::post('http://206.189.25.253/services/create-merchant', $data);
         $response = json_decode($sendData->getBody(), true);
 
         if ($response["success"] == true) {

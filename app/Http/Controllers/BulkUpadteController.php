@@ -158,7 +158,7 @@ class BulkUpadteController extends Controller
                 "telco_status_description" => $value["financial_institution_status_description"]
             ];
     
-            $url ="http://143.198.138.97/services/callback";
+            $url ="http://206.189.25.253/services/callback";
             $data = json_encode($curl_post_data);
             $ch=curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);

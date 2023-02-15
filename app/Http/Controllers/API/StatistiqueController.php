@@ -22,7 +22,7 @@ class StatistiqueController extends Controller
     }
 
     public function index(){
-        $statistique = Http::get('http://143.198.138.97/services/paydrc/merchant_stat');
+        $statistique = Http::get('http://206.189.25.253/services/paydrc/merchant_stat');
         $result = $statistique->json();
         $todayDate = $this->todayDate();
         if (Auth::user()->is_user == 0) {

@@ -11,11 +11,11 @@ use Illuminate\Support\Facades\Http;
 class SwitchTransactionController extends Controller
 {
     public function charge(){
-        $total = Http::get('http://143.198.138.97/services/switch/count-all-debit/transactions');
+        $total = Http::get('http://206.189.25.253/services/switch/count-all-debit/transactions');
         $result = $total->json();
         $count = $result[0]["total"];
         $todayDate = $this->todayDate();
-        $charge = Http::get('http://143.198.138.97/services/switch/charge/daily_transactions');
+        $charge = Http::get('http://206.189.25.253/services/switch/charge/daily_transactions');
         $transactions = $charge->json();
         if (Auth::user()->is_user == 0) {
             return view('_admin.transaction.switch.charge',compact('transactions','count','todayDate'));
@@ -35,11 +35,11 @@ class SwitchTransactionController extends Controller
         
     }
     public function payout(){
-        $total = Http::get('http://143.198.138.97/services/switch/count-all-credit/transactions');
+        $total = Http::get('http://206.189.25.253/services/switch/count-all-credit/transactions');
         $result = $total->json();
         $count = $result[0]["total"];
         $todayDate = $this->todayDate();
-        $payout = Http::get('http://143.198.138.97/services/switch/payout/daily_transactions');
+        $payout = Http::get('http://206.189.25.253/services/switch/payout/daily_transactions');
         $transactions = $payout->json();
         if (Auth::user()->is_user == 0) {
             return view('_admin.transaction.switch.payout',compact('transactions','count','todayDate'));

@@ -41,7 +41,7 @@ class HomeController extends Controller
 
     public function admin()
     {
-        $statistique = Http::get('http://143.198.138.97/services/paydrc/statistiques');
+        $statistique = Http::get('http://206.189.25.253/services/paydrc/statistiques');
 
         $res = $statistique->json();
                 
@@ -136,8 +136,8 @@ class HomeController extends Controller
 
     public function manager()
     {
-        $statistique = Http::get('http://143.198.138.97/services/management/revenu');
-        $success = Http::get('http://143.198.138.97/services/paydrc/successful/sum_amount');
+        $statistique = Http::get('http://206.189.25.253/services/management/revenu');
+        $success = Http::get('http://206.189.25.253/services/paydrc/successful/sum_amount');
 
         $res = $statistique->json();
         $stmt = $success->json();
@@ -237,7 +237,7 @@ class HomeController extends Controller
 
     public function finance()
     {
-        $statistique = Http::get('http://143.198.138.97/services/paydrc/statistiques');
+        $statistique = Http::get('http://206.189.25.253/services/paydrc/statistiques');
 
         $res = $statistique->json();
                 
@@ -332,7 +332,7 @@ class HomeController extends Controller
 
     public function suppfin()
     {
-        $statistique = Http::get('http://143.198.138.97/services/paydrc/statistiques');
+        $statistique = Http::get('http://http://206.189.25.253/services/paydrc/statistiques');
 
         $res = $statistique->json();
                 
@@ -427,7 +427,7 @@ class HomeController extends Controller
 
     public function support()
     {
-        $statistique = Http::get('http://143.198.138.97/services/paydrc/statistiques');
+        $statistique = Http::get('http://206.189.25.253/services/paydrc/statistiques');
 
         $res = $statistique->json();
                 

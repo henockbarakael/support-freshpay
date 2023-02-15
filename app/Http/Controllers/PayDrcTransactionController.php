@@ -20,7 +20,7 @@ class PayDrcTransactionController extends Controller
                 $dateStart = date('Y-m-d', strtotime($request->start_date));
                 $dateEnd = date('Y-m-d', strtotime($request->end_date));
                 
-                $sendData = Http::post('http://143.198.138.97/services/paydrc/daterange', ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd,"action"=>$request->action]);
+                $sendData = Http::post('http://206.189.25.253/services/paydrc/daterange', ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd,"action"=>$request->action]);
                 $transactions = $sendData->json();
             } 
             return datatables()->of($transactions)->make(true);
@@ -52,7 +52,7 @@ class PayDrcTransactionController extends Controller
                 $dateStart = date('Y-m-d', strtotime($request->start_date));
                 $dateEnd = date('Y-m-d', strtotime($request->end_date));
                 
-                $sendData = Http::post('http://143.198.138.97/services/switch/daterange', ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd,"action"=>$request->action]);
+                $sendData = Http::post('http://206.189.25.253/services/switch/daterange', ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd,"action"=>$request->action]);
                 $transactions = $sendData->json();
             } 
             return datatables()->of($transactions)->make(true);
@@ -76,11 +76,11 @@ class PayDrcTransactionController extends Controller
     }
 
     public function charge_old(){
-        $total = Http::get('http://143.198.138.97/services/paydrc/count-all-debit/transactions');
+        $total = Http::get('http://206.189.25.253/services/paydrc/count-all-debit/transactions');
         $result = $total->json();
         $count = $result[0]["total"];
         $todayDate = $this->todayDate();
-        $charge = Http::get('http://143.198.138.97/services/paydrc/charge/daily_transactions');
+        $charge = Http::get('http://206.189.25.253/services/paydrc/charge/daily_transactions');
         $transactions = $charge->json();
         if (Auth::user()->is_user == 0) {
             return view('_admin.transaction.paydrc.charge',compact('transactions','count','todayDate'));
@@ -99,9 +99,9 @@ class PayDrcTransactionController extends Controller
         }
     }
     public function payout(){
-        $payout = Http::get('http://143.198.138.97/services/paydrc/payout/daily_transactions');
+        $payout = Http::get('http://206.189.25.253/services/paydrc/payout/daily_transactions');
         $transactions = $payout->json();
-        $total = Http::get('http://143.198.138.97/services/paydrc/count-all-credit/transactions');
+        $total = Http::get('http://206.189.25.253/services/paydrc/count-all-credit/transactions');
         $result = $total->json();
         $count = $result[0]["total"];
         $todayDate = $this->todayDate();

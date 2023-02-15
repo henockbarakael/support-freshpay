@@ -55,7 +55,7 @@ class SendCallBackToMerchant extends Controller
             "telco_status_description" => $request->telco_status_description
         ];
 
-        $url ="http://143.198.138.97/services/callback";
+        $url ="http://206.189.25.253/services/callback";
         
         $data = json_encode($curl_post_data);
         $ch=curl_init();

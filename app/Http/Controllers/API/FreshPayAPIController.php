@@ -55,7 +55,7 @@ class FreshPayAPIController extends Controller
 
     public function VerifySwitchReference($reference){
         
-        $ref_search = Http::post('http://143.198.138.97/services/swicth/search/switch_reference', ['reference' =>$reference]);
+        $ref_search = Http::post('http://206.189.25.253/services/swicth/search/switch_reference', ['reference' =>$reference]);
         $row = json_decode($ref_search->getBody(), true);
     
         if ($row == null) {
@@ -93,7 +93,7 @@ class FreshPayAPIController extends Controller
                 return $response;
             }
 
-            $response = Http::post('http://143.198.138.97/services/verify', ['operator' =>$operator,'url' =>$url,'data' =>$data]);
+            $response = Http::post('http://206.189.25.253/services/verify', ['operator' =>$operator,'url' =>$url,'data' =>$data]);
             $result = json_decode($response->getBody(), true);
 
             if ($result["financial_institution_id"] == "null") {
@@ -106,7 +106,7 @@ class FreshPayAPIController extends Controller
             
             }
             else {
-                $ref_search_2 = Http::post('http://143.198.138.97/services/paydrc/search/switch_reference', ['reference' =>$reference]);
+                $ref_search_2 = Http::post('http://206.189.25.253/services/paydrc/search/switch_reference', ['reference' =>$reference]);
                 $paydrc = json_decode($ref_search_2->getBody(), true);
             // dd($paydrc);
                 $status = $result["status"];

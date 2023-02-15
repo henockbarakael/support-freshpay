@@ -791,7 +791,7 @@
                         <span class="menu-title">Review Transaction</span>
                     </a>
                     @elseif(Auth::user()->is_user == 1)
-                    <a class="menu-link {{ (request()->routeIs('manager.paydrc.charge')) ? 'active' : '' }}" href="{{route('manager.paydrc.charge')}}">
+                    <a class="menu-link {{ (request()->routeIs('manager.paydrc.daterange')) ? 'active' : '' }}" href="{{route('manager.paydrc.daterange')}}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
                             <span class="svg-icon svg-icon-2">
@@ -805,7 +805,7 @@
                         <span class="menu-title">Review Transaction</span>
                     </a>
                     @elseif(Auth::user()->is_user == 2)
-                    <a class="menu-link {{ (request()->routeIs('finance.paydrc.charge')) ? 'active' : '' }}" href="{{route('finance.paydrc.charge')}}">
+                    <a class="menu-link {{ (request()->routeIs('finance.paydrc.daterange')) ? 'active' : '' }}" href="{{route('finance.paydrc.daterange')}}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
                             <span class="svg-icon svg-icon-2">
@@ -819,7 +819,7 @@
                         <span class="menu-title">Review Transaction</span>
                     </a>
                     @elseif(Auth::user()->is_user == 3)
-                    <a class="menu-link {{ (request()->routeIs('suppfin.paydrc.charge')) ? 'active' : '' }}" href="{{route('suppfin.paydrc.charge')}}">
+                    <a class="menu-link {{ (request()->routeIs('suppfin.paydrc.daterange')) ? 'active' : '' }}" href="{{route('suppfin.paydrc.daterange')}}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
                             <span class="svg-icon svg-icon-2">
@@ -833,7 +833,7 @@
                         <span class="menu-title">Review Transaction</span>
                     </a>
                     @elseif(Auth::user()->is_user == 4)
-                    <a class="menu-link {{ (request()->routeIs('support.paydrc.charge')) ? 'active' : '' }}" href="{{route('support.paydrc.charge')}}">
+                    <a class="menu-link {{ (request()->routeIs('support.paydrc.daterange')) ? 'active' : '' }}" href="{{route('support.paydrc.daterange')}}">
                         <span class="menu-icon">
                             <!--begin::Svg Icon | path: icons/duotune/art/art002.svg-->
                             <span class="svg-icon svg-icon-2">

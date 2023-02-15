@@ -332,7 +332,7 @@ class HomeController extends Controller
 
     public function suppfin()
     {
-        $statistique = Http::get('http://http://206.189.25.253/services/paydrc/statistiques');
+        $statistique = Http::get('http://206.189.25.253/services/paydrc/statistiques');
 
         $res = $statistique->json();
                 

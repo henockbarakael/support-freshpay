@@ -78,6 +78,8 @@ class FinanceController extends Controller
                 
                 $sendData = Http::post('http://206.189.25.253/services/api/merchant/balance', $data);
                 $transactions = $sendData->json();
+
+                dd($transactions);
               
             } 
             return datatables()->of($transactions)->make(true);

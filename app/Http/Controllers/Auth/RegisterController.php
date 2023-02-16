@@ -84,12 +84,22 @@ class RegisterController extends Controller
         elseif ($request['role_name'] == "Support_2") {
             $is_user = 4;
         }
-        return User::create([
+        $data = User::create([
             'firstname' => $request['firstname'],
             'lastname' => $request['lastname'],
             'email' => $request['email'],
             'is_user' => $is_user,
             'password' => Hash::make($request['password']),
         ]);
+
+        if($data){
+            return response()->json(['status'=>true,'message'=>'User created successfully']);
+        }
+        else{
+            return response()->json(['status'=>false,'message'=>'Failed to create user']);
+
+        }
+        
+
     }
 }

@@ -44,8 +44,8 @@ Auth::routes();
 
 Route::get('login', [LoginController::class, 'index'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('login.post'); 
-Route::get('registration', [LoginController::class, 'registration'])->name('registration');
-Route::post('registration', [LoginController::class, 'create'])->name('registration.post'); 
+Route::get('registration', [RegisterController::class, 'registration'])->name('registration');
+Route::post('registration', [RegisterController::class, 'create'])->name('registration.post'); 
 Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::group(['prefix'=>'admin','middleware' => ['auth','is_admin','prevent-back-history']], function () {

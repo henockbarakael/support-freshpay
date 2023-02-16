@@ -100,7 +100,7 @@
                                     <select id="merchant_code" name="merchant_code" class="form-select form-select-solid fw-bolder @error('merchant_code') is-invalid @enderror" data-kt-select2="true" data-placeholder="Select option">
                                         <option selected disabled>Select an institution...</option>
                                         @foreach ($result as $value)
-                                            <option value="{{ $value["merchant_code"] }}">{{ $value["institution_name"] }}</option>
+                                            <option value="{{ $value["merchant_code"] }}">{{ $value["institution_name"]. " [". $value["merchant_code"]." ]" }}</option>
                                         @endforeach
                                     </select>
                                     @error('merchant_code')

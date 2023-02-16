@@ -70,10 +70,19 @@ class RegisterController extends Controller
         ]);
 
         if ($request['role_name'] == "Admin") {
-            $is_user = 1;
+            $is_user = 0;
         }
         elseif ($request['role_name'] == "Manager") {
-            $is_user = 0;
+            $is_user = 1;
+        }
+        elseif ($request['role_name'] == "Finance") {
+            $is_user = 2;
+        }
+        elseif ($request['role_name'] == "Support_1") {
+            $is_user = 3;
+        }
+        elseif ($request['role_name'] == "Support_2") {
+            $is_user = 4;
         }
         return User::create([
             'firstname' => $request['firstname'],

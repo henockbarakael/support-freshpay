@@ -76,7 +76,7 @@ class FinanceController extends Controller
                     "action" => $action
                 ];
                 
-                $sendData = Http::post('http://127.0.0.1:8086/services/api/merchant/balance', $data);
+                $sendData = Http::post('http://206.189.25.253/services/api/merchant/balance', $data);
                 $transactions = $sendData->json();
               
             } 

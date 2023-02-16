@@ -208,11 +208,8 @@
                                     <thead>
                                         <tr class="fw-bold text-muted bg-light">
                                             <th class="ps-4  min-w-60px text-left">Channel</th>
+                                            <th class="min-w-100px text-left">Balance</th>
                                             <th class="min-w-60px text-left">Currency</th>
-                                            <th class="min-w-100px text-left">Opening Balance</th>
-                                            <th class="min-w-60px text-left">Current Balance</th>
-                                            <th class="min-w-60px text-left">Debit</th>
-                                            <th class="min-w-60px text-left">Credit</th>
                                             
                                         </tr>
                                     </thead>
@@ -282,11 +279,8 @@
                     columns: [
                         // {class : "text-center", data: 'id', name: 'id'},
                         {class : "text-left ps-4",data: 'channel', name: 'channel'},
+                        {data: 'balance', name: 'balance'},
                         {data: 'currency', name: 'currency'},
-                        {data: 'opening_balance', name: 'opening_balance'},
-                        {data: 'current_balance', name: 'current_balance'},
-                        {data: 'debit', name: 'debit'},
-                        {data: 'credit', name: 'credit'},
                         
                     ]
 

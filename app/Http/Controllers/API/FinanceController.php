@@ -53,9 +53,6 @@ class FinanceController extends Controller
         }
     }
 
-
-
-
     public function indexBalance(Request $request){
         $response = Http::get('http://206.189.25.253/services/paydrc/merchant');
         $result = $response->json();
@@ -79,9 +76,9 @@ class FinanceController extends Controller
                     "action" => $action
                 ];
                 
-                $sendData = Http::post('http://206.189.25.253/services/merchant-balance', $data);
+                $sendData = Http::post('http://127.0.0.1:8086/services/api/merchant/balance', $data);
                 $transactions = $sendData->json();
-                // dd($transactions);
+              
             } 
             return datatables()->of($transactions)->make(true);
 
@@ -103,8 +100,57 @@ class FinanceController extends Controller
             return view('_support.finance.balance',compact('result'));
         }
         
-        
     }
+
+    // public function indexBalance(Request $request){
+    //     $response = Http::get('http://206.189.25.253/services/paydrc/merchant');
+    //     $result = $response->json();
+    //     $transactions = [];
+    //     if(request()->ajax()) {
+            
+    //         if(!empty($request->start_date)) {
+
+    //             $date = date('Y-m-d', strtotime($request->start_date));
+    //             // dd($request->merchant_code);
+    //             $channel = $request->channel;
+    //             $currency = $request->currency;
+    //             $merchant_code = $request->merchant_code;
+    //             $action = $request->action;
+
+    //             $data = [
+    //                 "merchant_code" => $merchant_code,
+    //                 "currency" => $currency,
+    //                 "channel" => $channel,
+    //                 "date" => $date,
+    //                 "action" => $action
+    //             ];
+                
+    //             $sendData = Http::post('http://206.189.25.253/services/merchant-balance', $data);
+    //             $transactions = $sendData->json();
+    //             // dd($transactions);
+    //         } 
+    //         return datatables()->of($transactions)->make(true);
+
+    //     }
+       
+    //     if (Auth::user()->is_user == 0) {
+    //         return view('_admin.finance.balance',compact('result'));
+    //     }
+    //     elseif (Auth::user()->is_user == 1) {
+    //         return view('_manager.finance.balance',compact('result'));
+    //     }
+    //     elseif (Auth::user()->is_user == 2) {
+    //         return view('_finance.finance.balance',compact('result'));
+    //     }
+    //     elseif (Auth::user()->is_user == 3) {
+    //         return view('_suppfin.finance.balance',compact('result'));
+    //     }
+    //     elseif (Auth::user()->is_user == 4) {
+    //         return view('_support.finance.balance',compact('result'));
+    //     }
+        
+        
+    // }
 
 
     public function TopUpWallet(){

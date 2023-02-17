@@ -22,7 +22,7 @@ class FinanceController extends Controller
 
                 $data = ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd];
                 
-                $sendData = Http::post('http://127.0.0.1:8086/services/pending-payouts', $data);
+                $sendData = Http::post('http://206.189.25.253/services/pending-payouts', $data);
                 $transactions = $sendData->json();
                 // dd($transactions);
             } 
@@ -59,7 +59,7 @@ class FinanceController extends Controller
         ## Read POST data 
         $id = $request->post('id');
 
-        $sendData = Http::get('http://127.0.0.1:8086/services/paydrc/getRecord/<id>?', ["id"=>$id]);
+        $sendData = Http::get('http://206.189.25.253/services/paydrc/getRecord/<id>?', ["id"=>$id]);
         $empdata = $sendData->json();
         // dd($empdata);
         // $response = array();
@@ -79,7 +79,7 @@ class FinanceController extends Controller
                 'action' => $empdata[0]["action"]
             ];
             
-            $sendData = Http::post('http://127.0.0.1:8086/services/send-pending-payouts', $data);
+            $sendData = Http::post('http://206.189.25.253/services/send-pending-payouts', $data);
             $response = $sendData->json();
 
             if ($response["success"] == true) {
@@ -122,7 +122,7 @@ class FinanceController extends Controller
                 $sendData = Http::post('http://206.189.25.253/services/api/merchant/balance', $data);
                 $transactions = $sendData->json();
 
-                dd($transactions);
+                // dd($transactions);
               
             } 
             return datatables()->of($transactions)->make(true);

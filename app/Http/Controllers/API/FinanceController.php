@@ -22,14 +22,14 @@ class FinanceController extends Controller
 
                 $data = ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd];
                 
-                $sendData = Http::post('http://206.189.25.253/services/pending-payouts', $data);
+                $sendData = Http::post('http://127.0.0.1:8086/services/pending-payouts', $data);
                 $transactions = $sendData->json();
                 // dd($transactions);
             } 
             return datatables()->of($transactions)
             ->addIndexColumn()
             ->addColumn('action', function($row){
-                    $btn ="<button class='btn btn-sm btn-dark deleteUser' data-id='".$row["paydrc_reference"]."'><i class='fa fa-paper-plane'></i></button>";
+                    $btn ="<button class='btn btn-sm btn-dark sendData' data-id='".$row["id"]."'><i class='fa fa-paper-plane'></i></button>";
                     return $btn;
             })
             ->rawColumns(['action'])
@@ -53,6 +53,49 @@ class FinanceController extends Controller
         }
     }
 
+    // Read Transaction record by ID
+    public function SendToSwitch(Request $request){
+
+        ## Read POST data 
+        $id = $request->post('id');
+
+        $sendData = Http::get('http://127.0.0.1:8086/services/paydrc/getRecord/<id>?', ["id"=>$id]);
+        $empdata = $sendData->json();
+        // dd($empdata);
+        // $response = array();
+        if(!empty($empdata)){
+
+            $data = [
+                'merchant_code' => $empdata[0]["merchant_code"],
+                'merchant_reference' => $empdata[0]["thirdparty_reference"],
+                'amount' => $empdata[0]["amount"],
+                'currency' => $empdata[0]["currency"],
+                'operator' => $empdata[0]["method"],
+                'created_at' => $empdata[0]["created_at"],
+                'updated_at' => $empdata[0]["updated_at"],
+                'customer_details' => $empdata[0]["customer_details"],
+                'paydrc_reference' => $empdata[0]["paydrc_reference"],
+                'status' => $empdata[0]["status"],
+                'action' => $empdata[0]["action"]
+            ];
+            
+            $sendData = Http::post('http://127.0.0.1:8086/services/send-pending-payouts', $data);
+            $response = $sendData->json();
+
+            if ($response["success"] == true) {
+                return response()->json(['success'=>true,'message'=>"Transaction successfully updated."]);
+            }
+            else {
+                return response()->json(['success'=>false,'message'=>"Failed to update from switch db."]);
+            }
+        }else{
+            return response()->json(['success'=>false,'message'=>"Failed to update from switch db."]);
+        }
+
+
+    }
+
+ 
     public function indexBalance(Request $request){
         $response = Http::get('http://206.189.25.253/services/paydrc/merchant');
         $result = $response->json();

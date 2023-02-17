@@ -167,7 +167,6 @@
 
 
 <script type='text/javascript'>
-
     $(function() {
         $("#start_date").daterangepicker({
                 singleDatePicker: true,
@@ -184,66 +183,89 @@
             }
         );
     });
-
-   
     var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
     $(document).ready(function(){
 
         load_data();
-            function load_data(dateStart = '', dateEnd = ''){
-                $('#empTable').DataTable({
-
-                    processing: true,
-                    serverSide: true,
-
-                    ajax: {
-                        url:'pending-payout',
-                        data:{dateStart:dateStart, dateEnd:dateEnd}
-                    },
-
-                    columns: [
-                        // {class : "text-center", data: 'id', name: 'id'},
-                        {class : "text-left ps-4",data: 'created_at', name: 'created_at'},
-                        {data: 'paydrc_reference', name: 'paydrc_reference'},
-                        {data: 'merchant_reference', name: 'merchant_reference'},
-                        {data: 'amount', name: 'amount'},
-                        {data: 'currency', name: 'currency'},
-                        {data: 'status', name: 'status'},
-                        {data: 'action', name: 'action', orderable: false, searchable: false},
-                        // {class : "text-left ps-4",data: 'created_at', name: 'created_at'},
-
-                        
-                    ]
-
-                });
+        function load_data(dateStart = '', dateEnd = ''){
+            $('#empTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url:'pending-payout',
+                    data:{dateStart:dateStart, dateEnd:dateEnd}
+                },
+                columns: [
+                    {class : "text-left ps-4",data: 'created_at', name: 'created_at'},
+                    {data: 'paydrc_reference', name: 'paydrc_reference'},
+                    {data: 'merchant_reference', name: 'merchant_reference'},
+                    {data: 'amount', name: 'amount'},
+                    {data: 'currency', name: 'currency'},
+                    {data: 'status', name: 'status'},
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                ]
+            });
+        }
+        $('#but_search').click(function(){
+            var dateStart=document.getElementById('start_date').value;
+            var dateEnd=document.getElementById('end_date').value;
+            if(dateStart != '' && dateEnd != ''){
+                $('#empTable').DataTable().destroy();
+                load_data(dateStart, dateEnd);
+            } else{
+                alert('Both item is required');
             }
-            $('#but_search').click(function(){
+        });
+        $('#refresh').click(function(){
+            $('#start_date').val('');
+            $("#channel").val('').trigger('change');
+            $("#merchant_code").val('').trigger('change');
+            $('.currency:checked').prop('checked', false);
+            $('#empTable').DataTable().destroy();
+            load_data();
+        });
+         // Update record
+       $('#empTable').on('click','.sendData',function(){
+            var id = $(this).data('id');
+            // $('#txt_empid').val(id);
+            // AJAX request
+            $.ajax({
+                url: 'send-data-to-switch',
+                type: 'POST',
+                data: {_token: CSRF_TOKEN,id: id},
+                dataType: 'json',
+                success: function(response){
 
-                var dateStart=document.getElementById('start_date').value;
-                var dateEnd=document.getElementById('end_date').value;
+                    if(response.success == true){
 
-                if(dateStart != '' && dateEnd != ''){
-                    $('#empTable').DataTable().destroy();
-                    load_data(dateStart, dateEnd);
-                } else{
-                    alert('Both item is required');
+                        Swal.fire({
+                            text: response.message,
+                            icon: "success",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            }
+                        })
+
+                        $('#empTable').DataTable().ajax.reload();
+                    }else{
+                        Swal.fire({
+                            text: response.message,
+                            icon: "error",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            }
+                        });
+                        $('#empTable').DataTable().ajax.reload();
+                    }
                 }
             });
 
-            $('#refresh').click(function(){
-                $('#start_date').val('');
-                $("#channel").val('').trigger('change');
-                $("#merchant_code").val('').trigger('change');
-                // $('.action:checked').prop('checked', false);
-                $('.currency:checked').prop('checked', false);
-                $('#empTable').DataTable().destroy();
-                load_data();
-            });
-
- 
+       });
     });
-
-
 </script>
 
 {{-- <script type="text/javascript">

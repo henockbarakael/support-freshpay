@@ -112,6 +112,7 @@ Route::group(['prefix'=>'admin','middleware' => ['auth','is_admin','prevent-back
     # Finance
     Route::get('pending-payout', [FinanceController::class, 'pendingPayout'])->name('admin.pending.payout.create');
     Route::post('pending-payout', [FinanceController::class, 'pendingPayoutPost'])->name('admin.pending.payout.process');
+    Route::post('send-data-to-switch', [FinanceController::class, 'SendToSwitch'])->name('admin.pending.payout.send');
 
     Route::get('merchant-balance', [FinanceController::class, 'indexBalance'])->name('admin.merchant.balance.create');
     Route::post('merchant-balance', [FinanceController::class, 'getBalance'])->name('admin.merchant.balance.get');

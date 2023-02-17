@@ -40,8 +40,8 @@ class SearchTransactionController extends Controller
     public function update(Request $request){
         $reference = $request->option;
         $reference_value = $request->option_value;
-        $date = $request->date;
-        // $date = date('Y-m-d', strtotime($request->datetime));
+        $date = $request->start_date;
+
         if ($date == null) {
             $madate = "";
         }

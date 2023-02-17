@@ -14,7 +14,11 @@
     <link rel="canonical" href="https://gofreshpay.com/">
     <link rel="shortcut icon" href="{{ asset('assets/media/logos/favicon.png')}}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
-    <link href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css')}}" rel="stylesheet" type="text/css" />
+    {{-- <link href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css')}}" rel="stylesheet" type="text/css" /> --}}
+    <!-- Datepicker -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- Datatables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/r-2.2.3/datatables.min.css" />
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/style.bundle.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/plugins/custom/datatables/datatables.bundle.css')}}" rel="stylesheet" type="text/css">
@@ -105,11 +109,11 @@
                                         <label class="fs-6 form-label fw-bold text-dark">Select a date</label>
                                         <!--begin::Select-->
                                         <div class="input-group">
-                                        <input class="form-control form-control-solid" name="date" id="kt_daterangepicker_3"/>
-                                        <span class="input-group-text" data-td-target="#kt_td_picker_basic" data-td-toggle="datetimepicker">
-                                            <i class="fas fa-calendar"></i>
-                                        </span>
-                                    </div>
+                                            <input type="text" readonly name="start_date" id="start_date" placeholder="Pick a date" class="form-control form-control-solid"/>
+                                            <span class="input-group-text">
+                                                <i class="fas fa-calendar"></i>
+                                            </span>
+                                        </div>
                                         {{-- <input class="form-control form-control-solid" value="" onfocus="(this.type='date')" onblur="if(!this.value) this.type='text'" name="date"  type="text"/> --}}
 
                                         <!--end::Select-->
@@ -283,56 +287,36 @@
 </div>
 @section('script')
 <script>var hostUrl = "assets/";</script>
-<script src="{{ asset('assets/plugins/global/plugins.bundle.js')}}"></script>
 <script src="{{ asset('assets/js/scripts.bundle.js')}}"></script>
-<script src="{{ asset('assets/js/custom/widgets.js')}}"></script>
-<script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js')}}"></script>
-{{-- <script type="text/javascript">
-    $('.show_success').click(function(event) {
-          var form =  $(this).closest("form");
-          var name = $(this).data("name");
-          event.preventDefault();
-          Swal.fire({
-                text: "Are you sure you want to success this transaction?",
-                icon: "warning",
-                showCancelButton: true,
-                buttonsStyling: false,
-                confirmButtonText: "Yes, delete!",
-                cancelButtonText: "No, cancel",
-                customClass: {
-                    confirmButton: "btn fw-bold btn-succes",
-                    cancelButton: "btn fw-bold btn-active-light-primary"
-                }
-            })
-          .then((willDelete) => {
-            if (willDelete) {
-              form.submit();
-            }
-          });
+
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+<!-- Font Awesome -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
+
+<!-- Momentjs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+<!-- Datatables -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+
+<script src="{{ asset('assets/plugins/global/plugins.bundle.js')}}"></script>
+<!-- Datepicker -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript"
+    src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-flash-1.6.1/b-html5-1.6.1/b-print-1.6.1/r-2.2.3/datatables.min.js">
+</script>
+<script>
+    $(function() {
+        $("#start_date").datepicker({
+            "dateFormat": "yy-mm-dd"
+        });
     });
-    $('.show_failed').click(function(event) {
-          var form =  $(this).closest("form");
-          var name = $(this).data("name");
-          event.preventDefault();
-          Swal.fire({
-                text: "Are you sure you want to failed selected transactions?",
-                icon: "warning",
-                showCancelButton: true,
-                buttonsStyling: false,
-                confirmButtonText: "Yes, failed!",
-                cancelButtonText: "No, cancel",
-                customClass: {
-                    confirmButton: "btn fw-bold btn-danger",
-                    cancelButton: "btn fw-bold btn-active-light-primary"
-                }
-            })
-          .then((willDelete) => {
-            if (willDelete) {
-              form.submit();
-            }
-          });
-    });
-</script> --}}
+</script>
 <script type="text/javascript">
   
     /*------------------------------------------

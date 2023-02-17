@@ -268,7 +268,7 @@
     });
 </script>
 
-{{-- <script type="text/javascript">
+<script type="text/javascript">
     $(document).ajaxStart(function() {
         $('#loading').addClass('loading');
         $('#loading-content').addClass('loading-content');
@@ -277,7 +277,7 @@
         $('#loading').removeClass('loading');
         $('#loading-content').removeClass('loading-content');
     });
-</script> --}}
+</script>
 
 @endsection
 @endsection

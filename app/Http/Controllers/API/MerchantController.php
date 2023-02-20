@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SendMail;
+use App\Models\MerchantInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 class MerchantController extends Controller
 {
@@ -55,6 +58,8 @@ class MerchantController extends Controller
                 "merchant_id"=>$response["institution"]["merchant_id"],
                 "merchant_secrete"=>$response["institution"]["merchant_secrete"]
             ];
+            MerchantInfo::create($data);
+        
             return response()->json(['status'=>true,'message'=>$response["description"],'data'=>$response["institution"]["merchant_secrete"]]);
         }
         else {

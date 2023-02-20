@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\API\AirtelController;
 use App\Http\Controllers\API\MpesaController;
 use App\Http\Controllers\API\OrangeController;
+use App\Mail\SendMail;
 use App\Models\Contact;
 use App\Models\DrcSendMoneyTransac;
 use Carbon\Carbon;
@@ -12,6 +13,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
@@ -41,6 +43,7 @@ class HomeController extends Controller
 
     public function admin()
     {
+  
         $statistique = Http::get('http://206.189.25.253/services/paydrc/statistiques');
 
         $res = $statistique->json();

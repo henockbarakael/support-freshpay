@@ -15,24 +15,10 @@ var KTUsersAddUser = function () {
             form,
             {
                 fields: {
-                    'institution_name': {
+                    'e_amount': {
                         validators: {
                             notEmpty: {
-                                message: 'Full name is required'
-                            }
-                        }
-                    },
-                    'institution_email': {
-                        validators: {
-                            notEmpty: {
-                                message: 'Valid email address is required'
-                            }
-                        }
-                    },
-                    'institution_phone': {
-                        validators: {
-                            notEmpty: {
-                                message: 'Valid phone number is required'
+                                message: 'Amount is required'
                             }
                         }
                     },
@@ -72,10 +58,13 @@ var KTUsersAddUser = function () {
                             submitButton.removeAttribute('data-kt-indicator');
                             // Enable button
                             submitButton.disabled = false;
-                            var url = "institution";
-                            var institution_name = $("input[name=institution_name]").val();
-                            var institution_phone = $("input[name=institution_phone]").val();
-                            var institution_email = $("input[name=institution_email]").val();
+                            var url = "merchant-wallet";
+                            var amount = $("input[name=e_amount]").val();
+                            var wallet_code = $("input[name=e_wallet_code]").val();
+                            var currency = $("input[name=e_currency]").val();
+                            var wallet_type = $("input[name=e_wallet_type]").val();
+                            var vendor = $("input[name=e_vendor]").val();
+                            var institution_name = $("input[name=e_institution_name]").val();
                             $.ajaxSetup({
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -85,9 +74,12 @@ var KTUsersAddUser = function () {
                                 url: url,
                                 type:"POST",
                                 data:{
-                                institution_name:institution_name,
-                                institution_phone:institution_phone,
-                                institution_email:institution_email,
+                                    amount: amount,
+                                    currency: currency,
+                                    wallet_code: wallet_code,
+                                    institution_name: institution_name,
+                                    wallet_type: wallet_type,
+                                    vendor: vendor
                                 },
                                 success:function(response){
                                     if(response.status == false) {
@@ -115,7 +107,6 @@ var KTUsersAddUser = function () {
                                         }).then(function (result) {
                                             if (result.isConfirmed) { 
                                                 modal.hide();
-                                                location.reload();	
                                             }
                                         });
                                     }

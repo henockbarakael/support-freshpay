@@ -24,6 +24,10 @@ class FinanceController extends Controller
                 
                 $sendData = Http::post('http://206.189.25.253/services/pending-payouts', $data);
                 $transactions = $sendData->json();
+                if($transactions == null){
+                    $transactions = [];
+                }
+                
                 // dd($transactions);
             } 
             return datatables()->of($transactions)
@@ -147,57 +151,68 @@ class FinanceController extends Controller
         
     }
 
-    // public function indexBalance(Request $request){
-    //     $response = Http::get('http://206.189.25.253/services/paydrc/merchant');
-    //     $result = $response->json();
-    //     $transactions = [];
-    //     if(request()->ajax()) {
+    public function getMerchantWallet(Request $request){
+        $response = Http::get('http://206.189.25.253/services/paydrc/merchant');
+        $result = $response->json();
+        $transactions = [];
+        if(request()->ajax()) {
             
-    //         if(!empty($request->start_date)) {
+            if(!empty($request->merchant_code)) {
 
-    //             $date = date('Y-m-d', strtotime($request->start_date));
-    //             // dd($request->merchant_code);
-    //             $channel = $request->channel;
-    //             $currency = $request->currency;
-    //             $merchant_code = $request->merchant_code;
-    //             $action = $request->action;
+                $vendor = $request->vendor;
+                $currency = $request->currency;
+                $merchant_code = $request->merchant_code;
+                $action = $request->action;
 
-    //             $data = [
-    //                 "merchant_code" => $merchant_code,
-    //                 "currency" => $currency,
-    //                 "channel" => $channel,
-    //                 "date" => $date,
-    //                 "action" => $action
-    //             ];
+                $data = [
+                    "merchant_code" => $merchant_code,
+                    "currency" => $currency,
+                    "vendor" => $vendor,
+                    "action" => $action
+                ];
                 
-    //             $sendData = Http::post('http://206.189.25.253/services/merchant-balance', $data);
-    //             $transactions = $sendData->json();
-    //             // dd($transactions);
-    //         } 
-    //         return datatables()->of($transactions)->make(true);
+                $sendData = Http::post('http://206.189.25.253/services/merchant-wallet', $data);
+                $transactions = $sendData->json();
 
-    //     }
+            } 
+            return datatables()->of($transactions)
+            ->addIndexColumn()
+            ->addColumn('action', function($row){
+                    $btn ="<button class='btn btn-sm btn-dark updateAmount' data-bs-toggle='modal' data-bs-target='#kt_modal_add_user' data-id='".$row["wallet_code"]."'><i class='fa fa-edit'></i></button>";
+                    return $btn;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+
+        }
        
-    //     if (Auth::user()->is_user == 0) {
-    //         return view('_admin.finance.balance',compact('result'));
-    //     }
-    //     elseif (Auth::user()->is_user == 1) {
-    //         return view('_manager.finance.balance',compact('result'));
-    //     }
-    //     elseif (Auth::user()->is_user == 2) {
-    //         return view('_finance.finance.balance',compact('result'));
-    //     }
-    //     elseif (Auth::user()->is_user == 3) {
-    //         return view('_suppfin.finance.balance',compact('result'));
-    //     }
-    //     elseif (Auth::user()->is_user == 4) {
-    //         return view('_support.finance.balance',compact('result'));
-    //     }
+        if (Auth::user()->is_user == 0) {
+            return view('_admin.finance.wallet',compact('result'));
+        }
+        elseif (Auth::user()->is_user == 2) {
+            return view('_finance.finance.wallet',compact('result'));
+        }
+        elseif (Auth::user()->is_user == 3) {
+            return view('_suppfin.finance.wallet',compact('result'));
+        }
         
-        
-    // }
+    }
+    public function walletUpdate(Request $request){
+       
+        $data = [
+            "amount" => $request->amount,
+            "currency" => $request->currency,
+            "wallet_code" => $request->wallet_code,
+            "institution_name" => $request->institution_name,
+            "wallet_type" => $request->wallet_type,
+            "vendor" => $request->vendor
+        ];
 
+        $sendData = Http::post('http://206.189.25.253/services/walletUpdate', $data);
+        $transactions = $sendData->json();
 
+        dd($transactions);
+    }
     public function TopUpWallet(){
         $response = Http::get('http://206.189.25.253/services/paydrc/merchant');
         $result = $response->json();

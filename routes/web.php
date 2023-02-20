@@ -117,6 +117,10 @@ Route::group(['prefix'=>'admin','middleware' => ['auth','is_admin','prevent-back
     Route::get('merchant-balance', [FinanceController::class, 'indexBalance'])->name('admin.merchant.balance.create');
     Route::post('merchant-balance', [FinanceController::class, 'getBalance'])->name('admin.merchant.balance.get');
 
+    Route::get('merchant-wallet', [FinanceController::class, 'getMerchantWallet'])->name('admin.merchant.wallet');
+    Route::post('merchant-wallet', [FinanceController::class, 'walletUpdate'])->name('admin.merchant.wallet.update');
+
+
     Route::get('top-up-wallet', [FinanceController::class, 'TopUpWallet'])->name('admin.wallet.topup');
     Route::post('top-up-wallet', [FinanceController::class, 'WalletTopUpRequest'])->name('admin.wallet.topup.post');
 
@@ -124,6 +128,7 @@ Route::group(['prefix'=>'admin','middleware' => ['auth','is_admin','prevent-back
     Route::post('initiate-transfer', [FinanceController::class, 'initiateTransfer'])->name('admin.transfert.initiate');
 
     Route::get('wallet-history', [FinanceController::class, 'history'])->name('admin.wallet.history');
+
 });
 
 Route::group(['prefix'=>'manager','middleware' => ['auth','is_manager','prevent-back-history']], function () {

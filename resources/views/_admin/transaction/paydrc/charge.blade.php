@@ -341,7 +341,21 @@
                     },
 
                     dom:'lBfrtip',
-                    "buttons": ["csv", "excel", "pdf"],
+                    "buttons": [
+                        "csv", "excel", "pdf",
+                        {
+                            extend: 'print',
+                            text: 'Print all (not just selected)',
+                            exportOptions : {
+                                modifier : {
+                                    // DataTables core
+                                    order : 'current',  // 'current', 'applied', 'index',  'original'
+                                    page : 'all',      // 'all',     'current'
+                                    search : 'applied'     // 'none',    'applied', 'removed'
+                                }
+                            }
+                        }
+                    ],
 
                     columns: [
                         {class : "text-center", data: 'id', name: 'id'},

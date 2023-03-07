@@ -340,6 +340,9 @@
                         data:{start_date:start_date, end_date:end_date, action:action}
                     },
 
+                    dom:'lBfrtip',
+                    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+
                     columns: [
                         {class : "text-center", data: 'id', name: 'id'},
                         {data: 'merchant_code', name: 'merchant_code'},

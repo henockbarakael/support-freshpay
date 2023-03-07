@@ -88,28 +88,42 @@
                     <div class="card mb-7">
                         <!--begin::Card body-->
                         <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="col-sm-4 me-1">
-                                    <div class="nav-group nav-group-fluid mt-1">
-                                        <label class="form-control fw-bolder">
-                                            Merchant
-                                        </label>
+                            
+
+                                <div class="d-flex align-items-center">
+                                    <div class="col-sm-4 me-1">
+                                        <div class="nav-group nav-group-fluid mt-1">
+                                            <label class="form-control fw-bolder">
+                                                Merchant
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select id="merchant_code" name="merchant_code" class="form-select form-select-solid fw-bolder @error('merchant_code') is-invalid @enderror" data-kt-select2="true" data-placeholder="Select option">
+                                            <option selected disabled>Select an institution...</option>
+                                            <?php
+                                                foreach($result as $key => $value){
+                                                    $nums = explode(',', $value["merchant_code"]);
+                                                    $nombre = count($nums);
+                                                    // echo $nombre;
+                                                    if ($nombre < 1) {
+                                                        echo  '<option value="{{ $value["merchant_code"] }}">'.$value["institution_name"].'</option>';
+                                                    }
+                                                    else {
+                                                        echo  '<option value="{{ $value["merchant_code"] }}">'.$value["institution_name"]. " [". $value["merchant_code"]." ]" .'</option>';
+                                                    }
+                                                }  
+                                            ?>
+                                        </select>
+                                        @error('merchant_code')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-8">
-                                    <select id="merchant_code" name="merchant_code" class="form-select form-select-solid fw-bolder @error('merchant_code') is-invalid @enderror" data-kt-select2="true" data-placeholder="Select option">
-                                        <option selected disabled>Select an institution...</option>
-                                        @foreach ($result as $value)
-                                            <option value="{{ $value["merchant_code"] }}">{{ $value["institution_name"]. " [". $value["merchant_code"]." ]" }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('merchant_code')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
+                               
+                            
                             <div class="d-flex align-items-center">
                                 <div class="col-sm-4 me-1">
                                     <div class="nav-group nav-group-fluid mt-1">

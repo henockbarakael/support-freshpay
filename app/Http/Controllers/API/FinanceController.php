@@ -263,9 +263,11 @@ class FinanceController extends Controller
     }
 
     public function transfer(){
-        $response = Http::get('http://206.189.25.253/services/paydrc/merchant');
+        $response = Http::get('http://127.0.0.1:8086/services/merchant');
         $result = $response->json();
-      
+
+        
+        
         if (Auth::user()->is_user == 0) {
             return view('_admin.finance.transfert',compact('result'));
         }

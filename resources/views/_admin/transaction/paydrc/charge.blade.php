@@ -341,7 +341,7 @@
                     },
 
                     dom:'lBfrtip',
-                    "buttons": ["csv", "excel", "pdf", "print"],
+                    "buttons": ["csv", "excel", "pdf"],
 
                     columns: [
                         {class : "text-center", data: 'id', name: 'id'},

@@ -212,7 +212,7 @@
                     },
 
                     dom:'lBfrtip',
-                    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                    "buttons": ["csv", "excel", "pdf"],
 
                     columns: [
                         {class : "text-center", data: 'id', name: 'id'},

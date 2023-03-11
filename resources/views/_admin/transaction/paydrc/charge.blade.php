@@ -87,7 +87,7 @@
                             <div class="py-3 d-flex flex-stack flex-wrap">
                                 <div class="d-flex my-3 ms-2">
                                     <label class="form-check form-check-custom form-check-solid me-5">
-                                        Both All
+                                        Both 
                                     </label>
                                     <input class="form-check-input me-5 action" type="radio" value="both" name="action" />
                                     <label class="form-check form-check-custom form-check-solid me-5">
@@ -194,6 +194,7 @@
 <!-- Momentjs -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="{{ asset('assets/js/scripts.bundle.js')}}"></script>
+<script src="{{ asset('vendor/datatables/buttons.server-side.js') }}"></script>
 <script>
     $("#switchValue").on('change', function() {
         if ($(this).is(':checked')) {

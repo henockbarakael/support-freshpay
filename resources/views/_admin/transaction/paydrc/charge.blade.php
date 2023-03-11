@@ -194,6 +194,8 @@
 <!-- Momentjs -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="{{ asset('assets/js/scripts.bundle.js')}}"></script>
+<script src="{{ asset('vendor/datatables/buttons.server-side.js') }}"></script>
+
 <script>
     $("#switchValue").on('change', function() {
         if ($(this).is(':checked')) {

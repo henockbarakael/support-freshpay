@@ -342,7 +342,7 @@
                         data:{start_date:start_date, end_date:end_date, action:action}
                     },
 
-                    dom:'Bfrtip',
+                    dom:'lBfrtip',
                     lengthMenu: [
                         [10, 25, 50, -1],
                         [10, 25, 50, 'All'],

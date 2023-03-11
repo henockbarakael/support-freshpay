@@ -87,7 +87,7 @@
                             <div class="py-3 d-flex flex-stack flex-wrap">
                                 <div class="d-flex my-3 ms-2">
                                     <label class="form-check form-check-custom form-check-solid me-5">
-                                        Both
+                                        Both All
                                     </label>
                                     <input class="form-check-input me-5 action" type="radio" value="both" name="action" />
                                     <label class="form-check form-check-custom form-check-solid me-5">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\DateRangeDataTable;
 use App\Models\DrcSendMoneyTransac;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -11,36 +12,55 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PayDrcTransactionController extends Controller
 {
-    public function daterangePayDrc(Request $request){
+    // public function daterangePayDrc(Request $request){
 
        
-        if(request()->ajax()) {
-            $transactions = [];
-            if(!empty($request->start_date)) {
-                $dateStart = date('Y-m-d', strtotime($request->start_date));
-                $dateEnd = date('Y-m-d', strtotime($request->end_date));
+    //     if(request()->ajax()) {
+    //         $transactions = [];
+    //         if(!empty($request->start_date)) {
+    //             $dateStart = date('Y-m-d', strtotime($request->start_date));
+    //             $dateEnd = date('Y-m-d', strtotime($request->end_date));
                 
-                $sendData = Http::post('http://206.189.25.253/services/paydrc/daterange', ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd,"action"=>$request->action]);
-                $transactions = $sendData->json();
-            } 
-            return datatables()->of($transactions)->make(true);
+    //             $sendData = Http::post('http://206.189.25.253/services/paydrc/daterange', ["dateStart"=>$dateStart,"dateEnd"=>$dateEnd,"action"=>$request->action]);
+    //             $transactions = $sendData->json();
+    //         } 
+    //         return datatables()->of($transactions)->make(true);
 
-        }
+    //     }
+    //     if (Auth::user()->is_user == 0) {
+    //         return view('_admin.transaction.paydrc.charge');
+    //     }
+    //     elseif (Auth::user()->is_user == 1) {
+    //         return view('_manager.transaction.paydrc.charge');
+    //     }
+    //     elseif (Auth::user()->is_user == 2) {
+    //         return view('_finance.transaction.paydrc.charge');
+    //     }
+    //     elseif (Auth::user()->is_user == 3) {
+    //         return view('_suppfin.transaction.paydrc.charge');
+    //     }
+    //     elseif (Auth::user()->is_user == 4) {
+    //         return view('_support.transaction.paydrc.charge');
+    //     }
+    // }
+
+    public function daterangePayDrc(DateRangeDataTable $dataTable, Request $request){
         if (Auth::user()->is_user == 0) {
-            return view('_admin.transaction.paydrc.charge');
+            return $request->isMethod(method:'post') ? $this->create($request) : $dataTable->render(view :'_admin.transaction.paydrc.charge');
         }
         elseif (Auth::user()->is_user == 1) {
-            return view('_manager.transaction.paydrc.charge');
+            return $request->isMethod(method:'post') ? $this->create($request) : $dataTable->render(view :'_manager.transaction.paydrc.charge');
         }
         elseif (Auth::user()->is_user == 2) {
-            return view('_finance.transaction.paydrc.charge');
+            return $request->isMethod(method:'post') ? $this->create($request) : $dataTable->render(view :'_finance.transaction.paydrc.charge');
         }
         elseif (Auth::user()->is_user == 3) {
-            return view('_suppfin.transaction.paydrc.charge');
+            return $request->isMethod(method:'post') ? $this->create($request) : $dataTable->render(view :'_suppfin.transaction.paydrc.charge');
         }
         elseif (Auth::user()->is_user == 4) {
-            return view('_support.transaction.paydrc.charge');
+            return $request->isMethod(method:'post') ? $this->create($request) : $dataTable->render(view :'_support.transaction.paydrc.charge');
         }
+        
     }
 
     public function daterangeSwitch(Request $request){

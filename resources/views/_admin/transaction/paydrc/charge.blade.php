@@ -342,25 +342,25 @@
                         data:{start_date:start_date, end_date:end_date, action:action}
                     },
 
-                    dom:'lBfrtip',
+                    dom:'Bfrtip',
                     lengthMenu: [
                         [10, 25, 50, -1],
                         [10, 25, 50, 'All'],
                     ],
                     "buttons": [
-                        "csv", "excel", "pdf",
-                        {
-                            extend: 'print',
-                            text: 'Print all (not just selected)',
-                            exportOptions : {
-                                modifier : {
-                                    // DataTables core
-                                    order : 'current',  // 'current', 'applied', 'index',  'original'
-                                    page : 'all',      // 'all',     'current'
-                                    search : 'applied'     // 'none',    'applied', 'removed'
-                                }
-                            }
-                        }
+                        "csv", "excel", "pdf"
+                        // {
+                        //     extend: 'print',
+                        //     text: 'Print all (not just selected)',
+                        //     exportOptions : {
+                        //         modifier : {
+                        //             // DataTables core
+                        //             order : 'current',  // 'current', 'applied', 'index',  'original'
+                        //             page : 'all',      // 'all',     'current'
+                        //             search : 'applied'     // 'none',    'applied', 'removed'
+                        //         }
+                        //     }
+                        // }
                     ],
 
                     columns: [
